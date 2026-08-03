@@ -1,0 +1,329 @@
+/* ---------- Gallery hero ---------- */
+.gallery-hero {
+  position: relative;
+  padding-top: 8rem;
+  padding-bottom: 4rem;
+  overflow: hidden;
+  text-align: center;
+}
+
+.gallery-hero-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.gallery-eyebrow {
+  color: var(--secondary);
+  letter-spacing: 0.3em;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.gallery-title {
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.gallery-subtitle {
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+/* ---------- Filter bar ---------- */
+.gallery-filter {
+  position: sticky;
+  top: 80px;
+  z-index: 40;
+  background: rgba(248, 245, 238, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(110, 30, 42, 0.12);
+  border-bottom: 1px solid rgba(110, 30, 42, 0.12);
+  padding: 1.25rem 0;
+}
+
+.gallery-filter-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.gallery-filter-years,
+.gallery-filter-cats {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  overflow-x: auto;
+  flex-wrap: wrap;
+}
+
+.filter-chip {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--outline-variant);
+  color: var(--on-surface-variant);
+  white-space: nowrap;
+  transition: var(--transition-smooth);
+}
+
+.filter-chip:hover {
+  border-color: var(--secondary);
+  color: var(--secondary);
+}
+
+.filter-chip.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--on-primary);
+}
+
+.gallery-filter-divider {
+  width: 1px;
+  height: 32px;
+  background: rgba(219, 192, 193, 0.5);
+}
+
+.gallery-filter-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--outline);
+}
+
+.filter-cat {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+
+.filter-cat:hover,
+.filter-cat.active {
+  color: var(--primary);
+}
+
+@media (max-width: 767px) {
+  .gallery-filter-divider {
+    display: none;
+  }
+}
+
+/* ---------- Bento grid ---------- */
+.gallery-main {
+  padding-top: var(--section-padding);
+  padding-bottom: var(--section-padding);
+}
+
+.gallery-bento {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gutter);
+  grid-auto-flow: dense;
+}
+
+.gallery-card {
+  position: relative;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid rgba(117, 91, 0, 0.2);
+  min-height: 320px;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  cursor: pointer;
+}
+
+.gallery-card-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.7s ease;
+}
+
+.gallery-card:hover .gallery-card-bg {
+  transform: scale(1.05);
+}
+
+.gallery-card-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(80, 6, 22, 0.85) 0%,
+    transparent 55%
+  );
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.gallery-card:hover .gallery-card-shade {
+  opacity: 1;
+}
+
+/* Video */
+.gallery-play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.gallery-play-btn {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255, 237, 237, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+.gallery-card:hover .gallery-play-btn {
+  transform: scale(1.1);
+}
+
+.gallery-card.is-video .gallery-card-shade {
+  background: linear-gradient(
+    to top,
+    rgba(80, 6, 22, 0.9) 0%,
+    transparent 70%
+  );
+  opacity: 1;
+}
+
+/* Caption */
+.gallery-card-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 2rem;
+  z-index: 3;
+  transform: translateY(8px);
+  opacity: 0.9;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.gallery-card:hover .gallery-card-caption {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.gallery-card.is-video .gallery-card-caption {
+  opacity: 1;
+}
+
+.gallery-card-tag {
+  color: var(--color-gold-light);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.gallery-card-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 0.25rem;
+}
+
+.gallery-card-meta {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Spans */
+.gallery-card-solo {
+  aspect-ratio: 4 / 3;
+}
+
+.gallery-card-wide {
+  aspect-ratio: 16 / 9;
+}
+
+.gallery-card-tall {
+  min-height: 420px;
+}
+
+.gallery-card-square {
+  aspect-ratio: 1 / 1;
+}
+
+.gallery-card-medium {
+  min-height: 420px;
+}
+
+.gallery-card-half {
+  aspect-ratio: 4 / 3;
+}
+
+@media (min-width: 768px) {
+  .gallery-bento {
+    grid-template-columns: repeat(12, 1fr);
+  }
+  .gallery-card-solo {
+    grid-column: 1 / -1;
+    aspect-ratio: 21 / 9;
+  }
+  .gallery-card-wide {
+    grid-column: span 8;
+    aspect-ratio: auto;
+  }
+  .gallery-card-tall {
+    grid-column: span 4;
+  }
+  .gallery-card-square {
+    grid-column: span 4;
+  }
+  .gallery-card-medium {
+    grid-column: span 8;
+  }
+  .gallery-card-half {
+    grid-column: span 6;
+  }
+}
+
+/* ---------- Load more ---------- */
+.gallery-more {
+  text-align: center;
+  margin-top: 5rem;
+}
+
+.gallery-more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--primary);
+  border-bottom: 2px solid var(--secondary);
+  padding-bottom: 0.5rem;
+  transition: gap 0.3s ease;
+}
+
+.gallery-more-btn:hover {
+  gap: 1.5rem;
+}
+
+/* ---------- Dark theme overrides ---------- */
+[data-theme='dark'] .gallery-filter {
+  background: rgba(18, 9, 11, 0.85);
+  border-top: 1px solid rgba(82, 66, 68, 0.4);
+  border-bottom: 1px solid rgba(82, 66, 68, 0.4);
+}

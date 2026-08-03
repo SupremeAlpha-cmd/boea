@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Award Categories | The Best of Edo</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&amp;family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error-container": "#ffdad6",
+                    "secondary-fixed-dim": "#ecc246",
+                    "surface-container-low": "#fff0f0",
+                    "on-secondary-fixed-variant": "#584400",
+                    "on-error": "#ffffff",
+                    "on-primary-container": "#f3858f",
+                    "surface-bright": "#fff8f7",
+                    "on-surface-variant": "#554243",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-on-surface": "#ffeded",
+                    "primary-fixed-dim": "#ffb2b7",
+                    "inverse-surface": "#382e2e",
+                    "primary-container": "#6e1e2a",
+                    "on-error-container": "#93000a",
+                    "surface-variant": "#f0dede",
+                    "error": "#ba1a1a",
+                    "on-secondary": "#ffffff",
+                    "tertiary": "#002c1e",
+                    "on-primary": "#ffffff",
+                    "primary-fixed": "#ffdadb",
+                    "background": "#fff8f7",
+                    "on-secondary-fixed": "#241a00",
+                    "outline": "#887272",
+                    "surface-container-high": "#f6e4e4",
+                    "on-tertiary-fixed": "#002116",
+                    "tertiary-fixed": "#b3efd4",
+                    "surface-container": "#fceaea",
+                    "inverse-primary": "#ffb2b7",
+                    "surface-container-highest": "#f0dede",
+                    "secondary-fixed": "#ffe08e",
+                    "on-secondary-container": "#735a00",
+                    "on-background": "#22191a",
+                    "secondary": "#755b00",
+                    "on-surface": "#22191a",
+                    "tertiary-fixed-dim": "#98d3b9",
+                    "surface": "#fff8f7",
+                    "outline-variant": "#dbc0c1",
+                    "surface-dim": "#e7d6d6",
+                    "tertiary-container": "#004431",
+                    "surface-tint": "#9b414b",
+                    "secondary-container": "#fed255",
+                    "primary": "#500616",
+                    "on-primary-fixed-variant": "#7d2935",
+                    "on-tertiary-fixed-variant": "#13503c",
+                    "on-tertiary-container": "#77b198",
+                    "on-primary-fixed": "#40000e",
+                    "on-tertiary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin-desktop": "64px",
+                    "container-max-width": "1280px",
+                    "gutter": "24px",
+                    "margin-mobile": "20px",
+                    "section-padding": "120px",
+                    "unit": "8px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Playfair Display"],
+                    "label-caps": ["Manrope"],
+                    "display-lg-mobile": ["Playfair Display"],
+                    "display-lg": ["Playfair Display"],
+                    "body-md": ["Manrope"],
+                    "headline-xl": ["Playfair Display"],
+                    "headline-xl-mobile": ["Playfair Display"],
+                    "body-lg": ["Manrope"],
+                    "caption": ["Manrope"]
+            },
+            "fontSize": {
+                    "headline-md": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                    "display-lg-mobile": ["48px", {"lineHeight": "56px", "fontWeight": "700"}],
+                    "display-lg": ["72px", {"lineHeight": "84px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-xl": ["48px", {"lineHeight": "56px", "fontWeight": "700"}],
+                    "headline-xl-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "caption": ["14px", {"lineHeight": "20px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .edo-pattern {
+            background-color: transparent;
+            background-image:  radial-gradient(#8D6134 0.5px, transparent 0.5px), radial-gradient(#8D6134 0.5px, #fff8f7 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0,10px 10px;
+            opacity: 0.03;
+        }
+        .hero-gradient {
+            background: linear-gradient(180deg, rgba(80, 6, 22, 0.05) 0%, rgba(255, 248, 247, 0) 100%);
+        }
+        .bronze-glow {
+            box-shadow: 0 0 20px rgba(141, 97, 52, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md">
+<!-- TopNavBar -->
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-desktop h-20 max-w-container-max-width mx-auto bg-background/95 backdrop-blur-md border-b border-outline-variant/20 shadow-sm">
+<div class="flex items-center gap-8">
+<span class="font-headline-md text-headline-md font-bold text-primary tracking-tight">The Best of Edo</span>
+<div class="hidden md:flex gap-6 items-center">
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="#">About</a>
+<a class="font-label-caps text-label-caps text-primary font-bold border-b-2 border-secondary" href="#">Categories</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="#">Gallery</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="font-label-caps text-label-caps px-6 py-2 rounded-xl text-primary border border-outline-variant hover:bg-surface-container-low transition-all">Login</button>
+<button class="font-label-caps text-label-caps px-6 py-2 rounded-xl bg-primary text-on-primary hover:opacity-90 active:scale-95 transition-all">Nominate</button>
+</div>
+</nav>
+<main class="pt-20">
+<!-- Hero Section -->
+<section class="relative py-section-padding overflow-hidden hero-gradient">
+<div class="absolute inset-0 edo-pattern"></div>
+<div class="max-w-container-max-width mx-auto px-margin-desktop relative z-10 text-center">
+<span class="font-label-caps text-label-caps text-secondary tracking-[0.2em] mb-4 block">PRESTIGE &amp; EXCELLENCE</span>
+<h1 class="font-display-lg text-display-lg text-primary mb-6 max-w-4xl mx-auto leading-tight">
+                    Celebrating the Vanguard of Edo Heritage
+                </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto mb-10">
+                    The Best of Edo Awards honors exceptional individuals and organizations who embody the legendary resilience and creative brilliance of the Benin Empire in a modern world.
+                </p>
+<div class="flex justify-center gap-4">
+<a class="bg-primary text-on-primary px-10 py-4 rounded-xl font-label-caps text-label-caps hover:bg-primary-container transition-colors shadow-lg" href="#nominate">Start Nomination</a>
+<a class="border-2 border-secondary text-primary px-10 py-4 rounded-xl font-label-caps text-label-caps hover:bg-surface-container-high transition-colors" href="#categories">View Categories</a>
+</div>
+</div>
+</section>
+<!-- Categories Section -->
+<section class="py-section-padding bg-white relative" id="categories">
+<div class="max-w-container-max-width mx-auto px-margin-desktop">
+<div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+<div class="max-w-xl">
+<h2 class="font-headline-xl text-headline-xl text-primary mb-4">Award Categories</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Our categories recognize excellence across the spectrum of cultural, social, and technological advancement.</p>
+</div>
+<div class="flex gap-2">
+<button class="p-3 border border-outline-variant rounded-full text-primary hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">west</span>
+</button>
+<button class="p-3 border border-outline-variant rounded-full text-primary hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">east</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Category 1 -->
+<div class="group p-8 border border-outline-variant/30 rounded-xl hover:border-secondary transition-all duration-300 bronze-glow flex flex-col items-start bg-surface-bright">
+<div class="w-16 h-16 rounded-full bg-surface-container-low flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-secondary text-4xl" style="font-variation-settings: 'FILL' 1;">temple_buddhist</span>
+</div>
+<span class="font-label-caps text-label-caps text-secondary mb-2">HERITAGE</span>
+<h3 class="font-headline-md text-headline-md text-primary mb-4">Cultural Heritage Preservation</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8 flex-grow">
+                            Awarded to those who have demonstrated extraordinary commitment to the archiving, restoration, and promotion of Great Benin artifacts and traditions.
+                        </p>
+<a class="flex items-center gap-2 text-primary font-bold group-hover:gap-4 transition-all" href="#">
+<span>Learn More</span>
+<span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+<!-- Category 2 -->
+<div class="group p-8 border border-outline-variant/30 rounded-xl hover:border-secondary transition-all duration-300 bronze-glow flex flex-col items-start bg-surface-bright">
+<div class="w-16 h-16 rounded-full bg-surface-container-low flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-secondary text-4xl" style="font-variation-settings: 'FILL' 1;">public</span>
+</div>
+<span class="font-label-caps text-label-caps text-secondary mb-2">DIPLOMACY</span>
+<h3 class="font-headline-md text-headline-md text-primary mb-4">Global Leadership &amp; Impact</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8 flex-grow">
+                            Recognizing Edo sons and daughters who have achieved significant international influence, fostering positive global relations and community growth.
+                        </p>
+<a class="flex items-center gap-2 text-primary font-bold group-hover:gap-4 transition-all" href="#">
+<span>Learn More</span>
+<span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+<!-- Category 3 -->
+<div class="group p-8 border border-outline-variant/30 rounded-xl hover:border-secondary transition-all duration-300 bronze-glow flex flex-col items-start bg-surface-bright">
+<div class="w-16 h-16 rounded-full bg-surface-container-low flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-secondary text-4xl" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+</div>
+<span class="font-label-caps text-label-caps text-secondary mb-2">CREATIVITY</span>
+<h3 class="font-headline-md text-headline-md text-primary mb-4">Innovation in Arts &amp; Design</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8 flex-grow">
+                            Honoring visionaries who fuse traditional Benin motifs with modern technology, creating new forms of artistic expression for the 21st century.
+                        </p>
+<a class="flex items-center gap-2 text-primary font-bold group-hover:gap-4 transition-all" href="#">
+<span>Learn More</span>
+<span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</section><section class="py-section-padding bg-surface-container-low relative overflow-hidden" id="past-winners"><div class="absolute inset-0 edo-pattern opacity-5"></div><div class="max-w-container-max-width mx-auto px-margin-desktop relative z-10"><div class="text-center mb-16"><h2 class="font-headline-xl text-headline-xl text-primary mb-4">Legacy of Excellence</h2><p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">Celebrating our past winners who have set the gold standard for Edo heritage and innovation.</p></div><div class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-16"><div class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-outline-variant/20"><div class="aspect-[4/5] bg-surface-variant relative overflow-hidden"><div class="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors"></div><img alt="Chief Osas Igbinedion" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcaD7xAJt_eD8PE4GgQDU029zsArblrc0hgpyZ1TzKWealiecFzcv6wITlPmIOCGUPfvVTyBX5QAo8brwmtcvGRE1J5Iu1hYa7W59QJ-ZqNP5In4lp_6jVOKgck9r65_15bPRCBZ7hqBuiMEUVXVBiue0u_LRCHLJDm0qJjkdg_Q95mw9z1pp1q0yH7MhY8wWGz6H8dD_azR0ooTfUErvJ48vPp2zjBvpPHesMc3VP3UgKTZ4f6OBP"/></div><div class="p-8 text-center"><span class="font-label-caps text-label-caps text-secondary mb-2 block">2023 LAUREATE</span><h3 class="font-headline-md text-headline-md text-primary mb-1">Chief Osas Igbinedion</h3><p class="font-body-md text-body-md text-on-surface-variant">Cultural Heritage Preservation</p></div></div><div class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-outline-variant/20"><div class="aspect-[4/5] bg-surface-variant relative overflow-hidden"><div class="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors"></div><img alt="Dr. Adesuwa Omoregie" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsKQOnp_2RInV4ya2UcV6C7jkrNUxvzFsiC9w1tpGxidzodGE7Ie0oGkiWsR_Bha7HDCo7uT1V4w6qFmvbaLxrZrquJEOA1GlZ6EDfKukzZyO5SE3cRuqCEsR4hyrG7JORtysI-W5UM6yvsaSVr2AMAHlICcwTWO1RlBo1K3gK3krphCn-Hz8_YtXz9utbLHu3qSDX7jUfQvtmcW48J8ctR0n36tKDg1EMIHVeUVJho90EYFKR9z5e"/></div><div class="p-8 text-center"><span class="font-label-caps text-label-caps text-secondary mb-2 block">2023 LAUREATE</span><h3 class="font-headline-md text-headline-md text-primary mb-1">Dr. Adesuwa Omoregie</h3><p class="font-body-md text-body-md text-on-surface-variant">Global Leadership &amp; Impact</p></div></div><div class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-outline-variant/20"><div class="aspect-[4/5] bg-surface-variant relative overflow-hidden"><div class="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors"></div><img alt="Victor Ehikhamenor" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB45GYpbPnVTWGXOpMtKfYyShaPHWc88QtRZ_kMNFN5a4Uf96CychbE43EDoSKHVbalXb19bZyn7iIxVnUeVPSpr-ByxrTT-6OC2N0MNRXKhnw4vujtoeLPK1wy_YV2_9CKZ3nB1h8JXuHIW1ZjyBG44c9L_2V1u7AedEzSGjKrFJwCLxmB2dtb_CsL393cTNIJxQoYZsD5HXte20HaR9Pcp0CLof_qyw-KprBxE48gEGMDsBloeYX_"/></div><div class="p-8 text-center"><span class="font-label-caps text-label-caps text-secondary mb-2 block">2022 LAUREATE</span><h3 class="font-headline-md text-headline-md text-primary mb-1">Victor Ehikhamenor</h3><p class="font-body-md text-body-md text-on-surface-variant">Innovation in Arts &amp; Design</p></div></div></div><div class="flex justify-center"><button class="border-2 border-secondary text-primary px-12 py-4 rounded-xl font-label-caps text-label-caps hover:bg-secondary hover:text-white transition-all">View All Past Winners</button></div></div></section>
+<!-- Nomination Process Section -->
+<section class="py-section-padding bg-background" id="nominate">
+<div class="max-w-container-max-width mx-auto px-margin-desktop">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+<div class="relative">
+<div class="aspect-[4/5] rounded-xl overflow-hidden shadow-2xl relative">
+<div class="absolute inset-0 bg-primary/20 mix-blend-multiply"></div>
+<img class="w-full h-full object-cover" data-alt="A cinematic, high-contrast photograph of a golden Benin bronze leopard sculpture in a minimalist gallery setting. Soft top-lighting highlights the intricate bronze textures and regal form. The background is a clean, warm champagne white, consistent with the modern luxury Edo brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmQaJvfpkNF5O5jqcxFNi2C9uIK5kYwSqoDSwK4PQgCMib6sD4pMRbgpEBE58OUdL_5sdr6X6cOoRVyVQq2TLTVSbg4la0rLHnbTrhn3edL69sMvramZuwFv86Qhozjf4DJfIyutgX91EqloiuuRmVEdfRnZDanMCraXpwct9LBQtB67eY6sRm9OojC0ZlasEkUp8kTXc8RcI3H0JmCXYOvGrEV1PNk_lowmu5gUQ0jNX_BC8Tzn6h"/>
+<!-- Floating Badge -->
+<div class="absolute bottom-10 -right-10 bg-white p-8 rounded-xl shadow-2xl border border-secondary/20 max-w-xs transform rotate-2">
+<div class="flex items-center gap-4 mb-4">
+<span class="material-symbols-outlined text-secondary text-3xl">verified_user</span>
+<span class="font-label-caps text-label-caps text-primary">Certified Quality</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant italic">"The highest honor for those who carry the spirit of the ancient kingdom into the future."</p>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-10">
+<div>
+<h2 class="font-headline-xl text-headline-xl text-primary mb-6">Nomination Process</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Transparency and meritocracy are the pillars of the Edo Awards. Follow our structured journey to nominate your candidate.</p>
+</div>
+<div class="space-y-8">
+<!-- Step 1 -->
+<div class="flex gap-6 group">
+<div class="flex-shrink-0 w-12 h-12 rounded-full border-2 border-secondary flex items-center justify-center font-bold text-primary group-hover:bg-secondary group-hover:text-white transition-all">01</div>
+<div>
+<h4 class="font-headline-md text-headline-md text-primary mb-1 text-2xl">Submission</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Submit detailed documentation of the nominee's achievements through our portal before Oct 30.</p>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="flex gap-6 group">
+<div class="flex-shrink-0 w-12 h-12 rounded-full border-2 border-secondary flex items-center justify-center font-bold text-primary group-hover:bg-secondary group-hover:text-white transition-all">02</div>
+<div>
+<h4 class="font-headline-md text-headline-md text-primary mb-1 text-2xl">Vetting</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Our council of elders and industry experts reviews all entries for authenticity and impact.</p>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="flex gap-6 group">
+<div class="flex-shrink-0 w-12 h-12 rounded-full border-2 border-secondary flex items-center justify-center font-bold text-primary group-hover:bg-secondary group-hover:text-white transition-all">03</div>
+<div>
+<h4 class="font-headline-md text-headline-md text-primary mb-1 text-2xl">Shortlisting</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Top 3 finalists in each category are announced. Public voting opens for selected community awards.</p>
+</div>
+</div>
+<!-- Step 4 -->
+<div class="flex gap-6 group">
+<div class="flex-shrink-0 w-12 h-12 rounded-full border-2 border-secondary flex items-center justify-center font-bold text-primary group-hover:bg-secondary group-hover:text-white transition-all">04</div>
+<div>
+<h4 class="font-headline-md text-headline-md text-primary mb-1 text-2xl">Gala Night</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Winners are unveiled at the prestigious Grand Bronze Gala in December.</p>
+</div>
+</div>
+</div>
+<div class="pt-6">
+<button class="bg-primary text-on-primary px-12 py-5 rounded-xl font-headline-md text-headline-md text-xl hover:bg-primary-container transition-all flex items-center gap-4">
+                                Begin Submission
+                                <span class="material-symbols-outlined">arrow_outward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Newsletter / CTA -->
+<section class="py-section-padding bg-primary text-on-primary">
+<div class="max-w-container-max-width mx-auto px-margin-desktop text-center">
+<div class="max-w-3xl mx-auto">
+<h2 class="font-headline-xl text-headline-xl mb-6">Stay Informed on the Journey</h2>
+<p class="font-body-lg text-body-lg mb-10 opacity-90">Receive updates on nomination deadlines, finalist announcements, and exclusive gala night invitations.</p>
+<form class="flex flex-col sm:flex-row gap-4">
+<input class="flex-grow bg-white/10 border-b-2 border-white/30 text-white placeholder:text-white/50 px-6 py-4 focus:outline-none focus:border-secondary transition-colors rounded-none" placeholder="Your email address" type="email"/>
+<button class="bg-secondary text-on-secondary px-10 py-4 font-label-caps text-label-caps hover:bg-secondary-container transition-colors">Subscribe Now</button>
+</form>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-section-padding px-margin-desktop grid grid-cols-1 md:grid-cols-3 gap-gutter bg-primary border-t border-secondary/30">
+<div class="flex flex-col gap-6">
+<span class="font-headline-xl text-headline-xl text-on-primary">The Best of Edo Awards</span>
+<p class="font-body-md text-body-md text-on-primary/80">Honoring the Great Benin Legacy through contemporary excellence and global impact.</p>
+</div>
+<div class="grid grid-cols-2 gap-8">
+<div class="flex flex-col gap-4">
+<span class="font-label-caps text-label-caps text-secondary-fixed">Navigation</span>
+<a class="font-body-md text-on-primary/80 hover:text-secondary-fixed transition-colors" href="#">Heritage</a>
+<a class="font-body-md text-on-primary/80 hover:text-secondary-fixed transition-colors" href="#">Nomination Guide</a>
+</div>
+<div class="flex flex-col gap-4">
+<span class="font-label-caps text-label-caps text-secondary-fixed">Legal</span>
+<a class="font-body-md text-on-primary/80 hover:text-secondary-fixed transition-colors" href="#">Privacy Policy</a>
+<a class="font-body-md text-on-primary/80 hover:text-secondary-fixed transition-colors" href="#">Contact Us</a>
+</div>
+</div>
+<div class="flex flex-col gap-6 items-start md:items-end">
+<div class="flex gap-4">
+<a class="w-12 h-12 rounded-full border border-on-primary/20 flex items-center justify-center hover:border-secondary-fixed hover:text-secondary-fixed transition-all" href="#">
+<span class="material-symbols-outlined">share</span>
+</a>
+<a class="w-12 h-12 rounded-full border border-on-primary/20 flex items-center justify-center hover:border-secondary-fixed hover:text-secondary-fixed transition-all" href="#">
+<span class="material-symbols-outlined">mail</span>
+</a>
+</div>
+<p class="font-label-caps text-label-caps text-on-primary/60 text-sm md:text-right">© 2024 The Best of Edo Awards. Honoring the Great Benin Legacy.</p>
+</div>
+</footer>
+<script>
+        // Simple scroll reveal interaction
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('opacity-100', 'translate-y-0');
+                        entry.target.classList.remove('opacity-0', 'translate-y-10');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('section > div').forEach(section => {
+                section.classList.add('transition-all', 'duration-1000', 'ease-out', 'opacity-0', 'translate-y-10');
+                observer.observe(section);
+            });
+        });
+    </script>
+</body></html>

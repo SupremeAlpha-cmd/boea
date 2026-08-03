@@ -1,0 +1,188 @@
+/* ==========================================================================
+   THE BEST OF EDO AWARD (BOEA) — LIGHT "ROYAL IVORY" DESIGN SYSTEM
+   Based on the info.md brand spec:
+   Royal Burgundy (#6E1E2A) primary, Rich Gold (#C9A227) secondary,
+   Ivory/Champagne (#F8F5EE) background, Deep Charcoal (#1F1F1F) text.
+   Accents: coral red, burnished bronze, emerald (sparingly), gold gradients.
+   ========================================================================== */
+
+:root {
+  /* Surfaces (light champagne/ivory) */
+  --surface: #ffffff;
+  --surface-dim: #e9e2d5;
+  --surface-bright: #ffffff;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #fbf9f3;
+  --surface-container: #f4f0e7;
+  --surface-container-high: #efe9de;
+  --surface-container-highest: #e9e2d5;
+  --surface-variant: #efe8dc;
+
+  /* On-surface */
+  --on-surface: #201a1c;
+  --on-surface-variant: #6f5f5d;
+  --inverse-surface: #3a2326;
+  --inverse-on-surface: #ffece9;
+
+  /* Primary — Royal Burgundy (#6E1E2A) */
+  --primary: #6e1e2a;
+  --on-primary: #ffffff;
+  --primary-container: #f6ddde;
+  --on-primary-container: #4a0d18;
+  --inverse-primary: #ffb3ae;
+  --primary-fixed: #f6ddde;
+  --primary-fixed-dim: #d9a8aa;
+  --on-primary-fixed: #4a0d18;
+  --on-primary-fixed-variant: #84393f;
+
+  /* Secondary — Rich Gold (#C9A227) */
+  --secondary: #c9a227;
+  --on-secondary: #ffffff;
+  --secondary-container: #f6e9c2;
+  --on-secondary-container: #6b5200;
+  --secondary-fixed: #f6e9c2;
+  --secondary-fixed-dim: #c9a227;
+  --on-secondary-fixed: #3e2f00;
+  --on-secondary-fixed-variant: #8a6e00;
+
+  /* Tertiary — Emerald (sparingly) */
+  --tertiary: #2f7d52;
+  --on-tertiary: #ffffff;
+  --tertiary-container: #d8f2e1;
+  --on-tertiary-container: #1e4a32;
+  --tertiary-fixed: #d8f2e1;
+  --tertiary-fixed-dim: #a9d9bc;
+  --on-tertiary-fixed: #15301f;
+  --on-tertiary-fixed-variant: #2a5c3e;
+
+  /* Error */
+  --error: #ba1a1a;
+  --on-error: #ffffff;
+  --error-container: #ffdad6;
+  --on-error-container: #93000a;
+
+  /* Outline */
+  --outline: #8a7a7e;
+  --outline-variant: #d3c5c0;
+  --surface-tint: #6e1e2a;
+
+  /* Background */
+  --background: #f8f5ee;
+  --on-background: #201a1c;
+
+  /* Extras from the brand spec */
+  --burnished-bronze: #a36b2f;
+  --bead: #c8382c;
+  --coral: #d95d48;
+  --color-burgundy: #6e1e2a;
+  --color-gold: #c9a227;
+  --color-gold-light: #d9b64a;
+  --color-gold-bright: #ebc76b;
+  --royal-gradient: linear-gradient(135deg, #7a2332 0%, #4a0d18 100%);
+  --gradient-gold: linear-gradient(135deg, #f1d48a 0%, #d9b64a 50%, #b08d1e 100%);
+
+  /* Typography */
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'Manrope', sans-serif;
+
+  /* Rounded */
+  --radius-sm: 0.125rem;
+  --radius: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-full: 9999px;
+
+  /* Spacing */
+  --space-unit: 8px;
+  --container-max-width: 1280px;
+  --gutter: 24px;
+  --margin-mobile: 20px;
+  --margin-desktop: 64px;
+  --section-padding: 120px;
+
+  /* Effects */
+  --shadow-soft: 0 20px 40px -12px rgba(58, 35, 38, 0.18);
+  --shadow-ambient: 0 10px 35px rgba(58, 35, 38, 0.12);
+  --shadow-gold: 0 0 15px rgba(201, 162, 39, 0.35);
+  --border-bronze-subtle: 1px solid rgba(174, 138, 46, 0.28);
+
+  --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ==========================================================================
+   DARK "BEAD & BRONZE" THEME — the original dark theme
+   Coral bead red (#EE2A26) primary on a dark royal background.
+   ========================================================================== */
+
+[data-theme='dark'] {
+  --surface: #1b1013;
+  --surface-dim: #0e080a;
+  --surface-bright: #2a171b;
+  --surface-container-lowest: #0b0607;
+  --surface-container-low: #1e1215;
+  --surface-container: #241619;
+  --surface-container-high: #2e1c20;
+  --surface-container-highest: #392326;
+  --surface-variant: #392326;
+
+  --on-surface: #f3e6e2;
+  --on-surface-variant: #c9b4b0;
+  --inverse-surface: #f3e6e2;
+  --inverse-on-surface: #2a171b;
+
+  --primary: #ee2a26;
+  --on-primary: #ffffff;
+  --primary-container: #3a0c12;
+  --on-primary-container: #ffb4ab;
+  --inverse-primary: #ffb4ab;
+  --primary-fixed: #ffdad5;
+  --primary-fixed-dim: #ffb4ab;
+  --on-primary-fixed: #4d0004;
+  --on-primary-fixed-variant: #932525;
+
+  --secondary: #e9c462;
+  --on-secondary: #382b00;
+  --secondary-container: #584400;
+  --on-secondary-container: #ffe08e;
+  --secondary-fixed: #ffe08e;
+  --secondary-fixed-dim: #e9c462;
+  --on-secondary-fixed: #2e2300;
+  --on-secondary-fixed-variant: #c9a227;
+
+  --tertiary: #6fd3a8;
+  --on-tertiary: #003822;
+  --tertiary-container: #005134;
+  --on-tertiary-container: #9ef0c4;
+  --tertiary-fixed: #b3efd4;
+  --tertiary-fixed-dim: #98d3b9;
+  --on-tertiary-fixed: #002116;
+  --on-tertiary-fixed-variant: #13503c;
+
+  --error: #ffb4ab;
+  --on-error: #690005;
+  --error-container: #93000a;
+  --on-error-container: #ffdad6;
+
+  --outline: #9b8b8d;
+  --outline-variant: #524244;
+  --surface-tint: #ee2a26;
+
+  --background: #12090b;
+  --on-background: #f3e6e2;
+
+  --burnished-bronze: #e9c462;
+  --bead: #ee2a26;
+  --coral: #ee2a26;
+  --color-burgundy: #6e1e2a;
+  --color-gold: #c9a227;
+  --color-gold-light: #e9c462;
+  --color-gold-bright: #f7e7a1;
+  --royal-gradient: linear-gradient(135deg, #ee2a26 0%, #6e1e2a 100%);
+  --gradient-gold: linear-gradient(135deg, #f7e7a1 0%, #e9c462 50%, #c9a227 100%);
+
+  --shadow-soft: 0 20px 40px -12px rgba(0, 0, 0, 0.55);
+  --shadow-ambient: 0 10px 35px rgba(0, 0, 0, 0.4);
+  --shadow-gold: 0 0 15px rgba(233, 196, 98, 0.25);
+  --border-bronze-subtle: 1px solid rgba(233, 196, 98, 0.18);
+}

@@ -1,0 +1,417 @@
+<!DOCTYPE html><html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>The Best of Edo Awards | Rewarding Excellence</title>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error-container": "#ffdad6",
+                    "secondary-fixed-dim": "#ecc246",
+                    "surface-container-low": "#fff0f0",
+                    "on-secondary-fixed-variant": "#584400",
+                    "on-error": "#ffffff",
+                    "on-primary-container": "#f3858f",
+                    "surface-bright": "#fff8f7",
+                    "on-surface-variant": "#554243",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-on-surface": "#ffeded",
+                    "primary-fixed-dim": "#ffb2b7",
+                    "inverse-surface": "#382e2e",
+                    "primary-container": "#6e1e2a",
+                    "on-error-container": "#93000a",
+                    "surface-variant": "#f0dede",
+                    "error": "#ba1a1a",
+                    "on-secondary": "#ffffff",
+                    "tertiary": "#002c1e",
+                    "on-primary": "#ffffff",
+                    "primary-fixed": "#ffdadb",
+                    "background": "#fff8f7",
+                    "on-secondary-fixed": "#241a00",
+                    "outline": "#887272",
+                    "surface-container-high": "#f6e4e4",
+                    "on-tertiary-fixed": "#002116",
+                    "tertiary-fixed": "#b3efd4",
+                    "surface-container": "#fceaea",
+                    "inverse-primary": "#ffb2b7",
+                    "surface-container-highest": "#f0dede",
+                    "secondary-fixed": "#ffe08e",
+                    "on-secondary-container": "#735a00",
+                    "on-background": "#22191a",
+                    "secondary": "#755b00",
+                    "on-surface": "#22191a",
+                    "tertiary-fixed-dim": "#98d3b9",
+                    "surface": "#fff8f7",
+                    "outline-variant": "#dbc0c1",
+                    "surface-dim": "#e7d6d6",
+                    "tertiary-container": "#004431",
+                    "surface-tint": "#9b414b",
+                    "secondary-container": "#fed255",
+                    "primary": "#500616",
+                    "on-primary-fixed-variant": "#7d2935",
+                    "on-tertiary-fixed-variant": "#13503c",
+                    "on-tertiary-container": "#77b198",
+                    "on-primary-fixed": "#40000e",
+                    "on-tertiary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin-desktop": "64px",
+                    "container-max-width": "1280px",
+                    "gutter": "24px",
+                    "margin-mobile": "20px",
+                    "section-padding": "120px",
+                    "unit": "8px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Playfair Display"],
+                    "label-caps": ["Manrope"],
+                    "display-lg-mobile": ["Playfair Display"],
+                    "display-lg": ["Playfair Display"],
+                    "body-md": ["Manrope"],
+                    "headline-xl": ["Playfair Display"],
+                    "headline-xl-mobile": ["Playfair Display"],
+                    "body-lg": ["Manrope"],
+                    "caption": ["Manrope"]
+            },
+            "fontSize": {
+                    "headline-md": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                    "display-lg-mobile": ["48px", {"lineHeight": "56px", "fontWeight": "700"}],
+                    "display-lg": ["72px", {"lineHeight": "84px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-xl": ["48px", {"lineHeight": "56px", "fontWeight": "700"}],
+                    "headline-xl-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "caption": ["14px", {"lineHeight": "20px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        
+        .bronze-pattern {
+            background-image: url("https://www.transparenttextures.com/patterns/carbon-fibre.png");
+            opacity: 0.04;
+        }
+
+        .hero-slide {
+            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), transform 1.2s ease-out;
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transform: scale(1.05);
+        }
+
+        .hero-slide.active {
+            opacity: 1;
+            transform: scale(1);
+            z-index: 10;
+        }
+
+        .glass-nav {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .royal-gradient {
+            background: linear-gradient(135deg, #500616 0%, #6e1e2a 100%);
+        }
+
+        .gold-border-glow:hover {
+            box-shadow: 0 0 15px rgba(236, 194, 70, 0.3);
+        }
+
+        @keyframes subtle-pan {
+            0% { transform: scale(1.1) translateX(0%); }
+            100% { transform: scale(1.1) translateX(-2%); }
+        }
+        
+        .animate-subtle-pan {
+            animation: subtle-pan 20s infinite alternate ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- TopNavBar -->
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 md:px-margin-desktop h-20 max-w-full mx-auto bg-background/95 backdrop-blur-md border-b border-outline-variant/20 shadow-sm">
+<div class="flex items-center gap-8">
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-inverse-primary tracking-tight">The Best of Edo</span>
+<div class="hidden md:flex gap-gutter items-center">
+<a class="font-label-caps text-label-caps text-primary dark:text-inverse-primary font-bold border-b-2 border-secondary transition-all" href="#">About</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="#">Categories</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="#">Gallery</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<a class="hidden sm:inline-block font-label-caps text-label-caps px-6 py-2 border border-secondary text-primary hover:bg-surface-container-low transition-all" href="#">Login</a>
+<button class="bg-primary text-on-primary font-label-caps text-label-caps px-8 py-3 rounded-lg hover:bg-primary-container transition-all active:scale-95 shadow-lg">Nominate</button>
+</div>
+</nav>
+<main>
+<!-- Hero Section -->
+<section class="relative h-screen w-full overflow-hidden bg-surface-dim">
+<div class="h-full w-full relative" id="hero-slider">
+<!-- Slide 1: Edo South Beads -->
+<div class="hero-slide active">
+<div class="absolute inset-0 bg-black/40 z-10"></div>
+<div class="w-full h-full bg-cover bg-center animate-subtle-pan" data-alt="A luxurious close-up shot of a royal Edo chief's neck and hands adorned with vibrant, polished red coral beads, known as Ivie. The lighting is dramatic and high-contrast, catching the glint of the beads against deep mahogany skin. The overall aesthetic is one of extreme luxury and cultural heritage, using a rich palette of Royal Burgundy and Burnished Bronze." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBOGIruRG2ki1fBg4sS9tHtZy0dVbysj67siZlsCaA1wje1HVBk1h6Vhyp2AUlrS8Ys1wjAPWvgIU5dhfDuFvQwvGRuIuTL9X23l1-Q9FwhnNa34CxRbah0WC6MpwvZKgRVuhuaL_8qNiythJoAlZC6i4ogN8IqE9MevsKH4mHIpRC6OWWQfbXoqhz03E-wBWconkVpU3uUI5k8m3IMN5M0J_f8b10e0YNu4UBMjn2ewkeREiusYr68')"></div>
+<div class="absolute inset-0 z-20 flex flex-col justify-center items-center text-center px-4">
+<span class="font-label-caps text-label-caps text-secondary-fixed mb-4 tracking-[0.4em] uppercase">Edo South</span>
+<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-white max-w-4xl leading-tight">Rewarding Excellence</h1>
+<p class="font-body-lg text-body-lg text-white/80 mt-6 max-w-2xl italic">Honoring the heritage of the Great Benin Kingdom through modern achievement.</p>
+</div>
+</div>
+<!-- Slide 2: Benin Artifacts -->
+<div class="hero-slide">
+<div class="absolute inset-0 bg-black/40 z-10"></div>
+<div class="w-full h-full bg-cover bg-center" data-alt="A majestic studio portrait of a Benin Bronze leopard and an ivory mask, illuminated with warm, golden spotlighting. The background is a soft, deep burgundy fabric with subtle bronze-threaded patterns. The image captures the intricate relief carvings and weathered patina of these historic artifacts, symbolizing strength and royal authority in a sophisticated, gallery-like setting." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC94lsXIhwDdmFaYEImPWhqUmAIKd_1Hx66tEmqO2nGFVWs00PHR--Sq1ZjtgCnTiUTX8B2NAUBRFLQrXnexw3-wKm0F_GOgUo1wmXwKM7WTuifVnqYxDrVYs8370AOL450-JWvZVo1whHZhIzynD3hSMM9BzAOfTklS5Yia6v52vrgVOEcdUq9xguERXKCaBW-3vk7IqzO4ibYIYXbIOg5LM2LRhDwvHxw9U8K5MqvoOrqwYDa3V9-')"></div>
+<div class="absolute inset-0 z-20 flex flex-col justify-center items-center text-center px-4">
+<span class="font-label-caps text-label-caps text-secondary-fixed mb-4 tracking-[0.4em] uppercase">The Legacy</span>
+<h2 class="font-display-lg text-display-lg-mobile md:text-display-lg text-white max-w-4xl leading-tight">Bronze &amp; Bravery</h2>
+<button class="mt-8 px-10 py-4 border-2 border-white/30 text-white font-label-caps text-label-caps hover:bg-white hover:text-primary transition-all">View The Collection</button>
+</div>
+</div>
+<!-- Slide 3: Ososo Hill -->
+<div class="hero-slide">
+<div class="absolute inset-0 bg-black/30 z-10"></div>
+<div class="w-full h-full bg-cover bg-center" data-alt="A breathtaking panoramic view of Ososo Hill in Edo North during the golden hour. The landscape features rolling granite hills, lush greenery, and a soft mist settling in the valleys below. The sky is painted in warm shades of amber and pale pink, reflecting the light mode aesthetic of the brand while maintaining a sense of awe-inspiring natural beauty and prestigious elevation." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBn4Jzcx0eipXmhhcOcEk1KWmi5UNWCtAT93QpExtSH5iONyZA2P2AHI8K3gi4mp3wsIHZDLXrbfmRuAfXQbRjUYPBXWb2sDpJK4AFN_vuiBCo_p0ezEXvZqDF1NkV_Oanov9uE3Rn9BfuSSXPI2OEuP5RNoAhlWI4NwzE8yOasGxebNQjXLpLhr7kqDFP3awFUBbF6pA9kih5tt6lrIsvr1t_K9vbx3BvoJx8SIfSP-xOrl6WpKCkv')"></div>
+<div class="absolute inset-0 z-20 flex flex-col justify-center items-center text-center px-4">
+<span class="font-label-caps text-label-caps text-secondary-fixed mb-4 tracking-[0.4em] uppercase">Edo North</span>
+<h2 class="font-display-lg text-display-lg-mobile md:text-display-lg text-white max-w-4xl leading-tight">Highland Splendor</h2>
+</div>
+</div>
+<!-- Slide 4: Edo Central (Esan) -->
+<div class="hero-slide">
+<div class="absolute inset-0 bg-black/45 z-10"></div>
+<div class="w-full h-full bg-cover bg-center" data-alt="A dynamic, high-end photograph of Esan cultural performers wearing traditional hand-woven textiles. A central figure is mid-motion in a traditional dance, the heavy fabrics swirling with elegant weight. The lighting highlights the intricate patterns of the Esan weaving, using a color palette of deep reds, blacks, and creamy whites, capturing the rhythm and cultural pride of Edo Central." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAy8yhS3Vr0kM2w-opip3Vy5l6y_sNM8pU1REHSgKVmBn_jfBuhmkvlI7KZffzXEH3l5p2l5eMU9adewlfl5Cu8ua5Lk3O0lr456PHt4OrWenpL7MLfHj1sFAO1zi6d4cOtxHWMrEdVnLp7O98bJx1QfWuPsvR9CYeZlzA5BQr1NAQh8zlKCCfah8Yop0oHec01G75iDMyX1qP3toMmvKF3XrM6a14sOjTgNkvgL1yC0TqjgKSq7Fc1')"></div>
+<div class="absolute inset-0 z-20 flex flex-col justify-center items-center text-center px-4">
+<span class="font-label-caps text-label-caps text-secondary-fixed mb-4 tracking-[0.4em] uppercase">Edo Central</span>
+<h2 class="font-display-lg text-display-lg-mobile md:text-display-lg text-white max-w-4xl leading-tight">The Esan Rhythm</h2>
+</div>
+</div>
+</div>
+<!-- Slider Controls -->
+<div class="absolute bottom-12 left-0 w-full z-30 flex justify-between items-center px-margin-desktop">
+<div class="flex gap-4">
+<button class="p-3 rounded-full border border-white/20 text-white hover:bg-white/10 transition-all" onclick="prevSlide()">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<button class="p-3 rounded-full border border-white/20 text-white hover:bg-white/10 transition-all" onclick="nextSlide()">
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+<div class="flex gap-2" id="slide-indicators">
+<div class="h-1 w-8 bg-white/40 transition-all duration-500 rounded-full indicator-bar active"></div>
+<div class="h-1 w-8 bg-white/20 transition-all duration-500 rounded-full indicator-bar"></div>
+<div class="h-1 w-8 bg-white/20 transition-all duration-500 rounded-full indicator-bar"></div>
+<div class="h-1 w-8 bg-white/20 transition-all duration-500 rounded-full indicator-bar"></div>
+</div>
+</div>
+</section>
+<!-- About The Awards -->
+<section class="py-section-padding px-6 md:px-margin-desktop relative">
+<div class="bronze-pattern absolute inset-0 pointer-events-none"></div>
+<div class="max-w-container-max-width mx-auto flex flex-col md:flex-row gap-gutter items-center">
+<div class="w-full md:w-1/2">
+<span class="font-label-caps text-label-caps text-secondary tracking-widest block mb-6">PRESTIGE &amp; HERITAGE</span>
+<h2 class="font-headline-xl text-headline-xl-mobile md:text-headline-xl text-primary mb-8 leading-tight">A Celebration of Edo's Finest Minds</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-6 leading-relaxed">
+                        The Best of Edo Awards is more than a ceremony; it is a testament to the enduring spirit of excellence that has defined our kingdom for centuries. From the historic brass casters to modern-day visionaries, we honor those who push boundaries.
+                    </p>
+<p class="font-body-md text-body-md text-on-surface-variant/80 mb-10">
+                        Our platform serves as a bridge between the historical royal regalia of the Edo people and the contemporary sophistication of global excellence. We recognize the pioneers, the creators, and the leaders who embody the heart of Edo.
+                    </p>
+<a class="inline-flex items-center gap-2 font-label-caps text-label-caps text-primary hover:gap-4 transition-all" href="#">
+                        Read Our Story 
+                        <span class="material-symbols-outlined text-[16px]">east</span>
+</a>
+</div>
+<div class="w-full md:w-1/2 relative">
+<div class="aspect-[4/5] bg-surface-container-high rounded-lg overflow-hidden border border-outline-variant/30 shadow-2xl">
+<img class="w-full h-full object-cover" data-alt="A portrait of a contemporary Edo award winner, a woman in a modern tailored suit with a subtle coral bead brooch. She stands in a sunlit architectural space with minimalist, clean lines. The lighting is soft and airy, creating a high-key light mode look that emphasizes professional achievement and cultural rootedness." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXAWYaNDLKhw9PTaV91Z0LahDFbKVEM2YA1XXXnWgfgVrCkLA6-83cyP8rdEkrbF50axTOs6zWw6kYXUW4prcgY_Zn6ewjKRRZBYPwqea1QO7IiVYQlvP4X0GGNCXPuS2isCCF3EHfldvvv0IdOKmvnktxa1SZArj7Ma1TeHsbH84EE1zYVi795LG8Z85tCpy3-or6vp5hlq1_Sd_0yqCmkap4kBDzFk7kekBCoTnowc37--pLtlxE">
+</div>
+<div class="absolute -bottom-8 -left-8 bg-primary text-on-primary p-8 md:p-12 hidden lg:block">
+<div class="flex flex-col gap-1">
+<span class="font-headline-md text-headline-md leading-none">12+</span>
+<span class="font-label-caps text-label-caps opacity-80 uppercase">Categories</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Latest News (Bento Grid) -->
+<section class="py-section-padding px-6 md:px-margin-desktop bg-surface-container-low">
+<div class="max-w-container-max-width mx-auto">
+<div class="flex justify-between items-end mb-16">
+<div>
+<span class="font-label-caps text-label-caps text-secondary block mb-2">DISCOVER</span>
+<h2 class="font-headline-xl text-headline-xl-mobile md:text-headline-xl text-primary">Latest News</h2>
+</div>
+<a class="hidden md:block font-label-caps text-label-caps border-b border-primary text-primary pb-1" href="#">View All Press</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Featured Article -->
+<div class="md:col-span-7 group cursor-pointer">
+<div class="aspect-video overflow-hidden mb-6 border border-outline-variant/20 bg-white shadow-sm">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A wide-angle, high-end photography shot of a gala event stage prepared for an awards ceremony. The stage is bathed in soft gold and burgundy lighting, featuring large digital screens displaying elegant Edo patterns. Rows of premium white seating are visible, creating a sophisticated and exclusive atmosphere, reflecting a modern luxury event style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCz5S3fPWW39-q2fzn1W2UpNsSOcuC8lTdWCgxIUFGfs7KVx0wUXP6eHiXOuqPFHFNNgKNFs2uOGATTw3TyTMMBgPVYOw-vCN33fYtRtzv38SyuaohxhpE7K8PmKPY3eR4bXPfoN5oYyAmx9zqTRHMLr9wDUIaDQxa0CsF1IdDJItJE9ZTq50eWFVhwkYZuQxFuq__2wmQ4j7u-bgDfJyQwzcUa4MZ_D969KKXwP6Hdy2zgaCAlAn6v">
+</div>
+<div class="flex gap-4 items-center mb-4">
+<span class="font-label-caps text-label-caps bg-secondary-container text-on-secondary-container px-3 py-1">Event</span>
+<span class="font-caption text-caption text-on-surface-variant">March 12, 2024</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors mb-4">The 2024 Gala Night: A Date with Destiny in Benin City</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Join us for an evening of unparalleled elegance as we unveil the winners of this year's most anticipated categories...</p>
+</div>
+<!-- Side Articles -->
+<div class="md:col-span-5 flex flex-col gap-10">
+<div class="flex gap-6 group cursor-pointer">
+<div class="w-32 h-32 flex-shrink-0 bg-white border border-outline-variant/20 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform" data-alt="A close-up studio shot of a polished metallic award trophy with the shape of a stylized Benin bronze mask. The trophy rests on a black marble base and is lit from above to create sharp, gleaming highlights. The aesthetic is extremely premium and editorial, emphasizing the prestige of the award." src="https://lh3.googleusercontent.com/aida-public/AB6AXuApit6FdetpyqNHBvFQqOisvBWRNXt0tXuZ9xAhA0U94N5ND1iK7dLbnQ5L-TG1vQblR09kv8vK5gVG3-HzHMkPg9T8Ps-TVOaYMYwlY4YOxwwrnfOC3g94GXNcCVB6fbM528KKoFnhFJp5KsUFzYutu_krGu6vCeje4QbAcUzZOBw3sdkZCuAcvRYrMmxVgTcOrP8HvD3cp7tMI9AyoicEEdM3wdG_ZWBhvlONGi2qpatU5vQZpssg">
+</div>
+<div>
+<span class="font-label-caps text-label-caps text-secondary mb-2 block">Unveiling</span>
+<h4 class="font-body-lg font-bold text-on-surface group-hover:text-primary transition-colors leading-snug">Designing the New 'Great Benin' Award Trophy</h4>
+<span class="font-caption text-caption text-on-surface-variant mt-2 block">Press Release</span>
+</div>
+</div>
+<div class="flex gap-6 group cursor-pointer">
+<div class="w-32 h-32 flex-shrink-0 bg-white border border-outline-variant/20 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform" data-alt="A portrait of a group of three young Edo entrepreneurs, two men and one woman, laughing together in a bright, modern office space. They are dressed in a mix of professional attire and subtle African prints. The mood is optimistic and successful, representing the modern excellence of the Edo people." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcjP2IN2k_oezcV4U2uiw2TVte5QKahRqmWwlxRtt9n59BTKk1IWXCWrtqcwOUNHsaWWRyi37y6rtd73sGafph8qDPyYZskMkH7Yutim1o6auE9c42FWRjD17na4672ddVMe994HwsCIlPl1YkihpdaPvl1YOkrl7Os704JRxmJjHzOzwwFyF5CGrduDER5B07oPAmr3Kaie97dntKS_kjtP82plDztqA0k6rb-5ARAUoJe7IjzgxV">
+</div>
+<div>
+<span class="font-label-caps text-label-caps text-secondary mb-2 block">Highlight</span>
+<h4 class="font-body-lg font-bold text-on-surface group-hover:text-primary transition-colors leading-snug">Meet the 2024 Nominees in Innovation</h4>
+<span class="font-caption text-caption text-on-surface-variant mt-2 block">Nomination Series</span>
+</div>
+</div>
+<div class="flex gap-6 group cursor-pointer">
+<div class="w-32 h-32 flex-shrink-0 bg-white border border-outline-variant/20 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform" data-alt="An artistic shot of a set of calligraphic pens and ink on high-quality stationery paper. The script on the paper is elegant and formal. The lighting is soft and professional, evoking a sense of official documentation and refined invitation. The style is minimalist and editorial." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTLmI_YWiLNVsav3abMHx9JnAKeP2IWZnGjccXnwdEoSfNbVQQ1CFLJHf4l_rnCzG41-vWgu_40K1aEdIPWPzTbns9hDvdjswM0tOem0Nt8KQ3hS_JSlToqjcSOKl9sqbHkP1w_C2xalMN9VwSYiQQCKL5E4KeMufKa1G2mIDb0BR_vB21ecS94Twrfty9pdWRrhJVL4MXF3E4ZOVWde0YcuAOrd9mESd2_5mR0y6r1rqULm_oDRAe">
+</div>
+<div>
+<span class="font-label-caps text-label-caps text-secondary mb-2 block">Guidelines</span>
+<h4 class="font-body-lg font-bold text-on-surface group-hover:text-primary transition-colors leading-snug">How to Write a Compelling Nomination</h4>
+<span class="font-caption text-caption text-on-surface-variant mt-2 block">Tutorial</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Call To Nominate Banner -->
+<section class="py-section-padding px-6">
+<div class="max-w-container-max-width mx-auto royal-gradient rounded-xl p-12 md:p-24 relative overflow-hidden flex flex-col items-center text-center">
+<!-- Decorative Elements -->
+<div class="absolute top-0 left-0 w-full h-full bronze-pattern pointer-events-none opacity-10"></div>
+<div class="absolute -top-24 -right-24 w-64 h-64 bg-secondary/20 rounded-full blur-[100px]"></div>
+<div class="absolute -bottom-24 -left-24 w-64 h-64 bg-white/10 rounded-full blur-[80px]"></div>
+<span class="font-label-caps text-label-caps text-secondary-fixed mb-6 tracking-[0.3em]">YOUR VOICE MATTERS</span>
+<h2 class="font-headline-xl text-headline-xl-mobile md:text-headline-xl text-white mb-8 max-w-2xl leading-tight">Recognize the Greatness Within Your Community</h2>
+<p class="font-body-lg text-body-lg text-white/80 mb-12 max-w-xl">
+                    Nominations for the 2024 season are now officially open. Help us identify the trailblazers who are making Edo proud.
+                </p>
+<div class="flex flex-col sm:flex-row gap-4 w-full justify-center">
+<a class="px-12 py-5 bg-secondary-fixed text-on-secondary-fixed font-label-caps text-label-caps hover:bg-secondary-fixed-dim transition-all shadow-xl hover:scale-105 active:scale-95" href="#">Nominate Someone Now</a>
+<a class="px-12 py-5 border border-white/40 text-white font-label-caps text-label-caps hover:bg-white/10 transition-all" href="#">Download Guidelines</a>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-section-padding px-6 md:px-margin-desktop grid grid-cols-1 md:grid-cols-3 gap-gutter bg-primary dark:bg-primary-container text-on-primary dark:text-on-primary-container border-t border-secondary/30">
+<div class="flex flex-col gap-6">
+<span class="font-headline-xl text-headline-xl text-on-primary dark:text-on-primary-container">The Best of Edo</span>
+<p class="font-body-md text-on-primary/70 max-w-xs">
+                Upholding the legacy of the Benin Empire through the recognition of modern achievements and cultural preservation.
+            </p>
+<div class="flex gap-4">
+<a class="text-on-primary/60 hover:text-secondary-fixed transition-colors" href="#"><span class="material-symbols-outlined">public</span></a>
+<a class="text-on-primary/60 hover:text-secondary-fixed transition-colors" href="#"><span class="material-symbols-outlined">language</span></a>
+<a class="text-on-primary/60 hover:text-secondary-fixed transition-colors" href="#"><span class="material-symbols-outlined">alternate_email</span></a>
+</div>
+</div>
+<div class="flex flex-col gap-6">
+<span class="font-label-caps text-label-caps text-secondary-fixed">Quick Links</span>
+<div class="grid grid-cols-1 gap-4">
+<a class="font-body-md text-on-primary/80 hover:text-secondary-fixed transition-colors" href="#">Heritage</a>
+<a class="font-body-md text-on-primary/80 hover:text-secondary-fixed transition-colors" href="#">Nomination Guide</a>
+<a class="font-body-md text-on-primary/80 hover:text-secondary-fixed transition-colors" href="#">Privacy Policy</a>
+<a class="font-body-md text-on-primary/80 hover:text-secondary-fixed transition-colors" href="#">Contact Us</a>
+</div>
+</div>
+<div class="flex flex-col gap-6">
+<span class="font-label-caps text-label-caps text-secondary-fixed">Newsletter</span>
+<p class="font-body-md text-on-primary/70">Receive updates on the 2024 awards and heritage stories.</p>
+<div class="relative mt-2">
+<input class="w-full bg-primary-container/50 border-0 border-b border-white/20 text-white p-4 focus:ring-0 focus:border-secondary-fixed placeholder:text-white/40" placeholder="Email Address" type="email">
+<button class="absolute right-0 top-1/2 -translate-y-1/2 p-4 text-secondary-fixed hover:text-white transition-colors">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+<p class="mt-8 font-caption text-caption text-on-primary/50">© 2024 The Best of Edo Awards. Honoring the Great Benin Legacy.</p>
+</div>
+</footer>
+<!-- Scripts for interaction -->
+<script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.hero-slide');
+        const indicators = document.querySelectorAll('.indicator-bar');
+        const totalSlides = slides.length;
+
+        function updateSlider() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active');
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                }
+            });
+
+            indicators.forEach((bar, index) => {
+                bar.classList.remove('active', 'bg-white/40');
+                bar.classList.add('bg-white/20');
+                if (index === currentSlide) {
+                    bar.classList.add('active', 'bg-white/40');
+                    bar.style.width = '2rem';
+                } else {
+                    bar.style.width = '1.5rem';
+                }
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateSlider();
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateSlider();
+        }
+
+        // Auto-advance
+        setInterval(nextSlide, 7000);
+
+        // Initial state
+        updateSlider();
+    </script>
+</body></html>
