@@ -1,0 +1,53 @@
+.founder-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4rem;
+  align-items: start;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 1024px) {
+  .founder-grid {
+    grid-template-columns: 360px 1fr;
+    gap: 5rem;
+  }
+}
+
+.founder-portrait {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.founder-portrait-ring {
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.08), transparent 60%),
+    var(--gradient-gold);
+  padding: 10px;
+  box-shadow: var(--shadow-soft);
+}
+
+.founder-portrait-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--surface-bright);
+}
+
+.founder-portrait-caption {
+  color: var(--on-surface-variant);
+}
+
+.founder-bio {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}

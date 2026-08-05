@@ -281,15 +281,18 @@ button {
 
 /* ---------- Dark theme overrides ---------- */
 [data-theme='dark'] .btn-primary {
-  background: linear-gradient(135deg, #f0392e 0%, #d01c1a 55%, #a81212 100%);
+  background: linear-gradient(135deg, #8b2232 0%, #6e1e2a 55%, #4d0f19 100%);
+  border: 1px solid rgba(201, 162, 39, 0.4);
   box-shadow:
-    0 4px 18px rgba(238, 42, 38, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+    0 4px 18px rgba(110, 30, 42, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 [data-theme='dark'] .btn-primary:hover {
-  background: linear-gradient(135deg, #d42a22 0%, #9c100f 100%);
+  background: linear-gradient(135deg, #6e1e2a 0%, #4d0f19 100%);
+  border-color: var(--color-gold);
   box-shadow:
-    0 6px 26px rgba(238, 42, 38, 0.45),
-    inset 0 -2px 0 var(--color-gold);
+    0 6px 26px rgba(110, 30, 42, 0.6),
+    0 0 15px rgba(201, 162, 39, 0.3);
 }
+

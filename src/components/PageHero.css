@@ -1,0 +1,50 @@
+.page-hero {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  background: linear-gradient(
+    180deg,
+    rgba(110, 30, 42, 0.07) 0%,
+    rgba(248, 245, 238, 0) 100%
+  );
+  padding-top: calc(4rem + 80px);
+  padding-bottom: 4rem;
+}
+
+[data-theme='dark'] .page-hero {
+  background: linear-gradient(
+    180deg,
+    rgba(238, 42, 38, 0.08) 0%,
+    rgba(18, 9, 11, 0) 100%
+  );
+}
+
+.page-hero-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.page-hero-eyebrow {
+  color: var(--secondary);
+  letter-spacing: 0.2em;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.page-hero-title {
+  color: var(--primary);
+  max-width: 900px;
+  margin: 0 auto 1.5rem auto;
+}
+
+.page-hero-intro {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+@media (max-width: 767px) {
+  .page-hero {
+    padding-top: calc(3rem + 80px);
+    padding-bottom: 2.5rem;
+  }
+}

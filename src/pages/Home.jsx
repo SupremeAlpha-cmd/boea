@@ -4,9 +4,10 @@ import {
   ChevronLeft,
   ChevronRight,
   ArrowRight,
-  Calendar
+  ArrowUpRight
 } from 'lucide-react';
-import { HERO_SLIDES, NEWS_ITEMS } from '../data/content';
+import { HERO_SLIDES } from '../data/content';
+import { HOME } from '../data/site';
 import NominateCta from '../components/NominateCta';
 import './Home.css';
 
@@ -77,32 +78,23 @@ function HeroSlider() {
   );
 }
 
-function AboutSection() {
+function IntroSection() {
   return (
     <section className="about section" id="about">
       <div className="edo-pattern" />
       <div className="container about-centered">
         <div className="about-logo">
-          <img src="/logo.png" alt="The Best of Edo Award logo" />
+          <img src="/logo.png" alt="The Prestigious Best of Edo Award logo" />
         </div>
-        <span className="label-caps eyebrow">Prestige & Heritage</span>
-        <h2 className="headline-xl about-title">
-          A Celebration of Edo&rsquo;s Finest Minds
-        </h2>
-        <p className="body-lg text-muted">
-          The Best of Edo Awards is more than a ceremony; it is a testament to the
-          enduring spirit of excellence that has defined our kingdom for centuries.
-          From the historic brass casters to modern-day visionaries, we honor those
-          who push boundaries.
-        </p>
-        <p className="body-md text-muted about-second">
-          Our platform serves as a bridge between the historical royal regalia of the
-          Edo people and the contemporary sophistication of global excellence. We
-          recognize the pioneers, the creators, and the leaders who embody the heart
-          of Edo.
-        </p>
-        <Link to="/categories" className="action-link">
-          Read Our Story
+        <span className="label-caps eyebrow">{HOME.tagline}</span>
+        <h2 className="headline-xl about-title">{HOME.slogan}</h2>
+        {HOME.intro.map((p, i) => (
+          <p key={i} className="body-lg text-muted about-paragraph">
+            {p}
+          </p>
+        ))}
+        <Link to="/about" className="action-link">
+          About the Award
           <ArrowRight size={16} />
         </Link>
       </div>
@@ -110,57 +102,77 @@ function AboutSection() {
   );
 }
 
-function NewsSection() {
-  const featured = NEWS_ITEMS[0];
-
+function SplitSection({ reverse, eyebrow, title, paragraphs, image, alt, cta, ctaTo }) {
   return (
-    <section className="news section">
-      <div className="container">
-        <div className="news-header">
-          <div>
-            <span className="label-caps eyebrow">Discover</span>
-            <h2 className="headline-xl">Latest News</h2>
-          </div>
-          <Link to="/gallery" className="news-view-all">
-            View All Press
-          </Link>
+    <section className="split section">
+      <div className="container split-grid">
+        <div className={`split-media ${reverse ? 'split-media-reverse' : ''}`}>
+          <img src={image} alt={alt} />
         </div>
-
-        <Link to="/gallery" className="news-featured news-featured-horizontal">
-          <div className="news-featured-image">
-            <img src={featured.image} alt={featured.title} />
-          </div>
-          <div className="news-featured-body">
-            <div className="news-featured-meta">
-              <span className="news-tag">
-                <Calendar size={14} />
-                {featured.tag}
-              </span>
-              <span className="caption text-muted">{featured.date}</span>
-            </div>
-            <h3 className="headline-md news-featured-title">{featured.title}</h3>
-            <p className="body-md text-muted">{featured.excerpt}</p>
-            <span className="action-link news-featured-link">
-              Read More
-              <ArrowRight size={16} />
-            </span>
-          </div>
-        </Link>
+        <div className="split-content">
+          <span className="label-caps split-eyebrow">{eyebrow}</span>
+          <h2 className="headline-xl split-title">{title}</h2>
+          {paragraphs.map((p, i) => (
+            <p key={i} className="body-lg text-muted split-paragraph">
+              {p}
+            </p>
+          ))}
+          {cta && (
+            <Link to={ctaTo} className="btn btn-outline split-cta">
+              {cta}
+              <ArrowUpRight size={16} />
+            </Link>
+          )}
+        </div>
       </div>
     </section>
   );
 }
 
-function NominateBanner() {
+function PillarsSection() {
   return (
-    <NominateCta
-      eyebrow="Your Voice Matters"
-      title="Recognize the Greatness"
-      titleGold="Within Your Community"
-      copy="Nominations for the 2026 season are now officially open. Help us identify the trailblazers who are making Edo proud."
-      ctaText="Nominate Someone Now"
-      secondaryText="Download Guidelines"
-    />
+    <section className="pillars section">
+      <div className="container">
+        <div className="pillars-head">
+          <span className="label-caps pillars-eyebrow">Our Message</span>
+          <h2 className="headline-xl pillars-title">{HOME.fromEdoToWorld.title}</h2>
+        </div>
+        <div className="pillars-grid">
+          {HOME.fromEdoToWorld.pillars.map((pillar, i) => (
+            <div key={i} className="pillar-card">
+              <span className="pillar-number">0{i + 1}</span>
+              <p className="pillar-text">{pillar}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ClosingSection() {
+  return (
+    <section className="closing section">
+      <div className="edo-pattern" />
+      <div className="container closing-inner">
+        <span className="label-caps closing-eyebrow">
+          {HOME.recognising.title}
+        </span>
+        {HOME.recognising.paragraphs.map((p, i) => (
+          <p key={i} className="body-lg closing-paragraph">
+            {p}
+          </p>
+        ))}
+        <div className="closing-actions">
+          <Link to="/recipients" className="btn btn-primary">
+            Explore Past Recipients
+          </Link>
+          <Link to="/edition-2026" className="btn btn-outline">
+            The 9th Edition 2026
+          </Link>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -168,9 +180,36 @@ export default function Home() {
   return (
     <main>
       <HeroSlider />
-      <AboutSection />
-      <NewsSection />
-      <NominateBanner />
+      <IntroSection />
+      <SplitSection
+        reverse
+        eyebrow={HOME.moreThanAnAward.title}
+        title={HOME.moreThanAnAward.title}
+        paragraphs={HOME.moreThanAnAward.paragraphs}
+        image="/assets/gala_red_carpet.png"
+        alt="Best of Edo Award gala red carpet"
+        cta="See Past Recipients"
+        ctaTo="/recipients"
+      />
+      <SplitSection
+        eyebrow={HOME.fromEdoToWorld.title}
+        title={HOME.fromEdoToWorld.title}
+        paragraphs={HOME.fromEdoToWorld.paragraphs}
+        image="/assets/esan_culture.png"
+        alt="Esan culture and heritage"
+        cta="Discover Our Heritage"
+        ctaTo="/heritage"
+      />
+      <PillarsSection />
+      <ClosingSection />
+      <NominateCta
+        eyebrow="Your Voice Matters"
+        title="Recognize the Greatness"
+        titleGold="Within Your Community"
+        copy="Nominations for the 2026 season are now officially open. Help us identify the trailblazers who are making Edo proud."
+        ctaText="Nominate Someone Now"
+        secondaryText="Download Guidelines"
+      />
     </main>
   );
 }

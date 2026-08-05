@@ -186,3 +186,16 @@
   --shadow-gold: 0 0 15px rgba(233, 196, 98, 0.25);
   --border-bronze-subtle: 1px solid rgba(233, 196, 98, 0.18);
 }
+
+/* ---------- Responsive section spacing ---------- */
+@media (max-width: 767px) {
+  :root {
+    --section-padding: 72px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+    --section-padding: 96px;
+  }
+}

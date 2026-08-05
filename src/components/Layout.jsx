@@ -1,18 +1,64 @@
 import { NavLink, Link, useLocation } from 'react-router-dom';
-import { Menu, X, Sun, Moon } from 'lucide-react';
+import { Menu, X, Sun, Moon, ChevronDown, ChevronRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import './Layout.css';
 
-const NAV_LINKS = [
-  { to: '/', label: 'About', end: true },
-  { to: '/categories', label: 'Categories' },
-  { to: '/gallery', label: 'Gallery' },
-  { to: '/past-winners', label: 'Past Winners' }
+const NAV_GROUPS = [
+  {
+    label: 'About',
+    type: 'dropdown',
+    items: [
+      { to: '/about', label: 'About the Award' },
+      { to: '/about/history', label: 'Our History' },
+      { to: '/about/mission', label: 'Mission' },
+      { to: '/about/vision', label: 'Vision' },
+      { to: '/about/values', label: 'Core Values' },
+      { to: '/about/objectives', label: 'Objectives' },
+      { to: '/about/philosophy', label: 'Award Philosophy' },
+      { to: '/about/heritage', label: 'Our Heritage' },
+      { to: '/about/people', label: 'Our People' },
+      { to: '/about/founder', label: 'The Founder' }
+    ]
+  },
+  {
+    label: 'The Award',
+    type: 'dropdown',
+    items: [
+      { to: '/categories', label: 'Award Categories' },
+      { to: '/nomination', label: 'Nomination & Selection' },
+      { to: '/edition-2026', label: '9th Edition 2026' },
+      { to: '/recipients', label: 'Past Recipients' }
+    ]
+  },
+  {
+    label: 'Impact',
+    type: 'dropdown',
+    items: [
+      { to: '/impact', label: 'Our Impact' },
+      { to: '/humanitarian', label: 'Humanitarian Scheme' }
+    ]
+  },
+  {
+    label: 'Media',
+    type: 'dropdown',
+    items: [
+      { to: '/gallery', label: 'Gallery' },
+      { to: '/media', label: 'Media & Publicity' },
+      { to: '/partners', label: 'Partners & Sponsors' }
+    ]
+  },
+  { to: '/faq', label: 'FAQ', type: 'link' },
+  { to: '/contact', label: 'Contact', type: 'link' }
 ];
 
-function isActiveFor(link, pathname) {
-  if (link.end) return pathname === '/';
-  return pathname.startsWith(link.to);
+function isGroupActive(group, pathname) {
+  return group.items.some((item) =>
+    item.to === '/about' ? pathname === '/about' || pathname.startsWith('/about/') : pathname.startsWith(item.to)
+  );
+}
+
+function isLinkActive(to, pathname) {
+  return to === '/' ? pathname === '/' : pathname.startsWith(to);
 }
 
 export function ThemeToggle() {
@@ -40,8 +86,35 @@ export function ThemeToggle() {
   );
 }
 
+function DropdownNav({ group, pathname, onNavigate, expanded, onToggle }) {
+  const active = isGroupActive(group, pathname);
+
+  return (
+    <div className={`nav-dropdown ${active ? 'has-active' : ''} ${expanded ? 'expanded' : ''}`}>
+      <button type="button" className="nav-dropdown-btn" onClick={onToggle}>
+        {group.label}
+        <ChevronDown size={14} className="nav-dropdown-chevron" />
+      </button>
+      <div className="nav-dropdown-panel">
+        {group.items.map((item) => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            className={({ isActive }) => `nav-dropdown-link ${isActive ? 'active' : ''}`}
+            onClick={onNavigate}
+          >
+            {item.label}
+            <ChevronRight size={14} />
+          </NavLink>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const [activeMenu, setActiveMenu] = useState(null);
   const [scrolled, setScrolled] = useState(false);
   const { pathname } = useLocation();
 
@@ -53,36 +126,59 @@ export function Navbar() {
 
   useEffect(() => {
     setOpen(false);
+    setActiveMenu(null);
   }, [pathname]);
+
+  const toggleMenu = () => {
+    setOpen((v) => !v);
+    setActiveMenu(null);
+  };
 
   return (
     <nav className={`site-nav ${scrolled ? 'scrolled' : ''}`}>
       <div className="nav-inner container">
         <Link to="/" className="nav-brand">
-          <img src="/logo.png" alt="The Best of Edo Award logo" className="nav-logo" />
-          <span className="nav-brand-name">The Best of Edo</span>
+          <img src="/logo.png" alt="The Prestigious Best of Edo Award logo" className="nav-logo" />
+          <span className="nav-brand-name">The Prestigious Best of Edo</span>
         </Link>
 
         <div className={`nav-links ${open ? 'open' : ''}`}>
-          {NAV_LINKS.map((link) => (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              end={link.end}
-              className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-            >
-              {link.label}
-            </NavLink>
-          ))}
+          {NAV_GROUPS.map((group) =>
+            group.type === 'dropdown' ? (
+              <DropdownNav
+                key={group.label}
+                group={group}
+                pathname={pathname}
+                expanded={activeMenu === group.label}
+                onToggle={() =>
+                  setActiveMenu((current) => (current === group.label ? null : group.label))
+                }
+                onNavigate={() => setOpen(false)}
+              />
+            ) : (
+              <NavLink
+                key={group.to}
+                to={group.to}
+                className={({ isActive }) =>
+                  `nav-link ${isActive || isLinkActive(group.to, pathname) ? 'active' : ''}`
+                }
+              >
+                {group.label}
+              </NavLink>
+            )
+          )}
+          <Link to="/nomination" className="btn btn-gold nav-mobile-cta">
+            Nominate Someone
+          </Link>
         </div>
 
         <div className="nav-actions">
           <ThemeToggle />
-          <Link to="/categories" className="btn btn-primary nav-nominate">Nominate</Link>
+          <Link to="/nomination" className="btn btn-primary nav-nominate">Nominate</Link>
           <button
             className="nav-toggle"
             aria-label="Toggle menu"
-            onClick={() => setOpen((v) => !v)}
+            onClick={toggleMenu}
           >
             {open ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -97,34 +193,45 @@ export function Footer() {
     <footer className="site-footer">
       <div className="container footer-grid">
         <div className="footer-brand">
-          <span className="footer-brand-name">The Best of Edo</span>
+          <span className="footer-brand-name">The Prestigious Best of Edo</span>
           <p>
-            Upholding the legacy of the Benin Empire through the recognition of modern
-            achievements and cultural preservation.
+            The Prestigious Best of Edo Award is a humanitarian, heritage and civic awards platform
+            honouring excellence, service and innovation across Edo State and beyond.
           </p>
         </div>
 
         <div className="footer-col">
-          <span className="footer-heading">Quick Links</span>
+          <span className="footer-heading">About</span>
           <div className="footer-links">
-            <Link to="/">Home</Link>
-            <Link to="/categories">Award Categories</Link>
-            <Link to="/gallery">Gallery</Link>
-            <Link to="/past-winners">Past Winners</Link>
+            <Link to="/about">About the Award</Link>
+            <Link to="/about/history">Our History</Link>
+            <Link to="/about/mission">Mission & Vision</Link>
+            <Link to="/about/values">Core Values</Link>
+            <Link to="/about/founder">The Founder</Link>
           </div>
         </div>
 
         <div className="footer-col">
-          <span className="footer-heading">Newsletter</span>
-          <p>Receive updates on the awards and heritage stories.</p>
-          <form className="newsletter-form" onSubmit={(e) => e.preventDefault()}>
-            <input type="email" placeholder="Email Address" aria-label="Email Address" />
-            <button className="newsletter-send" type="submit" aria-label="Subscribe">
-              Send
-            </button>
-          </form>
+          <span className="footer-heading">The Award</span>
+          <div className="footer-links">
+            <Link to="/categories">Award Categories</Link>
+            <Link to="/nomination">Nomination & Selection</Link>
+            <Link to="/edition-2026">9th Edition 2026</Link>
+            <Link to="/recipients">Past Recipients</Link>
+          </div>
+        </div>
+
+        <div className="footer-col">
+          <span className="footer-heading">Connect</span>
+          <div className="footer-links">
+            <Link to="/contact">Contact Us</Link>
+            <Link to="/faq">FAQs</Link>
+            <Link to="/gallery">Gallery</Link>
+            <Link to="/media">Media & Publicity</Link>
+            <Link to="/partners">Partners & Sponsors</Link>
+          </div>
           <p className="footer-copyright">
-            &copy; 2026 The Best of Edo Awards. Honoring the Great Benin Legacy.
+            &copy; 2026 The Prestigious Best of Edo Awards &middot; Walkfront African Network Limited
           </p>
         </div>
       </div>

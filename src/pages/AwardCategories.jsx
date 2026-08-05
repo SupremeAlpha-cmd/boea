@@ -1,141 +1,81 @@
 import { Link } from 'react-router-dom';
-import {
-  ArrowRight,
-  ArrowUpRight,
-  ChevronLeft,
-  ChevronRight
-} from 'lucide-react';
-import { CATEGORIES, NOMINATION_STEPS } from '../data/content';
+import { ArrowUpRight, ArrowRight } from 'lucide-react';
+import PageHero from '../components/PageHero';
+import NominateCta from '../components/NominateCta';
+import { CATEGORIES } from '../data/site';
+import '../styles/pages.css';
 import './AwardCategories.css';
 
-function CategoriesHero() {
-  return (
-    <section className="cat-hero section">
-      <div className="edo-pattern" />
-      <div className="container cat-hero-inner">
-        <span className="label-caps cat-hero-eyebrow">Prestige & Excellence</span>
-        <h1 className="display-lg cat-hero-title">
-          Celebrating the Vanguard of Edo Heritage
-        </h1>
-        <p className="body-lg text-muted cat-hero-copy">
-          The Best of Edo Awards honors exceptional individuals and organizations who
-          embody the legendary resilience and creative brilliance of the Benin Empire
-          in a modern world.
-        </p>
-        <div className="cat-hero-actions">
-          <a href="#nominate" className="btn btn-primary">
-            Start Nomination
-          </a>
-          <a href="#categories" className="btn btn-outline">
-            View Categories
-          </a>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function CategoriesGrid() {
-  return (
-    <section className="cat-grid-section section" id="categories">
-      <div className="container">
-        <div className="cat-grid-header">
-          <div>
-            <h2 className="headline-xl cat-grid-title">Award Categories</h2>
-            <p className="body-md text-muted">
-              Our categories recognize excellence across the spectrum of cultural,
-              social, and technological advancement.
-            </p>
-          </div>
-          <div className="cat-grid-nav">
-            <button className="cat-nav-btn" aria-label="Scroll left">
-              <ChevronLeft size={20} />
-            </button>
-            <button className="cat-nav-btn" aria-label="Scroll right">
-              <ChevronRight size={20} />
-            </button>
-          </div>
-        </div>
-
-        <div className="cat-cards">
-          {CATEGORIES.map((cat) => (
-            <article key={cat.title} className="cat-card">
-              <span className="label-caps cat-card-tag">{cat.tag}</span>
-              <h3 className="headline-md cat-card-title">{cat.title}</h3>
-              <p className="body-md text-muted cat-card-desc">{cat.description}</p>
-              <Link to="/past-winners" className="cat-card-link">
-                Learn More
-                <ArrowRight size={14} />
-              </Link>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function NominationSection() {
-  return (
-    <section className="nomination section" id="nominate">
-      <div className="container">
-        <div className="nomination-head">
-          <span className="label-caps nomination-eyebrow">The Journey</span>
-          <h2 className="headline-xl nomination-title">Nomination Process</h2>
-          <p className="body-md text-muted nomination-intro">
-            Transparency and meritocracy are the pillars of the Edo Awards. Follow our
-            structured journey to nominate your candidate.
-          </p>
-        </div>
-
-        <div className="nomination-steps">
-          {NOMINATION_STEPS.map((step) => (
-            <div key={step.number} className="nomination-step">
-              <div className="nomination-step-number">{step.number}</div>
-              <h4 className="nomination-step-title">{step.title}</h4>
-              <p className="body-md text-muted">{step.description}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="nomination-cta">
-          <Link to="/past-winners" className="btn btn-primary">
-            Begin Submission
-            <ArrowUpRight size={18} />
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Newsletter() {
-  return (
-    <section className="newsletter">
-      <div className="container newsletter-inner">
-        <h2 className="headline-xl">Stay Informed on the Journey</h2>
-        <p className="body-lg newsletter-copy">
-          Receive updates on nomination deadlines, finalist announcements, and
-          exclusive gala night invitations.
-        </p>
-        <form className="newsletter-form-row" onSubmit={(e) => e.preventDefault()}>
-          <input type="email" placeholder="Your email address" aria-label="Email address" />
-          <button type="submit" className="btn btn-gold">
-            Subscribe Now
-          </button>
-        </form>
-      </div>
-    </section>
-  );
-}
-
 export default function AwardCategories() {
+  const standard = CATEGORIES.slice(0, 8);
+  const special = CATEGORIES.slice(8);
+
   return (
     <main>
-      <CategoriesHero />
-      <CategoriesGrid />
-      <NominationSection />
-      <Newsletter />
+      <PageHero
+        eyebrow="Award Categories"
+        title="Celebrating Excellence Across Diverse Fields"
+        intro="The Prestigious Best of Edo Award recognises exceptional individuals and organisations whose achievements, leadership, creativity, innovation and service contribute meaningfully to society, Edo State, Nigeria and the global community."
+      />
+
+      <section className="page-section section">
+        <div className="container">
+          <div className="card-grid cols-2">
+            {standard.map((cat) => (
+              <div key={cat.title} className="rich-card cat-card">
+                <span className="rich-card-index">{cat.number}</span>
+                <span className="label-caps cat-tag">{cat.tag}</span>
+                <h3 className="headline-md rich-card-title">{cat.title}</h3>
+                <p className="body-md rich-card-text">{cat.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="page-section-alt section">
+        <div className="container">
+          <div className="grid-header">
+            <span className="label-caps grid-header-eyebrow">Special Recognition</span>
+            <h2 className="headline-xl grid-header-title">
+              Honouring Exceptional Service, Lifetimes & Legacies
+            </h2>
+          </div>
+          <div className="card-grid cols-3">
+            {special.map((cat) => (
+              <div key={cat.title} className="rich-card cat-card">
+                <span className="rich-card-index">{cat.number}</span>
+                <h3 className="headline-md rich-card-title">{cat.title}</h3>
+                <p className="body-md rich-card-text">{cat.description}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="cat-grid-closing">
+            <p className="page-close-quote">
+              Different Fields. Different Journeys. One Standard: Excellence.
+            </p>
+            <div className="page-close-actions">
+              <Link to="/nomination" className="btn btn-primary">
+                Nominate a Candidate
+                <ArrowUpRight size={18} />
+              </Link>
+              <Link to="/faq" className="btn btn-outline">
+                Frequently Asked Questions
+                <ArrowRight size={18} />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <NominateCta
+        eyebrow="Your Voice Matters"
+        title="Recognize the Greatness"
+        titleGold="Within Your Community"
+        copy="Nominations for the 2026 season are now officially open. Help us identify the trailblazers who are making Edo proud."
+        ctaText="Nominate Someone Now"
+      />
     </main>
   );
 }

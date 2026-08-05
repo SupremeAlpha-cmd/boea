@@ -7,7 +7,7 @@ export default function NominateCta({
   titleGold,
   copy,
   ctaText,
-  ctaTo = '/categories',
+  ctaTo = '/nomination',
   secondaryText
 }) {
   return (
