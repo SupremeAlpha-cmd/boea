@@ -5,6 +5,9 @@ node_modules/
 dist/
 dist-ssr/
 
+# Environment
+.env
+
 # Logs
 *.log
 npm-debug.log*
