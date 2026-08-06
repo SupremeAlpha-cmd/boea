@@ -22,6 +22,7 @@ const Humanitarian = lazy(() => import('./pages/Humanitarian'));
 const PastRecipients = lazy(() => import('./pages/PastRecipients'));
 const Edition2026 = lazy(() => import('./pages/Edition2026'));
 const Partners = lazy(() => import('./pages/Partners'));
+const SponsorsLogos = lazy(() => import('./pages/SponsorsLogos'));
 const Gallery = lazy(() => import('./pages/Gallery'));
 const Media = lazy(() => import('./pages/Media'));
 const Faq = lazy(() => import('./pages/Faq'));
@@ -89,6 +90,7 @@ export default function App() {
           <Route path="/recipients" element={<PastRecipients />} />
           <Route path="/edition-2026" element={<Edition2026 />} />
           <Route path="/partners" element={<Partners />} />
+          <Route path="/sponsors-logos" element={<SponsorsLogos />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/media" element={<Media />} />
           <Route path="/faq" element={<Faq />} />

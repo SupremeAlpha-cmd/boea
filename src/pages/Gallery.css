@@ -336,6 +336,21 @@
   position: relative;
   aspect-ratio: 16 / 9;
   background: #0a0508;
+  overflow: hidden;
+}
+
+.video-player-el {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  background: #000;
+  outline: none;
+}
+
+.video-player-el:focus-visible {
+  outline: 2px solid var(--secondary);
+  outline-offset: -2px;
 }
 
 .video-placeholder-player {

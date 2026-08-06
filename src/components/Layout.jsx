@@ -45,7 +45,8 @@ const NAV_GROUPS = [
     items: [
       { to: '/gallery', label: 'Gallery' },
       { to: '/media', label: 'Media & Publicity' },
-      { to: '/partners', label: 'Partners & Sponsors' }
+      { to: '/partners', label: 'Partners & Sponsors' },
+      { to: '/sponsors-logos', label: 'Sponsors Logos' }
     ]
   },
   { to: '/faq', label: 'FAQ', type: 'link' },

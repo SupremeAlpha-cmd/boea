@@ -29,12 +29,12 @@ const PHOTOS = [
 ];
 
 const VIDEOS = [
-  { id: 'vid-1', title: 'The Prestigious Best of Edo Award — Gala Night Highlights', meta: 'Official Edition Event Film', duration: '—', tag: 'Gala Night', thumb: '/assets/gala_red_carpet.jpeg' },
-  { id: 'vid-2', title: 'BOEA Red Carpet & Award Presentations', meta: 'Red Carpet Coverage & Award Ceremony', duration: '—', tag: 'Red Carpet', thumb: '/assets/red_carpet_interview.jpeg' },
-  { id: 'vid-3', title: 'Cultural Entertainment — Live Performances', meta: 'Saxophonist, Choir & Cultural Acts', duration: '—', tag: 'Entertainment', thumb: '/assets/saxophonist.jpeg' },
-  { id: 'vid-4', title: 'BOEA 6th Edition — Strictly Entertainment', meta: 'Full Event Coverage, September 2023', duration: '—', tag: 'Docuseries', thumb: '/assets/boea_6th_edition_poster.jpeg' },
-  { id: 'vid-5', title: 'Award Night — Audience & Ceremony Atmosphere', meta: 'Celebrating Excellence Across Edo', duration: '—', tag: 'Ceremony', thumb: '/assets/gala_audience.jpeg' },
-  { id: 'vid-6', title: 'BOEA 5th Edition — Best Moments', meta: 'Red Carpet, Speeches & Award Presentations', duration: '—', tag: 'Highlights', thumb: '/assets/boea_5th_edition_backdrop.jpeg' },
+  { id: 'vid-1', title: 'BOEA Gala Night — Award Presentation Highlights', meta: 'Best of Edo Award — Official Event Coverage', duration: '1:00', tag: 'Gala Night', thumb: '/assets/gala_red_carpet.jpeg', src: '/assets/boea_video_1.mp4' },
+  { id: 'vid-2', title: 'BOEA Award Night — Stage & Ceremony Moments', meta: 'Best of Edo Award — Stage Performances & Ceremony', duration: '0:36', tag: 'Ceremony', thumb: '/assets/award_presentation_1.jpeg', src: '/assets/boea_video_2.mp4' },
+  { id: 'vid-3', title: 'BOEA Event Highlights — Live Atmosphere', meta: 'Best of Edo Award — Live Audience & Event Coverage', duration: '0:35', tag: 'Highlights', thumb: '/assets/gala_audience.jpeg', src: '/assets/boea_video_3.mp4' },
+  { id: 'vid-4', title: 'BOEA Award Night — Red Carpet & Arrivals', meta: 'Best of Edo Award — Red Carpet Coverage', duration: '0:59', tag: 'Red Carpet', thumb: '/assets/red_carpet_interview.jpeg', src: '/assets/boea_video_4.mp4' },
+  { id: 'vid-5', title: 'BOEA Entertainment — Cultural Performances', meta: 'Best of Edo Award — Live Entertainment & Cultural Acts', duration: '0:30', tag: 'Entertainment', thumb: '/assets/saxophonist.jpeg', src: '/assets/boea_video_5.mp4' },
+  { id: 'vid-6', title: 'BOEA Award Moment — Special Recognition', meta: 'Best of Edo Award — Special Award Presentation', duration: '0:15', tag: 'Award Moment', thumb: '/assets/award_presentation_3.jpeg', src: '/assets/boea_video_6.mp4' },
 ];
 
 export default function Gallery() {
@@ -138,7 +138,7 @@ export default function Gallery() {
         </div>
       )}
 
-      {/* Video Modal */}
+      {/* Video Modal — real HTML5 player */}
       {activeVideo && (
         <div className="video-modal-backdrop" onClick={() => setActiveVideo(null)}>
           <div className="video-modal-content" onClick={(e) => e.stopPropagation()}>
@@ -152,12 +152,19 @@ export default function Gallery() {
               </button>
             </div>
             <div className="video-player-wrapper">
-              <div className="video-placeholder-player">
-                <Play size={48} className="gold-text play-large" />
-                <p className="body-lg">{activeVideo.title}</p>
-                <p className="caption text-muted">Official event video from the Best of Edo Award archives.</p>
-              </div>
+              <video
+                key={activeVideo.src}
+                controls
+                autoPlay
+                playsInline
+                className="video-player-el"
+                poster={activeVideo.thumb}
+              >
+                <source src={activeVideo.src} type="video/mp4" />
+                Your browser does not support HTML5 video.
+              </video>
             </div>
+            <p className="photo-lightbox-caption">{activeVideo.meta}</p>
           </div>
         </div>
       )}
