@@ -497,9 +497,16 @@
   color: rgba(255, 255, 255, 0.6);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 640px) {
   .footer-grid {
-    grid-template-columns: 2fr 1fr 1.5fr;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .footer-grid {
+    grid-template-columns: 2fr 1fr 1.25fr 1.25fr;
+    gap: 4rem;
   }
 }
 

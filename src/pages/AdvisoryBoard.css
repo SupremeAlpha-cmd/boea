@@ -1,0 +1,115 @@
+/* Advisory Board Grid */
+.advisory-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 640px) {
+  .advisory-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .advisory-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+  }
+}
+
+/* Card */
+.advisory-card {
+  background: var(--surface-bright);
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.advisory-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(201, 162, 39, 0.5);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(201, 162, 39, 0.15);
+}
+
+/* Image Area */
+.advisory-img-wrap {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.advisory-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.advisory-card:hover .advisory-img {
+  transform: scale(1.04);
+}
+
+.advisory-img-shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 55%, rgba(15, 7, 9, 0.55) 100%);
+  pointer-events: none;
+}
+
+/* Placeholder avatar */
+.advisory-avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--primary) 0%, #6e1e2a 100%);
+}
+
+.advisory-avatar-initials {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: rgba(201, 162, 39, 0.85);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Body */
+.advisory-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1;
+}
+
+.advisory-name {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--on-background);
+  margin: 0;
+}
+
+.advisory-title {
+  color: var(--secondary);
+  font-size: 11px;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.advisory-profile {
+  color: var(--on-surface-variant);
+  font-size: 14px;
+  line-height: 1.65;
+  margin: 0;
+}

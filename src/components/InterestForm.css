@@ -2,8 +2,14 @@
   background: var(--surface-bright);
   border: 1px solid var(--border-bronze-subtle);
   border-radius: var(--radius-xl);
-  padding: 2.5rem;
+  padding: 1.5rem;
   box-shadow: var(--shadow-soft);
+}
+
+@media (min-width: 640px) {
+  .interest-form {
+    padding: 2.5rem;
+  }
 }
 
 .interest-form-title {
@@ -38,6 +44,7 @@
   font-family: var(--font-body);
   font-size: 15px;
   padding: 0.9rem 1.1rem;
+  min-height: 48px;
   outline: none;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -58,7 +65,7 @@
 .interest-row {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 1.25rem;
 }
 
 @media (min-width: 640px) {

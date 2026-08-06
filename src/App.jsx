@@ -14,6 +14,7 @@ const AwardPhilosophy = lazy(() => import('./pages/AwardPhilosophy'));
 const Heritage = lazy(() => import('./pages/Heritage'));
 const People = lazy(() => import('./pages/People'));
 const Founder = lazy(() => import('./pages/Founder'));
+const AdvisoryBoard = lazy(() => import('./pages/AdvisoryBoard'));
 const AwardCategories = lazy(() => import('./pages/AwardCategories'));
 const Nomination = lazy(() => import('./pages/Nomination'));
 const Impact = lazy(() => import('./pages/Impact'));
@@ -80,6 +81,7 @@ export default function App() {
           <Route path="/about/heritage" element={<Heritage />} />
           <Route path="/about/people" element={<People />} />
           <Route path="/about/founder" element={<Founder />} />
+          <Route path="/about/advisory-board" element={<AdvisoryBoard />} />
           <Route path="/categories" element={<AwardCategories />} />
           <Route path="/nomination" element={<Nomination />} />
           <Route path="/impact" element={<Impact />} />

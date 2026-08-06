@@ -108,7 +108,8 @@
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.02em;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
 }
 
 /* Step Section Heading */

@@ -17,7 +17,8 @@ const NAV_GROUPS = [
       { to: '/about/philosophy', label: 'Award Philosophy' },
       { to: '/about/heritage', label: 'Our Heritage' },
       { to: '/about/people', label: 'Our People' },
-      { to: '/about/founder', label: 'The Founder' }
+      { to: '/about/founder', label: 'The Founder' },
+      { to: '/about/advisory-board', label: 'Advisory Board' }
     ]
   },
   {
@@ -139,7 +140,7 @@ export function Navbar() {
       <div className="nav-inner container">
         <Link to="/" className="nav-brand">
           <img src="/logo.png" alt="The Prestigious Best of Edo Award logo" className="nav-logo" />
-          <span className="nav-brand-name">The Prestigious Best of Edo</span>
+          <span className="nav-brand-name">The Prestigious Best of Edo Award</span>
         </Link>
 
         <div className={`nav-links ${open ? 'open' : ''}`}>
@@ -193,7 +194,7 @@ export function Footer() {
     <footer className="site-footer">
       <div className="container footer-grid">
         <div className="footer-brand">
-          <span className="footer-brand-name">The Prestigious Best of Edo</span>
+          <span className="footer-brand-name">The Prestigious Best of Edo Award</span>
           <p>
             The Prestigious Best of Edo Award is a humanitarian, heritage and civic awards platform
             honouring excellence, service and innovation across Edo State and beyond.

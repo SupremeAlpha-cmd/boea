@@ -15,10 +15,10 @@ export const HERO_SLIDES = [
   {
     id: 'legacy',
     region: 'The Legacy',
-    eyebrow: 'Bronze & Bravery',
-    title: 'Bronze & Bravery',
-    subtitle: 'The artistry of the Benin bronze masters, preserved for generations.',
-    image: '/assets/gala_red_carpet.png',
+    eyebrow: 'Gala Night',
+    title: 'Celebrating Excellence',
+    subtitle: 'The most prestigious night in Edo, celebrating the best sons and daughters of the state.',
+    image: '/assets/gala_red_carpet.jpeg',
     accent: '#C9A227'
   },
   {
@@ -49,7 +49,7 @@ export const NEWS_ITEMS = [
     title: 'The 2024 Gala Night: A Date with Destiny in Benin City',
     excerpt:
       'Join us for an evening of unparalleled elegance as we unveil the winners of this year\u2019s most anticipated categories...',
-    image: '/assets/gala_red_carpet.png'
+    image: '/assets/award_presentation_2.jpeg'
   },
   {
     tag: 'Unveiling',
@@ -128,10 +128,10 @@ export const GALLERY_ITEMS = [
   {
     id: 1,
     span: 'solo',
-    tag: 'Traditional Arts',
-    title: 'Traditional Arts & Royal Beads',
-    meta: 'Excellence in Craft',
-    image: '/assets/coral_beads.jpeg'
+    tag: 'Red Carpet',
+    title: 'BOEA Red Carpet — Media Interview',
+    meta: 'Best of Edo Awards Red Carpet Coverage',
+    image: '/assets/red_carpet_interview.jpeg'
   }
 ];
 
@@ -140,18 +140,18 @@ export const WINNERS = [
     name: 'Chief Osas Igbinedion',
     category: 'Cultural Heritage Preservation',
     year: '2023',
-    image: '/assets/coral_beads.jpeg'
+    image: '/assets/award_presentation_5.jpeg'
   },
   {
     name: 'Dr. Adesuwa Omoregie',
     category: 'Global Leadership & Impact',
     year: '2023',
-    image: '/assets/gala_red_carpet.png'
+    image: '/assets/award_presentation_4.jpeg'
   },
   {
     name: 'Victor Ehikhamenor',
     category: 'Innovation in Arts & Design',
     year: '2023',
-    image: '/assets/esan_culture.png'
+    image: '/assets/award_presentation_2.jpeg'
   }
 ];

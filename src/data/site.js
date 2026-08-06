@@ -34,7 +34,7 @@ export const HOME = {
     ]
   },
   fromEdoToWorld: {
-    title: 'From Edo to the World',
+    title: 'FROM EDO TO THE WORLD',
     paragraphs: [
       'Edo has a remarkable history of leadership, creativity, craftsmanship, enterprise and cultural influence. The Best of Edo Award carries this heritage into the present by recognising contemporary achievers who embody the spirit of excellence associated with the Edo identity.',
       'Our message is simple:'
@@ -224,7 +224,7 @@ export const MISSION = {
 // ---------------------------------------------------------------------------
 export const VISION = {
   eyebrow: 'Our Vision',
-  title: 'From Edo to the World',
+  title: 'FROM EDO TO THE WORLD',
   intro:
     'Our vision is to build the Prestigious Best of Edo Award into a trusted, respected and globally recognised platform for celebrating excellence, preserving heritage and inspiring positive impact.',
   blocks: [
