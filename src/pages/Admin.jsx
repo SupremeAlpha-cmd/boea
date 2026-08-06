@@ -35,7 +35,7 @@ const DEFAULT_SPONSORS = [
   { id: 'def-3', name: 'Benin Cultural Heritage Federation', category: 'Strategic Partner', logo: '/logo.png' },
 ];
 
-function LoginGate({ onLogin }) {
+function LoginGate({ onLogin, error }) {
   const [password, setPassword] = useState('');
 
   return (
@@ -57,12 +57,18 @@ function LoginGate({ onLogin }) {
             placeholder="Admin password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
+          {error && (
+            <p style={{ color: '#b71c1c', fontSize: '13px', fontWeight: 600, margin: '0.25rem 0 0 0' }}>
+              {error}
+            </p>
+          )}
           <button type="submit" className="btn btn-primary admin-login-btn">
             Sign In
           </button>
         </form>
-        <p className="caption text-muted">Authentication coming soon — the admin area is a shell.</p>
+        <p className="caption text-muted">Enter administrative credentials to gain access.</p>
       </div>
     </div>
   );
@@ -280,7 +286,18 @@ function ManagerShell() {
 
 export default function Admin() {
   const [authed, setAuthed] = useState(false);
+  const [error, setError] = useState('');
 
-  return authed ? <ManagerShell /> : <LoginGate onLogin={() => setAuthed(true)} />;
+  const handleLogin = (password) => {
+    const requiredPassword = import.meta.env.VITE_ADMIN_PASSWORD || 'boea-admin-2026';
+    if (password === requiredPassword) {
+      setAuthed(true);
+      setError('');
+    } else {
+      setError('Incorrect admin password. Please try again.');
+    }
+  };
+
+  return authed ? <ManagerShell /> : <LoginGate onLogin={handleLogin} error={error} />;
 }
 
