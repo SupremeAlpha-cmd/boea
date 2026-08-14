@@ -39,6 +39,14 @@ button {
   color: inherit;
 }
 
+/* Global focus-visible state for accessibility */
+:focus-visible {
+  outline: 2px solid var(--color-gold-bright, #f1c40f);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm, 4px);
+}
+
+
 /* Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

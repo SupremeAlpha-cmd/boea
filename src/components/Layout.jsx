@@ -18,11 +18,12 @@ const NAV_GROUPS = [
       { to: '/about/heritage', label: 'Our Heritage' },
       { to: '/about/people', label: 'Our People' },
       { to: '/about/founder', label: 'The Founder' },
-      { to: '/about/advisory-board', label: 'Advisory Board' }
+      { to: '/about/advisory-board', label: 'Advisory Board' },
+      { to: '/about/screening-panel', label: 'Screening Panel' }
     ]
   },
   {
-    label: 'The Award',
+    label: 'Award',
     type: 'dropdown',
     items: [
       { to: '/categories', label: 'Award Categories' },
@@ -46,6 +47,7 @@ const NAV_GROUPS = [
       { to: '/gallery', label: 'Gallery' },
       { to: '/media', label: 'Media & Publicity' },
       { to: '/partners', label: 'Partners & Sponsors' },
+      { to: '/previous-partners', label: 'Previous Partners' },
       { to: '/sponsors-logos', label: 'Sponsors Logos' }
     ]
   },
@@ -78,9 +80,11 @@ export function ThemeToggle() {
 
   return (
     <button
+      type="button"
       className="theme-toggle"
-      aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
-      title={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+      aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+      aria-pressed={theme === 'dark'}
+      title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
       onClick={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))}
     >
       {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
@@ -93,7 +97,12 @@ function DropdownNav({ group, pathname, onNavigate, expanded, onToggle }) {
 
   return (
     <div className={`nav-dropdown ${active ? 'has-active' : ''} ${expanded ? 'expanded' : ''}`}>
-      <button type="button" className="nav-dropdown-btn" onClick={onToggle}>
+      <button
+        type="button"
+        className="nav-dropdown-btn"
+        onClick={onToggle}
+        aria-expanded={expanded}
+      >
         {group.label}
         <ChevronDown size={14} className="nav-dropdown-chevron" />
       </button>
@@ -139,9 +148,8 @@ export function Navbar() {
   return (
     <nav className={`site-nav ${scrolled ? 'scrolled' : ''}`}>
       <div className="nav-inner container">
-        <Link to="/" className="nav-brand">
-          <img src="/logo.png" alt="The Prestigious Best of Edo Award logo" className="nav-logo" />
-          <span className="nav-brand-name">The Prestigious Best of Edo Award</span>
+        <Link to="/" className="nav-brand" aria-label="The Prestigious Best of Edo Award Home">
+          <img src="/assets/navbar_logo.png" alt="The Prestigious Best of Edo Award logo" className="nav-logo" />
         </Link>
 
         <div className={`nav-links ${open ? 'open' : ''}`}>
@@ -169,17 +177,16 @@ export function Navbar() {
               </NavLink>
             )
           )}
-          <Link to="/nomination" className="btn btn-gold nav-mobile-cta">
-            Nominate Someone
-          </Link>
         </div>
 
         <div className="nav-actions">
           <ThemeToggle />
-          <Link to="/nomination" className="btn btn-primary nav-nominate">Nominate</Link>
+          <Link to="/nomination" className="btn btn-primary nav-nominate">Nominate a Laureate</Link>
           <button
+            type="button"
             className="nav-toggle"
-            aria-label="Toggle menu"
+            aria-label="Toggle navigation menu"
+            aria-expanded={open}
             onClick={toggleMenu}
           >
             {open ? <X size={24} /> : <Menu size={24} />}
@@ -210,6 +217,8 @@ export function Footer() {
             <Link to="/about/mission">Mission & Vision</Link>
             <Link to="/about/values">Core Values</Link>
             <Link to="/about/founder">The Founder</Link>
+            <Link to="/about/advisory-board">Advisory Board</Link>
+            <Link to="/about/screening-panel">Screening Panel</Link>
           </div>
         </div>
 
@@ -231,6 +240,7 @@ export function Footer() {
             <Link to="/gallery">Gallery</Link>
             <Link to="/media">Media & Publicity</Link>
             <Link to="/partners">Partners & Sponsors</Link>
+            <Link to="/previous-partners">Previous Partners</Link>
           </div>
           <p className="footer-copyright">
             &copy; 2026 The Prestigious Best of Edo Awards &middot; Walkfront African Network Limited

@@ -6,55 +6,69 @@ import './AdvisoryBoard.css';
 const BOARD_MEMBERS = [
   {
     id: 1,
-    name: 'Name of Member',
+    name: 'Samuel Mac-Ebi, Esq.',
     title: 'Chairman, Advisory Board',
-    profile: 'A brief profile of this distinguished advisory board member will appear here, highlighting their accomplishments, professional background, and connection to the Best of Edo Award.',
-    image: null
+    profile: 'Distinguished legal practitioner and civic leader guiding the governance, strategic vision, and institutional integrity of the Best of Edo Award platform.',
+    image: '/assets/Sam Mac-Ebi Esq.jpeg'
   },
   {
     id: 2,
-    name: 'Name of Member',
-    title: 'Board Member',
-    profile: 'A brief profile of this distinguished advisory board member will appear here, highlighting their accomplishments, professional background, and connection to the Best of Edo Award.',
-    image: null
+    name: 'Dr. Ehizojie Ohiowele',
+    title: 'Member, Advisory Board',
+    profile: 'Respected corporate executive and leader contributing strategic economic guidance, corporate governance, and community development vision to the Award.',
+    image: '/assets/dr_ehizojie.jpeg'
   },
   {
     id: 3,
-    name: 'Name of Member',
-    title: 'Board Member',
-    profile: 'A brief profile of this distinguished advisory board member will appear here, highlighting their accomplishments, professional background, and connection to the Best of Edo Award.',
-    image: null
+    name: 'Dr. Kazeem Bello-Osagie',
+    title: 'Member, Advisory Board',
+    profile: 'Accomplished academic and policy strategist offering institutional insights on merit-based selection, education, and social impact across Edo State.',
+    image: '/assets/Drt. Kazeem Bello-Osagie.jpeg'
   },
   {
     id: 4,
-    name: 'Name of Member',
-    title: 'Board Member',
-    profile: 'A brief profile of this distinguished advisory board member will appear here, highlighting their accomplishments, professional background, and connection to the Best of Edo Award.',
-    image: null
+    name: 'Dr. Noah Inu Momodu',
+    title: 'Member, Advisory Board',
+    profile: 'Distinguished medical scholar and healthcare administrator counseling the board on public health initiatives, research excellence, and institutional standards.',
+    image: '/assets/Dr. Noah Inu MOmodu.jpeg'
   },
   {
     id: 5,
-    name: 'Name of Member',
-    title: 'Board Member',
-    profile: 'A brief profile of this distinguished advisory board member will appear here, highlighting their accomplishments, professional background, and connection to the Best of Edo Award.',
-    image: null
+    name: 'Mr. Andy Bello',
+    title: 'Member, Advisory Board',
+    profile: 'Seasoned administrator and community advocate supporting youth empowerment initiatives, heritage preservation, and stakeholder partnerships.',
+    image: '/assets/Andy Bello.jpeg'
   },
   {
     id: 6,
-    name: 'Name of Member',
-    title: 'Board Member',
-    profile: 'A brief profile of this distinguished advisory board member will appear here, highlighting their accomplishments, professional background, and connection to the Best of Edo Award.',
-    image: null
+    name: 'Mrs. Helen Izore',
+    title: 'Member, Advisory Board',
+    profile: 'Esteemed public service advocate and humanitarian leader providing guidance on civic engagement, gender inclusion, and community welfare programs.',
+    image: '/assets/Mrs Helen Eki Izore.jpeg'
   },
+  {
+    id: 7,
+    name: 'Mr. Osazuwa Timmy Obaseki',
+    title: 'Member, Advisory Board',
+    profile: 'Prominent media, communications, and enterprise leader dedicated to expanding international visibility and cultural legacy for the platform.',
+    image: null
+  }
 ];
 
+function getInitials(name) {
+  const cleanName = name
+    .replace(/^(Dr\.|Mr\.|Mrs\.|Ms\.|Engr\.|Prof\.|Chief|Ambassador|Comrade)\s+/i, '')
+    .replace(/,?\s*Esq\.?$/i, '')
+    .trim();
+  const parts = cleanName.split(' ').filter(Boolean);
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+  return parts[0] ? parts[0].substring(0, 2).toUpperCase() : 'BO';
+}
+
 function AvatarPlaceholder({ name }) {
-  const initials = name
-    .split(' ')
-    .filter(Boolean)
-    .map((w) => w[0])
-    .slice(0, 2)
-    .join('');
+  const initials = getInitials(name);
   return (
     <div className="advisory-avatar-placeholder" aria-hidden="true">
       <span className="advisory-avatar-initials">{initials}</span>
@@ -104,7 +118,7 @@ export default function AdvisoryBoard() {
         title="Honouring Edo's Best"
         titleGold="Since 2017"
         copy="The Best of Edo Award is powered by a board of distinguished leaders committed to integrity, impact, and celebrating true excellence."
-        ctaText="Nominate Someone"
+        ctaText="Nominate a Laureate"
       />
     </main>
   );

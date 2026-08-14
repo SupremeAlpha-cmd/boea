@@ -1,5 +1,6 @@
 import PageHero from '../components/PageHero';
 import NominateCta from '../components/NominateCta';
+import SponsoredPosts from '../components/SponsoredPosts';
 import { MEDIA } from '../data/site';
 import '../components/ContentPage.css';
 import '../styles/pages.css';
@@ -12,6 +13,8 @@ export default function Media() {
         title={MEDIA.title}
         intro={MEDIA.intro}
       />
+
+      <SponsoredPosts title="Sponsored Media & Promotional Features" eyebrow="Media Partners & Advertisers" />
 
       <section className="page-section section">
         <div className="container">

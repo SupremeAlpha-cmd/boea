@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 import PageHero from '../components/PageHero';
 import NominateCta from '../components/NominateCta';
 import InterestForm from '../components/InterestForm';
@@ -38,6 +40,18 @@ export default function Partners() {
                 <p className="body-md rich-card-text">{b.text}</p>
               </div>
             ))}
+          </div>
+
+          <div className="margin-top-xl" style={{ textAlign: 'center', background: 'var(--surface-container-low)', padding: '2.5rem 2rem', borderRadius: 'var(--radius-xl)', border: '1px solid var(--outline-variant)' }}>
+            <span className="label-caps eyebrow" style={{ color: 'var(--secondary)' }}>Historic Collaborations</span>
+            <h3 className="headline-lg" style={{ color: 'var(--primary)', margin: '0.5rem 0 1rem 0' }}>Previous Partners & Benefactors</h3>
+            <p className="body-lg text-muted" style={{ maxWidth: '640px', margin: '0 auto 1.5rem auto' }}>
+              Explore the corporate organizations, cultural institutions, and sponsors who have supported previous editions of the Best of Edo Award.
+            </p>
+            <Link to="/previous-partners" className="btn btn-outline">
+              View Previous Partners Archive
+              <ArrowRight size={16} />
+            </Link>
           </div>
         </div>
       </section>

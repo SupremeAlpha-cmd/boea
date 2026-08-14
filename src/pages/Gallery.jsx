@@ -6,35 +6,23 @@ import '../styles/pages.css';
 import './Gallery.css';
 
 const PHOTOS = [
-  { id: 1, span: 'wide', tag: 'Award Night', title: 'Grand Gala Night — Winner Presented with Trophy', meta: 'Recipients Honoured with BOEA Award & Coral Beads Elder', image: '/assets/gala_red_carpet.jpeg' },
-  { id: 2, span: 'normal', tag: 'Award Presentation', title: 'Special Recognition Award', meta: 'BOEA 6th Edition — Stage Presentation', image: '/assets/award_presentation_1.jpeg' },
-  { id: 3, span: 'normal', tag: 'Award Presentation', title: 'Actress & Producer Recognition', meta: 'BOEA Edition — Arts, Culture & Entertainment', image: '/assets/award_presentation_2.jpeg' },
-  { id: 4, span: 'wide', tag: 'Gala Night', title: 'Distinguished Guests at the Grand Banquet', meta: 'BOEA Award Night — Community & Corporate Tables', image: '/assets/gala_guests.jpeg' },
-  { id: 5, span: 'normal', tag: 'Award Presentation', title: 'Award Handover — BOEA Stage Moment', meta: 'Honouring Excellence in Leadership & Service', image: '/assets/award_presentation_3.jpeg' },
-  { id: 6, span: 'normal', tag: 'Live Performance', title: 'Saxophonist — Live Music at the Gala', meta: 'Cultural Entertainment & Musical Excellence', image: '/assets/saxophonist.jpeg' },
-  { id: 7, span: 'normal', tag: 'Gala Night', title: 'Audience Applause — Award Night Atmosphere', meta: 'Celebrating Excellence Across Sectors', image: '/assets/gala_audience.jpeg' },
-  { id: 8, span: 'normal', tag: 'Live Performance', title: 'Choir Performance at the Awards', meta: 'Cultural Heritage Through Music & Voice', image: '/assets/choir_performance.jpeg' },
-  { id: 9, span: 'wide', tag: 'Red Carpet', title: 'BOEA Red Carpet — Media Interview', meta: 'Best of Edo Awards Red Carpet Coverage', image: '/assets/red_carpet_interview.jpeg' },
-  { id: 10, span: 'normal', tag: 'Red Carpet', title: 'BOEA Backdrop — Dignitaries & Guests', meta: 'Best of Edo Awards 5th Edition Backdrop', image: '/assets/boea_5th_edition_backdrop.jpeg' },
-  { id: 11, span: 'normal', tag: 'Red Carpet', title: 'MC Holding BOEA Trophy on Stage', meta: '5th Edition — Hosted at BOEA Grand Ceremony', image: '/assets/mc_holding_trophy.jpeg' },
-  { id: 12, span: 'normal', tag: 'Red Carpet', title: 'Best of Edo Awards Red Carpet', meta: 'Dignitaries, Winners & Cultural Celebration', image: '/assets/boea_red_carpet_backdrop.jpeg' },
-  { id: 13, span: 'normal', tag: 'Red Carpet', title: 'Photo Wall — BOEA Moments', meta: 'Guests at the Official BOEA Photo Wall', image: '/assets/boea_photo_wall.jpeg' },
-  { id: 14, span: 'wide', tag: 'Ceremony', title: 'Award Handshake — Recipient & Presenter', meta: 'BOEA — Recognising Excellence in Business & Leadership', image: '/assets/award_handshake.jpeg' },
-  { id: 15, span: 'normal', tag: 'Ceremony', title: 'BOEA 6th Edition — Award Poster & Trophy', meta: 'Strictly Entertainment Edition, September 2023', image: '/assets/boea_6th_edition_poster.jpeg' },
-  { id: 16, span: 'normal', tag: 'Ceremony', title: 'Award Presentation — Excellence in Education', meta: 'Recipients Receiving Certificate & Trophy', image: '/assets/award_presentation_4.jpeg' },
-  { id: 17, span: 'normal', tag: 'Networking', title: 'Group Photo — Nominees & Dignitaries', meta: 'Building Connections at the Best of Edo Awards', image: '/assets/group_photo_1.jpeg' },
-  { id: 18, span: 'normal', tag: 'Networking', title: 'Delegates & Partners — Venue Networking', meta: 'Fostering Relationships & Collaboration', image: '/assets/nominees_seated.jpeg' },
-  { id: 19, span: 'normal', tag: 'Ceremony', title: 'Award Presentation — Healthcare & Service', meta: 'BOEA Edition — Honouring Community Champions', image: '/assets/award_presentation_5.jpeg' },
-  { id: 20, span: 'normal', tag: 'Speaker', title: 'Keynote Speaker at the BOEA Stage', meta: 'Inspiring the Next Generation of Edo Excellence', image: '/assets/speaker_on_stage.jpeg' },
+  { id: 1, span: 'wide', tag: 'Official Backdrop', title: 'Best of Edo Awards 5th Edition Backdrop', meta: 'Official BOEA Stage & Photo Wall', image: '/assets/boea_5th_edition_backdrop.jpeg' },
+  { id: 2, span: 'normal', tag: 'Award Poster', title: 'BOEA 6th Edition — Official Award Poster', meta: 'Strictly Entertainment Edition Showcase', image: '/assets/boea_6th_edition_poster.jpeg' },
+  { id: 3, span: 'normal', tag: 'Cultural Heritage', title: 'Coral Bead Regalia & Edo Heritage', meta: 'Great Benin Cultural Symbols & Regalia', image: '/assets/coral_beads.jpeg' },
+  { id: 4, span: 'wide', tag: 'Red Carpet', title: 'BOEA Official Red Carpet Backdrop', meta: 'Best of Edo Awards Ceremonial Wall', image: '/assets/boea_red_carpet_backdrop.jpeg' },
+  { id: 5, span: 'normal', tag: 'Trophy Emblem', title: 'The Great Benin Award Trophy', meta: 'Symbol of Excellence, Leadership & Distinction', image: '/assets/boea_6th_edition_poster.jpeg' },
+  { id: 6, span: 'normal', tag: 'Cultural Textiles', title: 'Esan Weaving & Heritage Motifs', meta: 'Esanland Cultural Heritage Preservation', image: '/assets/esan_culture.png' },
+  { id: 7, span: 'normal', tag: 'Highland Landscape', title: 'Ososo Hills — Edo North Highland Majesty', meta: 'Natural Heritage of Edo State', image: '/assets/ososo_hills.png' },
+  { id: 8, span: 'normal', tag: 'Media Wall', title: 'BOEA Official Media & Photo Wall', meta: 'Best of Edo Awards Official Press Wall', image: '/assets/boea_photo_wall.jpeg' },
 ];
 
 const VIDEOS = [
-  { id: 'vid-1', title: 'BOEA Gala Night — Award Presentation Highlights', meta: 'Best of Edo Award — Official Event Coverage', duration: '1:00', tag: 'Gala Night', thumb: '/assets/gala_red_carpet.jpeg', src: '/assets/boea_video_1.mp4' },
-  { id: 'vid-2', title: 'BOEA Award Night — Stage & Ceremony Moments', meta: 'Best of Edo Award — Stage Performances & Ceremony', duration: '0:36', tag: 'Ceremony', thumb: '/assets/award_presentation_1.jpeg', src: '/assets/boea_video_2.mp4' },
-  { id: 'vid-3', title: 'BOEA Event Highlights — Live Atmosphere', meta: 'Best of Edo Award — Live Audience & Event Coverage', duration: '0:35', tag: 'Highlights', thumb: '/assets/gala_audience.jpeg', src: '/assets/boea_video_3.mp4' },
-  { id: 'vid-4', title: 'BOEA Award Night — Red Carpet & Arrivals', meta: 'Best of Edo Award — Red Carpet Coverage', duration: '0:59', tag: 'Red Carpet', thumb: '/assets/red_carpet_interview.jpeg', src: '/assets/boea_video_4.mp4' },
-  { id: 'vid-5', title: 'BOEA Entertainment — Cultural Performances', meta: 'Best of Edo Award — Live Entertainment & Cultural Acts', duration: '0:30', tag: 'Entertainment', thumb: '/assets/saxophonist.jpeg', src: '/assets/boea_video_5.mp4' },
-  { id: 'vid-6', title: 'BOEA Award Moment — Special Recognition', meta: 'Best of Edo Award — Special Award Presentation', duration: '0:15', tag: 'Award Moment', thumb: '/assets/award_presentation_3.jpeg', src: '/assets/boea_video_6.mp4' },
+  { id: 'vid-1', title: 'BOEA Gala Night — Official Highlights', meta: 'Best of Edo Award — Event Coverage', duration: '1:00', tag: 'Gala Night', thumb: '/assets/boea_red_carpet_backdrop.jpeg', src: '/assets/boea_video_1.mp4' },
+  { id: 'vid-2', title: 'BOEA Award Night — Stage Moments', meta: 'Best of Edo Award — Ceremony Coverage', duration: '0:36', tag: 'Ceremony', thumb: '/assets/boea_5th_edition_backdrop.jpeg', src: '/assets/boea_video_2.mp4' },
+  { id: 'vid-3', title: 'BOEA Event Highlights — Atmosphere', meta: 'Best of Edo Award — Event Atmosphere', duration: '0:35', tag: 'Highlights', thumb: '/assets/boea_photo_wall.jpeg', src: '/assets/boea_video_3.mp4' },
+  { id: 'vid-4', title: 'BOEA Award Night — Red Carpet Coverage', meta: 'Best of Edo Award — Red Carpet', duration: '0:59', tag: 'Red Carpet', thumb: '/assets/boea_6th_edition_poster.jpeg', src: '/assets/boea_video_4.mp4' },
+  { id: 'vid-5', title: 'BOEA Cultural Showcase & Heritage Acts', meta: 'Best of Edo Award — Cultural Acts', duration: '0:30', tag: 'Entertainment', thumb: '/assets/coral_beads.jpeg', src: '/assets/boea_video_5.mp4' },
+  { id: 'vid-6', title: 'BOEA Award Moment — Special Recognition', meta: 'Best of Edo Award — Special Presentation', duration: '0:15', tag: 'Award Moment', thumb: '/assets/boea_6th_edition_poster.jpeg', src: '/assets/boea_video_6.mp4' },
 ];
 
 export default function Gallery() {

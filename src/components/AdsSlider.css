@@ -1,0 +1,82 @@
+/* Clean Full-Width Ads Slider directly before Footer */
+.ads-slider-wrapper {
+  width: 100%;
+  background: var(--surface-container-lowest);
+  padding: 2.5rem var(--margin-mobile);
+  border-top: 1px solid var(--outline-variant);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ads-slider-container {
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(201, 162, 39, 0.3);
+  background: #000000;
+  aspect-ratio: 16 / 9;
+  max-height: 480px;
+}
+
+@media (min-width: 768px) {
+  .ads-slider-container {
+    aspect-ratio: 21 / 9;
+    max-height: 420px;
+  }
+}
+
+.ads-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.ads-slide.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.ads-slide-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Subtle navigation dots */
+.ads-dots {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+}
+
+.ads-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.ads-dot.active {
+  background: var(--gold);
+  width: 24px;
+  border-radius: 4px;
+}

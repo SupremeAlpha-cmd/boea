@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 import PageHero from '../components/PageHero';
 import NominateCta from '../components/NominateCta';
 import '../styles/pages.css';
@@ -6,8 +8,10 @@ import './SponsorsLogos.css';
 
 const DEFAULT_SPONSORS = [
   { id: 'def-1', name: 'Walkfront African Network', category: 'Headline Sponsor', logo: '/logo.png' },
-  { id: 'def-2', name: 'Edo State Tourism Board', category: 'Official Partner', logo: '/logo.png' },
-  { id: 'def-3', name: 'Benin Cultural Heritage Federation', category: 'Strategic Partner', logo: '/logo.png' },
+  { id: 'def-2', name: 'Glo (Globacom)', category: 'Official Telecommunications Partner', logo: '/assets/glo_partner.jpeg' },
+  { id: 'def-3', name: 'Mainseed', category: 'Official Corporate Partner', logo: '/assets/mainseed_partner.jpeg' },
+  { id: 'def-4', name: 'Edo State Tourism Board', category: 'Official Partner', logo: '/logo.png' },
+  { id: 'def-5', name: 'Benin Cultural Heritage Federation', category: 'Strategic Partner', logo: '/logo.png' },
 ];
 
 export default function SponsorsLogos() {
@@ -60,6 +64,18 @@ export default function SponsorsLogos() {
               <p className="body-lg text-muted">No sponsor logos available at the moment.</p>
             </div>
           )}
+
+          <div className="margin-top-xl" style={{ textAlign: 'center', background: 'var(--surface-container-low)', padding: '2.5rem 2rem', borderRadius: 'var(--radius-xl)', border: '1px solid var(--outline-variant)' }}>
+            <span className="label-caps eyebrow" style={{ color: 'var(--secondary)' }}>Historic Archive</span>
+            <h3 className="headline-lg" style={{ color: 'var(--primary)', margin: '0.5rem 0 1rem 0' }}>Looking For Previous Partners & Sponsors?</h3>
+            <p className="body-lg text-muted" style={{ maxWidth: '640px', margin: '0 auto 1.5rem auto' }}>
+              View the historical record of benefactors and sponsors who supported the Best of Edo Award across previous editions.
+            </p>
+            <Link to="/previous-partners" className="btn btn-outline">
+              Explore Previous Partners Archive
+              <ArrowRight size={16} />
+            </Link>
+          </div>
         </div>
       </section>
 

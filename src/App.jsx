@@ -15,6 +15,7 @@ const Heritage = lazy(() => import('./pages/Heritage'));
 const People = lazy(() => import('./pages/People'));
 const Founder = lazy(() => import('./pages/Founder'));
 const AdvisoryBoard = lazy(() => import('./pages/AdvisoryBoard'));
+const ScreeningPanel = lazy(() => import('./pages/ScreeningPanel'));
 const AwardCategories = lazy(() => import('./pages/AwardCategories'));
 const Nomination = lazy(() => import('./pages/Nomination'));
 const Impact = lazy(() => import('./pages/Impact'));
@@ -22,6 +23,7 @@ const Humanitarian = lazy(() => import('./pages/Humanitarian'));
 const PastRecipients = lazy(() => import('./pages/PastRecipients'));
 const Edition2026 = lazy(() => import('./pages/Edition2026'));
 const Partners = lazy(() => import('./pages/Partners'));
+const PreviousPartners = lazy(() => import('./pages/PreviousPartners'));
 const SponsorsLogos = lazy(() => import('./pages/SponsorsLogos'));
 const Gallery = lazy(() => import('./pages/Gallery'));
 const Media = lazy(() => import('./pages/Media'));
@@ -83,6 +85,7 @@ export default function App() {
           <Route path="/about/people" element={<People />} />
           <Route path="/about/founder" element={<Founder />} />
           <Route path="/about/advisory-board" element={<AdvisoryBoard />} />
+          <Route path="/about/screening-panel" element={<ScreeningPanel />} />
           <Route path="/categories" element={<AwardCategories />} />
           <Route path="/nomination" element={<Nomination />} />
           <Route path="/impact" element={<Impact />} />
@@ -90,6 +93,7 @@ export default function App() {
           <Route path="/recipients" element={<PastRecipients />} />
           <Route path="/edition-2026" element={<Edition2026 />} />
           <Route path="/partners" element={<Partners />} />
+          <Route path="/previous-partners" element={<PreviousPartners />} />
           <Route path="/sponsors-logos" element={<SponsorsLogos />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/media" element={<Media />} />

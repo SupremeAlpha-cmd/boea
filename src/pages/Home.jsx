@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ChevronLeft,
   ChevronRight,
   ArrowRight,
-  ArrowUpRight
+  ArrowUpRight,
+  Play,
+  Pause
 } from 'lucide-react';
 import { HERO_SLIDES } from '../data/content';
 import { HOME } from '../data/site';
@@ -13,24 +15,51 @@ import './Home.css';
 
 function HeroSlider() {
   const [current, setCurrent] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const heroRef = useRef(null);
 
   useEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!isPlaying || isHovered || isFocused || prefersReducedMotion) {
+      return;
+    }
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % HERO_SLIDES.length);
     }, 7000);
     return () => clearInterval(interval);
-  }, []);
+  }, [isPlaying, isHovered, isFocused]);
 
   const next = () => setCurrent((prev) => (prev + 1) % HERO_SLIDES.length);
   const prev = () =>
     setCurrent((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'ArrowLeft') {
+      prev();
+    } else if (e.key === 'ArrowRight') {
+      next();
+    }
+  };
+
   return (
-    <section className="hero">
+    <section
+      ref={heroRef}
+      className="hero"
+      tabIndex={0}
+      aria-label="Hero Carousel"
+      onKeyDown={handleKeyDown}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onFocus={() => setIsFocused(true)}
+      onBlur={() => setIsFocused(false)}
+    >
       {HERO_SLIDES.map((slide, index) => (
         <div
           key={slide.id}
           className={`hero-slide ${index === current ? 'active' : ''}`}
+          aria-hidden={index !== current}
         >
           <div
             className="hero-slide-bg"
@@ -42,8 +71,8 @@ function HeroSlider() {
             <h1 className="hero-title">{slide.title}</h1>
             <p className="hero-subtitle">{slide.subtitle}</p>
             <div className="hero-cta">
-              <Link to="/categories" className="btn btn-primary">
-                Nominate A Laureate
+              <Link to="/nomination" className="btn btn-primary">
+                Nominate a Laureate
               </Link>
               <Link to="/gallery" className="hero-outline-link">
                 View Media Gallery
@@ -55,23 +84,41 @@ function HeroSlider() {
       ))}
 
       <div className="hero-controls container">
-        <div className="hero-arrows">
-          <button className="hero-arrow" onClick={prev} aria-label="Previous slide">
-            <ChevronLeft size={20} />
-          </button>
-          <button className="hero-arrow" onClick={next} aria-label="Next slide">
-            <ChevronRight size={20} />
-          </button>
-        </div>
-        <div className="hero-indicators">
-          {HERO_SLIDES.map((slide, index) => (
+        <div className="hero-controls-bar">
+          <div className="hero-arrows">
             <button
-              key={slide.id}
-              className={`hero-indicator ${index === current ? 'active' : ''}`}
-              onClick={() => setCurrent(index)}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
+              type="button"
+              className="hero-arrow"
+              onClick={prev}
+              aria-label="Previous slide"
+            >
+              <ChevronLeft size={20} />
+            </button>
+
+            <button
+              type="button"
+              className="hero-arrow"
+              onClick={next}
+              aria-label="Next slide"
+            >
+              <ChevronRight size={20} />
+            </button>
+          </div>
+
+          <div className="hero-indicators" role="tablist" aria-label="Slide Selection">
+            {HERO_SLIDES.map((slide, index) => (
+              <button
+                key={slide.id}
+                type="button"
+                role="tab"
+                className={`hero-indicator ${index === current ? 'active' : ''}`}
+                onClick={() => setCurrent(index)}
+                aria-label={`Go to slide ${index + 1} of ${HERO_SLIDES.length}`}
+                aria-selected={index === current}
+                aria-current={index === current ? 'true' : undefined}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -102,12 +149,46 @@ function IntroSection() {
   );
 }
 
-function SplitSection({ reverse, eyebrow, title, paragraphs, image, alt, cta, ctaTo }) {
+function SplitSection({ reverse, eyebrow, title, paragraphs, image, images, alt, cta, ctaTo }) {
+  const [currentIdx, setCurrentIdx] = useState(0);
+
+  useEffect(() => {
+    if (!images || images.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrentIdx((prev) => (prev + 1) % images.length);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, [images]);
+
   return (
     <section className="split section">
       <div className="container split-grid">
         <div className={`split-media ${reverse ? 'split-media-reverse' : ''}`}>
-          <img src={image} alt={alt} />
+          {images && images.length > 1 ? (
+            <div className="split-slideshow">
+              {images.map((imgSrc, index) => (
+                <img
+                  key={imgSrc}
+                  src={imgSrc}
+                  alt={`${alt} slide ${index + 1}`}
+                  className={index === currentIdx ? 'active' : ''}
+                />
+              ))}
+              <div className="split-slideshow-indicators">
+                {images.map((_, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    className={`split-slideshow-dot ${index === currentIdx ? 'active' : ''}`}
+                    onClick={() => setCurrentIdx(index)}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : (
+            <img src={image} alt={alt} />
+          )}
         </div>
         <div className="split-content">
           <span className="label-caps split-eyebrow">{eyebrow}</span>
@@ -186,7 +267,13 @@ export default function Home() {
         eyebrow={HOME.moreThanAnAward.title}
         title={HOME.moreThanAnAward.title}
         paragraphs={HOME.moreThanAnAward.paragraphs}
-        image="/assets/gala_red_carpet.png"
+        images={[
+          '/assets/boea_photo_wall.jpeg',
+          '/assets/boea_red_carpet_backdrop.jpeg',
+          '/assets/boea_5th_edition_backdrop.jpeg',
+          '/assets/boea_6th_edition_poster.jpeg',
+          '/assets/coral_beads.jpeg'
+        ]}
         alt="Best of Edo Award gala red carpet"
         cta="See Past Recipients"
         ctaTo="/recipients"
@@ -195,8 +282,12 @@ export default function Home() {
         eyebrow={HOME.fromEdoToWorld.title}
         title={HOME.fromEdoToWorld.title}
         paragraphs={HOME.fromEdoToWorld.paragraphs}
-        image="/assets/esan_culture.png"
-        alt="Esan culture and heritage"
+        images={[
+          '/assets/ososo_hills.png',
+          '/assets/coral_beads.jpeg',
+          '/assets/boea_6th_edition_poster.jpeg'
+        ]}
+        alt="Edo State landscape and heritage"
         cta="Discover Our Heritage"
         ctaTo="/heritage"
       />
@@ -207,7 +298,7 @@ export default function Home() {
         title="Recognize the Greatness"
         titleGold="Within Your Community"
         copy="Nominations for the 2026 season are now officially open. Help us identify the trailblazers who are making Edo proud."
-        ctaText="Nominate Someone Now"
+        ctaText="Nominate a Laureate"
         secondaryText="Download Guidelines"
       />
     </main>
