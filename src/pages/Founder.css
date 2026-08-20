@@ -21,25 +21,31 @@
 }
 
 .founder-portrait-ring {
-  width: 280px;
-  height: 280px;
-  border-radius: 50%;
+  width: 300px;
+  height: 350px;
+  border-radius: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
   background:
-    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.08), transparent 60%),
-    var(--gradient-gold);
-  padding: 10px;
-  box-shadow: var(--shadow-soft);
+    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.15), transparent 60%),
+    linear-gradient(135deg, #c9a227 0%, #f3d779 50%, #8a6c14 100%);
+  padding: 6px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35), 0 0 30px rgba(201, 162, 39, 0.2);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.founder-portrait-ring:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.45), 0 0 45px rgba(201, 162, 39, 0.35);
 }
 
 .founder-portrait-img {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
+  border-radius: 18px;
   object-fit: cover;
-  border: 3px solid var(--surface-bright);
+  border: 2px solid var(--surface-bright);
 }
 
 .founder-portrait-caption {

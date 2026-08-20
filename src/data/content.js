@@ -36,7 +36,7 @@ export const HERO_SLIDES = [
     eyebrow: 'WELCOME TO THE',
     title: ' BEST OF EDO AWARD',
     subtitle: 'The textiles, folklore and intellect of Esanland, honored on the world stage.',
-    image: '/assets/esan_culture.png',
+    image: '/assets/coral_beads.jpeg',
     accent: '#9B2D3D'
   }
 ];
@@ -61,7 +61,7 @@ export const NEWS_ITEMS = [
     tag: 'Highlight',
     title: 'Meet the 2024 Nominees in Innovation',
     kind: 'Nomination Series',
-    image: '/assets/esan_culture.png'
+    image: '/assets/coral_bead.jpeg'
   },
   {
     tag: 'Guidelines',
@@ -135,117 +135,55 @@ export const GALLERY_ITEMS = [
   }
 ];
 
-export const WINNERS = [
+export const WINNERS = [];
+
+export const PAST_RECIPIENTS_DATA = [];
+
+export const FEATURED_PRESS_LINKS = [
   {
-    name: 'Chief Osas Igbinedion',
-    category: 'Cultural Heritage Preservation',
-    year: '2024',
-    image: '/assets/coral_beads.jpeg'
+    id: 'press-vanguard-1',
+    type: 'article',
+    title: 'Best of Edo Award set to mark 7th edition in grand style',
+    description: 'Preparations have reached a feverish state for the most talked about 7th edition of the Prestigious Best of Edo Award in Benin City.',
+    source: 'Vanguard News',
+    domain: 'share.google',
+    url: 'https://share.google/cwHRMTqinBxjwWQ49',
+    image: '/assets/boea_trophy.png',
+    date: 'Official Press Feature'
   },
   {
-    name: 'Dr. Adesuwa Omoregie',
-    category: 'Global Leadership & Impact',
-    year: '2024',
-    image: '/assets/boea_6th_edition_poster.jpeg'
+    id: 'press-guardian-1',
+    type: 'article',
+    title: 'Best of Edo Award: Kazeem Bello-Osagie\'s Edo Pride, Mercy Aigbe, others to be honoured',
+    description: 'Edo Pride, a non-partisan platform promoted by Kazeem Bello-Osagie, is set to be honoured at the Prestigious Best of Edo Award.',
+    source: 'The Guardian Nigeria News',
+    domain: 'share.google',
+    url: 'https://share.google/bUgb7C237Gn2YaQos',
+    image: '/assets/Drt. Kazeem Bello-Osagie.jpeg',
+    date: 'Guardian Feature'
   },
   {
-    name: 'Victor Ehikhamenor',
-    category: 'Innovation in Arts & Design',
-    year: '2024',
-    image: '/assets/esan_culture.png'
+    id: 'press-independent-1',
+    type: 'article',
+    title: 'Best Of Edo Award: Ambrose Alli, Hosa Okunbo For Posthumous Honours',
+    description: 'BENIN - The organizer of Best of Edo Award, Mr. Paul Ofoni, has announced that plans were being put together by Walkfront African Network Limited.',
+    source: 'Independent Newspaper Nigeria',
+    domain: 'share.google',
+    url: 'https://share.google/HUuvAqfHAdo78Nd2v',
+    image: '/assets/boea_6th_edition_poster.jpeg',
+    date: 'Francis Onoiribholo'
+  },
+  {
+    id: 'reel-itv-1',
+    type: 'video',
+    title: 'Reel by INDEPENDENT TELEVISION/RADIO',
+    description: 'Broadcast Reel — Award of Excellence Presentation & Ceremony Highlights at Best of Edo Award 5th & 7th Gala Nights.',
+    source: 'Independent Television/Radio',
+    domain: 'fb.watch',
+    url: 'https://fb.watch/J1cM86ra00/',
+    image: '/assets/boea_5th_edition_backdrop.jpeg',
+    date: 'ITV Benin Special'
   }
 ];
 
-export const PAST_RECIPIENTS_DATA = [
-  {
-    id: 'rec-1',
-    name: 'Chief Osas Igbinedion',
-    category: 'Cultural Heritage Preservation',
-    edition: '7th Edition (2024)',
-    year: '2024',
-    citation: 'Honored for outstanding contributions to the archiving, restoration, and promotion of Great Benin historical artifacts and oral traditions globally.',
-    image: '/assets/coral_beads.jpeg',
-    featured: true
-  },
-  {
-    id: 'rec-2',
-    name: 'Dr. Adesuwa Omoregie',
-    category: 'Global Leadership & Impact',
-    edition: '7th Edition (2024)',
-    year: '2024',
-    citation: 'Recognized for distinguished international advocacy in public health and creating sustainable healthcare programs across rural Edo communities.',
-    image: '/assets/boea_6th_edition_poster.jpeg',
-    featured: true
-  },
-  {
-    id: 'rec-3',
-    name: 'Victor Ehikhamenor',
-    category: 'Innovation in Arts & Design',
-    edition: '7th Edition (2024)',
-    year: '2024',
-    citation: 'Celebrated for global contemporary art leadership, fusing traditional Benin motifs and rosary beads with modern architectural design.',
-    image: '/assets/esan_culture.png',
-    featured: true
-  },
-  {
-    id: 'rec-4',
-    name: 'Engr. Osaro Egharevba',
-    category: 'Technology & Enterprise',
-    edition: '8th Edition (2025)',
-    year: '2025',
-    citation: 'Awarded for pioneering renewable clean-energy microgrids that power educational institutes across Edo North and Central districts.',
-    image: '/assets/boea_6th_edition_poster.jpeg',
-    featured: true
-  },
-  {
-    id: 'rec-5',
-    name: 'Ambassador (Mrs.) Ifueko Omoigui-Okauru',
-    category: 'Public Service Excellence',
-    edition: '6th Edition (2023)',
-    year: '2023',
-    citation: 'Honored for landmark institutional governance reforms and lifelong dedication to fiscal transparency and civic empowerment.',
-    image: '/assets/boea_5th_edition_backdrop.jpeg',
-    featured: false
-  },
-  {
-    id: 'rec-6',
-    name: 'Prof. Gregory Akenzua',
-    category: 'Education & Medical Research',
-    edition: '6th Edition (2023)',
-    year: '2023',
-    citation: 'Recognized for decades of trailblazing clinical pediatric research and medical academic mentorship in West Africa.',
-    image: '/assets/boea_photo_wall.jpeg',
-    featured: false
-  },
-  {
-    id: 'rec-7',
-    name: 'Lady Osayamen Idahosa',
-    category: 'Humanitarian & Community Support',
-    edition: '5th Edition (2022)',
-    year: '2022',
-    citation: 'Honored for founding vocational skills empowerment centers supporting widowhood initiatives and youth scholarship funds in Benin City.',
-    image: '/assets/boea_red_carpet_backdrop.jpeg',
-    featured: false
-  },
-  {
-    id: 'rec-8',
-    name: 'Comrade Nosakhare Obaseki',
-    category: 'Youth Empowerment & Sports',
-    edition: '5th Edition (2022)',
-    year: '2022',
-    citation: 'Awarded for initiating grassroots athletic academies and youth mentorship networks connecting Edo talent with international institutions.',
-    image: '/assets/ososo_hills.png',
-    featured: false
-  },
-  {
-    id: 'rec-9',
-    name: 'Edo State Cultural Troupe & Heritage Guild',
-    category: 'Cultural Heritage Preservation',
-    edition: '4th Edition (2021)',
-    year: '2021',
-    citation: 'Recognized for preserving traditional royal performing arts, royal bronze casting heritage, and Esan weaving traditions for future generations.',
-    image: '/assets/esan_culture.png',
-    featured: false
-  }
-];
 

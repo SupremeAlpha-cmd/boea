@@ -162,15 +162,15 @@ export default function PastRecipients() {
               ))}
             </div>
           ) : (
-            <div className="recipients-empty-state">
-              <Users size={48} className="empty-icon" />
-              <h3 className="headline-md">No Laureates Found</h3>
-              <p className="body-md text-muted">
-                No recipients match your current search and filter criteria.
+            <div className="recipients-empty-state" style={{ padding: '4rem 2rem', textAlign: 'center' }}>
+              <Trophy size={48} className="empty-icon gold-text" style={{ margin: '0 auto 1rem' }} />
+              <h3 className="headline-md">Official Laureates Archive Updating</h3>
+              <p className="body-md text-muted" style={{ maxWidth: '580px', margin: '0 auto' }}>
+                The official catalog of past award recipients across previous editions is currently undergoing institutional verification and cataloging for the 2026 season.
               </p>
-              <button type="button" onClick={resetFilters} className="btn btn-primary margin-top-md">
-                View All Laureates
-              </button>
+              <Link to="/nomination" className="btn btn-gold margin-top-md" style={{ display: 'inline-flex' }}>
+                Nominate a 2026 Laureate
+              </Link>
             </div>
           )}
 

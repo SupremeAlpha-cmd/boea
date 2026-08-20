@@ -4,23 +4,31 @@
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  background: var(--surface-container-low);
+  background: var(--background, #0d0809);
 }
 
 .admin-login-card {
   width: 100%;
-  max-width: 400px;
+  max-width: 440px;
   text-align: center;
-  padding: 3rem 2.5rem;
-  background: var(--surface-bright);
-  border: 1px solid var(--border-bronze-subtle);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-soft);
+  padding: 3rem 2.25rem;
+  background: var(--surface-bright, #181013);
+  border: 1.5px solid var(--border-bronze-subtle, rgba(201, 162, 39, 0.35));
+  border-radius: var(--radius-xl, 20px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(201, 162, 39, 0.1);
 }
 
-.admin-login-icon {
-  color: var(--secondary);
-  margin-bottom: 1rem;
+.admin-login-icon-box {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(201, 162, 39, 0.15);
+  border: 1px solid rgba(201, 162, 39, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.25rem auto;
+  box-shadow: 0 0 15px rgba(201, 162, 39, 0.2);
 }
 
 .admin-login-form {
@@ -28,6 +36,129 @@
   flex-direction: column;
   gap: 1rem;
   margin-top: 1.5rem;
+}
+
+.admin-pass-input-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.admin-pass-input {
+  width: 100%;
+  background: var(--surface-container-low, #1e1316) !important;
+  border: 1.5px solid var(--border-bronze-subtle, rgba(201, 162, 39, 0.35)) !important;
+  border-radius: var(--radius-md, 10px) !important;
+  color: var(--on-background, #f8fafc) !important;
+  font-family: var(--font-body) !important;
+  font-size: 15px !important;
+  padding: 0.9rem 2.8rem 0.9rem 1.1rem !important;
+  min-height: 50px;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.admin-pass-input:focus {
+  border-color: var(--color-gold, #c9a227) !important;
+  box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.2) !important;
+}
+
+.admin-pass-input::placeholder {
+  color: var(--on-surface-variant, #94a3b8);
+  opacity: 0.7;
+}
+
+.admin-pass-toggle-btn {
+  position: absolute;
+  right: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--color-gold, #c9a227);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0.2rem;
+  transition: opacity 0.2s ease;
+}
+
+.admin-pass-toggle-btn:hover {
+  opacity: 0.8;
+}
+
+/* ---------- Admin Form Controls & Inputs ---------- */
+.admin-label {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  color: var(--color-gold, #c9a227) !important;
+  margin-bottom: 0.4rem !important;
+  display: block !important;
+}
+
+.admin-input {
+  width: 100% !important;
+  background: var(--surface-container-low, #1e1316) !important;
+  border: 1.5px solid var(--border-bronze-subtle, rgba(201, 162, 39, 0.35)) !important;
+  border-radius: var(--radius-md, 10px) !important;
+  color: var(--on-background, #f8fafc) !important;
+  font-family: var(--font-body, inherit) !important;
+  font-size: 14px !important;
+  padding: 0.75rem 1rem !important;
+  min-height: 46px !important;
+  outline: none !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.admin-input:focus {
+  border-color: var(--color-gold, #c9a227) !important;
+  box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.25) !important;
+}
+
+.admin-input::placeholder {
+  color: rgba(248, 250, 252, 0.4) !important;
+}
+
+.admin-select {
+  width: 100% !important;
+  background-color: var(--surface-container-low, #1e1316) !important;
+  border: 1.5px solid var(--border-bronze-subtle, rgba(201, 162, 39, 0.35)) !important;
+  border-radius: var(--radius-md, 10px) !important;
+  color: var(--on-background, #f8fafc) !important;
+  font-family: var(--font-body, inherit) !important;
+  font-size: 14px !important;
+  padding: 0.75rem 2.5rem 0.75rem 1rem !important;
+  min-height: 46px !important;
+  outline: none !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23c9a227' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 1rem center !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
+  cursor: pointer !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.admin-select:focus {
+  border-color: var(--color-gold, #c9a227) !important;
+  box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.25) !important;
+}
+
+.admin-select option {
+  background-color: #1e1316 !important;
+  color: #f8fafc !important;
+  padding: 0.6rem !important;
+}
+
+.upload-section-card {
+  background: var(--surface-bright, #181013) !important;
+  border: 1.5px solid var(--border-bronze-subtle, rgba(201, 162, 39, 0.35)) !important;
+  border-radius: 16px !important;
+  padding: 1.75rem !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
 }
 
 /* ---------- Manager shell ---------- */

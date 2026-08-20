@@ -8,42 +8,42 @@ const BOARD_MEMBERS = [
     id: 1,
     name: 'Samuel Mac-Ebi, Esq.',
     title: 'Chairman, Advisory Board',
-    profile: 'Distinguished legal practitioner and civic leader guiding the governance, strategic vision, and institutional integrity of the Best of Edo Award platform.',
+    profile: 'Distinguished legal practitioner, legendary broadcaster, public speaker, corporate consultant and civic leader, guiding the governance, strategic vision, and institutional integrity of the Best of Edo Award platform.',
     image: '/assets/Sam Mac-Ebi Esq.jpeg'
   },
   {
     id: 2,
     name: 'Dr. Ehizojie Ohiowele',
     title: 'Member, Advisory Board',
-    profile: 'Respected corporate executive and leader contributing strategic economic guidance, corporate governance, and community development vision to the Award.',
+    profile: 'A respected corporate executive and visionary leader, bringing strategic economic insight, sound corporate governance, and a strong commitment to community development to the Award.',
     image: '/assets/dr_ehizojie.jpeg'
   },
   {
     id: 3,
     name: 'Dr. Kazeem Bello-Osagie',
     title: 'Member, Advisory Board',
-    profile: 'Accomplished academic and policy strategist offering institutional insights on merit-based selection, education, and social impact across Edo State.',
+    profile: 'Kazeem Bello-Osagie is a lawyer, entrepreneur, real estate professional, cultural advocate and media personality with strong ties to Edo State. He is the founder of EdoPride, a platform established to promote Edo culture, language, heritage and the achievements of Edo people globally.',
     image: '/assets/Drt. Kazeem Bello-Osagie.jpeg'
   },
   {
     id: 4,
-    name: 'Dr. Noah Inu Momodu',
+    name: 'Mr. Andy Bello',
     title: 'Member, Advisory Board',
-    profile: 'Distinguished medical scholar and healthcare administrator counseling the board on public health initiatives, research excellence, and institutional standards.',
-    image: '/assets/Dr. Noah Inu MOmodu.jpeg'
+    profile: 'Renowned Media Executive and community advocate supporting youth empowerment initiatives, heritage preservation, and stakeholder partnerships.',
+    image: '/assets/Andy Bello.jpeg'
   },
   {
     id: 5,
-    name: 'Mr. Andy Bello',
+    name: 'Dr. Noah Inu Momodu',
     title: 'Member, Advisory Board',
-    profile: 'Seasoned administrator and community advocate supporting youth empowerment initiatives, heritage preservation, and stakeholder partnerships.',
-    image: '/assets/Andy Bello.jpeg'
+    profile: 'Dr. Momodu Inu Noah is an accomplished Music Director/Producer, With his wealth of experience across the entertainment, music, media and technology industries, Dr. Momodu brings valuable expertise to the Best of Edo Award each year, contributing to the planning and delivery of an entertaining, professionally curated event experience marked by creativity, excellence and a touch of class.',
+    image: '/assets/Dr. Noah Inu MOmodu.jpeg'
   },
   {
     id: 6,
     name: 'Mrs. Helen Izore',
     title: 'Member, Advisory Board',
-    profile: 'Esteemed public service advocate and humanitarian leader providing guidance on civic engagement, gender inclusion, and community welfare programs.',
+    profile: 'Helen Eki Izore, popularly known as Helen Izore, is a Nigerian entrepreneur and leading professional in the events planning and decoration industry. She is the Founder and CEO of Ruru World Events, a prominent events management and decoration company, with over 20 years of industry experience',
     image: '/assets/Mrs Helen Eki Izore.jpeg'
   },
   {

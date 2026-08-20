@@ -26,7 +26,15 @@ export default function NominateCta({
           <Link to={ctaTo} className="btn btn-gold">
             {ctaText}
           </Link>
-          {secondaryText && <a href="#" className="btn btn-outline">{secondaryText}</a>}
+          {secondaryText && (
+            <a
+              href="/assets/BOEA_2026_Nomination_Guidelines.pdf"
+              download="BOEA_2026_Nomination_Guidelines.pdf"
+              className="btn btn-outline"
+            >
+              {secondaryText}
+            </a>
+          )}
         </div>
       </div>
     </section>

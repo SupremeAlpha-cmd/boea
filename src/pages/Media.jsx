@@ -1,7 +1,9 @@
 import PageHero from '../components/PageHero';
 import NominateCta from '../components/NominateCta';
 import SponsoredPosts from '../components/SponsoredPosts';
+import RichLinkPreview from '../components/RichLinkPreview';
 import { MEDIA } from '../data/site';
+import { FEATURED_PRESS_LINKS } from '../data/content';
 import '../components/ContentPage.css';
 import '../styles/pages.css';
 
@@ -13,6 +15,25 @@ export default function Media() {
         title={MEDIA.title}
         intro={MEDIA.intro}
       />
+
+      {/* Featured News Press & Broadcast Reel Links Section */}
+      <section className="page-section section" style={{ background: 'var(--surface-container-low)', padding: '3.5rem 0' }}>
+        <div className="container">
+          <div className="grid-header" style={{ textAlign: 'left', marginBottom: '2rem' }}>
+            <span className="label-caps grid-header-eyebrow" style={{ color: 'var(--secondary)' }}>Press & Broadcast Outlets</span>
+            <h2 className="headline-xl grid-header-title">Featured News & Video Reel Previews</h2>
+            <p className="body-md text-muted" style={{ maxWidth: '680px' }}>
+              Explore major newspaper reports and broadcast television reels featuring the Best of Edo Award platform. Click any link card to visit the official news publication.
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.75rem' }}>
+            {FEATURED_PRESS_LINKS.map((item) => (
+              <RichLinkPreview key={item.id} item={item} />
+            ))}
+          </div>
+        </div>
+      </section>
 
       <SponsoredPosts title="Sponsored Media & Promotional Features" eyebrow="Media Partners & Advertisers" />
 

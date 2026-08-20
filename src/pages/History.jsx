@@ -1,11 +1,11 @@
-import { Calendar, Landmark, Globe, Award, Sparkles } from 'lucide-react';
+import { Calendar, Landmark, Globe, Award } from 'lucide-react';
 import PageHero from '../components/PageHero';
 import NominateCta from '../components/NominateCta';
 import { HISTORY } from '../data/site';
 import '../styles/pages.css';
 import './History.css';
 
-const TIMELINE_ICONS = [Landmark, Calendar, Award, Globe, Sparkles];
+const TIMELINE_ICONS = [Landmark, Calendar, Award, Globe, Award];
 
 export default function History() {
   return (

@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route, Outlet, useLocation } from 'react-router-dom';
 import { useEffect, lazy, Suspense } from 'react';
 import { Navbar, Footer } from './components/Layout';
+import ErrorBoundary from './components/ErrorBoundary';
+import usePageMeta from './hooks/usePageMeta';
 
 // Lazy-loaded pages for code splitting & optimal load performance
 const Home = lazy(() => import('./pages/Home'));
@@ -56,13 +58,17 @@ function PageLoader() {
 }
 
 function Layout() {
+  usePageMeta();
+
   return (
     <div className="boea-app">
       <Navbar />
       <ScrollToTop />
-      <Suspense fallback={<PageLoader />}>
-        <Outlet />
-      </Suspense>
+      <ErrorBoundary>
+        <Suspense fallback={<PageLoader />}>
+          <Outlet />
+        </Suspense>
+      </ErrorBoundary>
       <Footer />
     </div>
   );

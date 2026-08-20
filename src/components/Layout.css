@@ -30,8 +30,8 @@
   display: inline-flex;
   align-items: center;
   gap: 0.65rem;
-  min-width: 0;
-  flex: 0 1 auto;
+  flex-shrink: 0;
+  min-width: fit-content;
 }
 
 .nav-logo {
@@ -529,38 +529,56 @@
 /* ---------- Mobile nav sizing ---------- */
 @media (max-width: 1149px) {
   .nav-brand {
-    flex: 1 1 auto;
+    flex: 0 0 auto;
+    flex-shrink: 0;
   }
 }
 
 @media (max-width: 767px) {
   .nav-inner {
-    gap: 0.75rem;
+    gap: 0.5rem;
+  }
+  .nav-brand {
+    flex-shrink: 0;
+    min-width: fit-content;
   }
   .nav-logo {
-    height: 34px;
+    height: 38px !important;
+    width: auto !important;
+    flex-shrink: 0 !important;
+    min-width: 38px;
+    object-fit: contain;
   }
   .nav-brand-name {
-    font-size: 15px;
+    font-size: 14px;
     line-height: 1.2;
-    white-space: normal;
-    overflow: visible;
-    text-overflow: clip;
+    white-space: nowrap;
   }
   .nav-actions {
-    gap: 0.4rem;
+    gap: 0.35rem;
+    flex-shrink: 0;
+  }
+  .nav-nominate {
+    padding: 0.45rem 0.85rem;
+    font-size: 10px;
+    letter-spacing: 0.05em;
   }
   .theme-toggle {
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
   }
 }
 
-@media (max-width: 360px) {
-  .nav-brand-name {
-    font-size: 13px;
-  }
+@media (max-width: 480px) {
   .nav-logo {
-    height: 30px;
+    height: 36px !important;
+    min-width: 36px;
+  }
+  .nav-brand-name {
+    display: none; /* Hide textual title on very narrow mobile to keep logo bold & pristine */
+  }
+  .nav-nominate {
+    padding: 0.4rem 0.65rem;
+    font-size: 10px;
   }
 }

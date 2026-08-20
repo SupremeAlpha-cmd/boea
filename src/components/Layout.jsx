@@ -32,6 +32,16 @@ const NAV_GROUPS = [
       { to: '/recipients', label: 'Past Recipients' }
     ]
   },
+  { to: '/gallery', label: 'Gallery', type: 'link' },
+  {
+    label: 'Partners',
+    type: 'dropdown',
+    items: [
+      { to: '/partners', label: 'Partners & Sponsorship' },
+      { to: '/previous-partners', label: 'Previous Partners' },
+      { to: '/sponsors-logos', label: 'Sponsors Logos' }
+    ]
+  },
   {
     label: 'Impact',
     type: 'dropdown',
@@ -44,11 +54,7 @@ const NAV_GROUPS = [
     label: 'Media',
     type: 'dropdown',
     items: [
-      { to: '/gallery', label: 'Gallery' },
-      { to: '/media', label: 'Media & Publicity' },
-      { to: '/partners', label: 'Partners & Sponsors' },
-      { to: '/previous-partners', label: 'Previous Partners' },
-      { to: '/sponsors-logos', label: 'Sponsors Logos' }
+      { to: '/media', label: 'Media & Publicity' }
     ]
   },
   { to: '/faq', label: 'FAQ', type: 'link' },

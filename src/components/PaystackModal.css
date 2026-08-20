@@ -1,0 +1,449 @@
+/* ---------- Paystack Payment Modal Overlay Styles ---------- */
+
+.paystack-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(8px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: fadeIn 0.25s ease forwards;
+}
+
+.paystack-modal-card {
+  width: 100%;
+  max-width: 580px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  color: #1e293b;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Paystack Header */
+.paystack-header {
+  background: #092c4c;
+  color: #ffffff;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.paystack-merchant-info {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.paystack-merchant-logo {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  background: #ffffff;
+  padding: 4px;
+  border-radius: 8px;
+}
+
+.paystack-merchant-name {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0;
+  color: #ffffff;
+}
+
+.paystack-merchant-desc {
+  font-size: 12px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.paystack-amount-badge {
+  text-align: right;
+}
+
+.paystack-currency {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+.paystack-amount {
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.paystack-close-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-left: 1rem;
+}
+
+.paystack-close-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Body & Tabs Layout */
+.paystack-body {
+  display: flex;
+  min-height: 320px;
+}
+
+@media (max-width: 540px) {
+  .paystack-body {
+    flex-direction: column;
+  }
+}
+
+.paystack-tabs-sidebar {
+  width: 170px;
+  background: #f8fafc;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  flex-shrink: 0;
+}
+
+@media (max-width: 540px) {
+  .paystack-tabs-sidebar {
+    width: 100%;
+    flex-direction: row;
+    border-right: none;
+    border-bottom: 1px solid #e2e8f0;
+    overflow-x: auto;
+  }
+}
+
+.paystack-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.85rem 1rem;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.paystack-tab-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.paystack-tab-btn.active {
+  background: #ffffff;
+  color: #092c4c;
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Content Panel */
+.paystack-content-panel {
+  flex-grow: 1;
+  padding: 1.5rem;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.paystack-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.paystack-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.paystack-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #475569;
+  letter-spacing: 0.05em;
+}
+
+.paystack-input {
+  padding: 0.75rem 0.9rem;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #0f172a;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.paystack-input:focus {
+  border-color: #092c4c;
+}
+
+.paystack-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.paystack-submit-btn {
+  margin-top: 0.5rem;
+  width: 100%;
+  background: #092c4c;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 0.9rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.paystack-submit-btn:hover {
+  background: #03182b;
+}
+
+/* Bank Transfer View */
+.paystack-transfer-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.paystack-info-text {
+  font-size: 13px;
+  color: #475569;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.paystack-account-card {
+  background: #f8fafc;
+  border: 1.5px dashed #cbd5e1;
+  padding: 1rem;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.paystack-bank-tag {
+  font-size: 11px;
+  color: #0284c7;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.paystack-account-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.paystack-acc-number {
+  font-family: monospace;
+  font-size: 22px;
+  font-weight: 800;
+  color: #0f172a;
+
+  letter-spacing: 0.1em;
+}
+
+.paystack-copy-btn {
+  background: #e2e8f0;
+  border: none;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+}
+
+.paystack-acc-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.paystack-timer-text {
+  font-size: 12px;
+  color: #94a3b8;
+  text-align: center;
+}
+
+/* USSD View */
+.paystack-ussd-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.paystack-ussd-box {
+  background: #f1f5f9;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.paystack-ussd-code {
+  font-family: monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: #092c4c;
+
+  background: #e2e8f0;
+  padding: 0.4rem;
+  border-radius: 6px;
+}
+
+/* QR Code View */
+.paystack-qr-view {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.paystack-qr-placeholder {
+  border: 2px solid #e2e8f0;
+  padding: 1.25rem;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fafafa;
+}
+
+/* Loading Spinner View */
+.paystack-loading-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  gap: 1rem;
+}
+
+.paystack-spinner {
+  width: 44px;
+  height: 44px;
+  border: 4px solid #cbd5e1;
+  border-top-color: #092c4c;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.paystack-loading-text {
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+/* Success View */
+.paystack-success-view {
+  padding: 2.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.paystack-success-icon {
+  color: #10b981;
+  margin-bottom: 1rem;
+}
+
+.paystack-success-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #0f172a;
+
+  margin: 0 0 0.5rem 0;
+}
+
+.paystack-success-text {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0 0 1.5rem 0;
+}
+
+.paystack-receipt-box {
+  width: 100%;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 13px;
+}
+
+.paystack-receipt-row {
+  display: flex;
+  justify-content: space-between;
+  color: #475569;
+}
+
+.paystack-done-btn {
+  width: 100%;
+  padding: 0.85rem;
+  font-weight: 700;
+}
+
+/* Footer */
+.paystack-footer {
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  padding: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-size: 11px;
+  color: #64748b;
+}
+
+.paystack-shield {
+  color: #10b981;
+}

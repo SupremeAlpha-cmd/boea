@@ -1,9 +1,9 @@
 .interest-form {
-  background: var(--surface-bright);
-  border: 1px solid var(--border-bronze-subtle);
-  border-radius: var(--radius-xl);
+  background: var(--surface-bright, #150e10);
+  border: 1.5px solid var(--border-bronze-subtle, rgba(201, 162, 39, 0.3));
+  border-radius: var(--radius-xl, 20px);
   padding: 1.5rem;
-  box-shadow: var(--shadow-soft);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
 }
 
 @media (min-width: 640px) {
@@ -13,7 +13,7 @@
 }
 
 .interest-form-title {
-  color: var(--primary);
+  color: var(--primary, #f8fafc);
   margin-bottom: 0.5rem;
 }
 
@@ -30,35 +30,67 @@
 }
 
 .interest-label {
-  color: var(--secondary);
+  color: var(--secondary, #c9a227);
+  font-size: 11px;
+  letter-spacing: 0.08em;
 }
 
 .interest-input,
 .interest-select,
 .interest-textarea {
   width: 100%;
-  background: var(--surface-container-low);
-  border: 1px solid var(--outline-variant);
-  border-radius: var(--radius-md);
-  color: var(--on-background);
+  background: var(--surface-container-low, #1e1316);
+  border: 1.5px solid var(--border-bronze-subtle, rgba(201, 162, 39, 0.3));
+  border-radius: var(--radius-md, 10px);
+  color: var(--on-background, #f8fafc);
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: 14px;
   padding: 0.9rem 1.1rem;
   min-height: 48px;
   outline: none;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+/* Global Select & Option Brand Overrides */
+select.interest-select,
+.interest-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23c9a227' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 1rem center !important;
+  background-size: 16px 16px !important;
+  padding-right: 2.5rem;
+  cursor: pointer;
+}
+
+select.interest-select option,
+.interest-select option {
+  background-color: #1a1215 !important;
+  color: #f8fafc !important;
+  padding: 12px 16px !important;
+  font-family: var(--font-body) !important;
+  font-size: 14px !important;
+}
+
+select.interest-select option:hover,
+select.interest-select option:focus,
+select.interest-select option:checked {
+  background-color: #3b2820 !important;
+  color: #e9c462 !important;
+}
+
 .interest-input:focus,
 .interest-select:focus,
 .interest-textarea:focus {
-  border-color: var(--secondary);
-  box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.15);
+  border-color: var(--color-gold, #c9a227);
+  box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.2);
 }
 
 .interest-input::placeholder,
 .interest-textarea::placeholder {
-  color: var(--on-surface-variant);
+  color: var(--on-surface-variant, #94a3b8);
   opacity: 0.7;
 }
 
@@ -75,8 +107,72 @@
   }
 }
 
+/* Brand-Aware Pricing Box & Chips */
+.interest-pricing-box {
+  background: rgba(201, 162, 39, 0.04);
+  border: 1.5px solid rgba(201, 162, 39, 0.25);
+  border-radius: var(--radius-lg, 14px);
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.interest-pricing-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+}
+
+.interest-tier-badge {
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(201, 162, 39, 0.15);
+  color: var(--color-gold-light, #f3d779);
+  border: 1px solid rgba(201, 162, 39, 0.3);
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full, 9999px);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.interest-pricing-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.interest-price-chip {
+  background: var(--surface-container-low, #1e1316);
+  border: 1px solid var(--border-bronze-subtle, rgba(201, 162, 39, 0.3));
+  border-radius: var(--radius-md, 8px);
+  color: var(--on-background, #f8fafc);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 0.5rem 0.85rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.interest-price-chip:hover {
+  border-color: var(--color-gold, #c9a227);
+  color: var(--color-gold-light, #e9c462);
+  transform: translateY(-1px);
+}
+
+.interest-price-chip.active {
+  background: linear-gradient(135deg, #c9a227 0%, #8a6c14 100%);
+  border-color: #f3d779;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(201, 162, 39, 0.3);
+}
+
 .interest-submit {
-  margin-top: 0.5rem;
+  margin-top: 0.75rem;
+  padding: 0.95rem 1.5rem;
+  font-weight: 700;
 }
 
 .interest-form-success {
@@ -85,7 +181,7 @@
 }
 
 .interest-success-icon {
-  color: var(--tertiary);
+  color: var(--color-gold, #c9a227);
   margin-bottom: 1rem;
 }
 
@@ -97,10 +193,4 @@
 .interest-success-text {
   max-width: 420px;
   margin: 0 auto;
-}
-
-[data-theme='dark'] .interest-input,
-[data-theme='dark'] .interest-select,
-[data-theme='dark'] .interest-textarea {
-  background: rgba(255, 255, 255, 0.06);
 }

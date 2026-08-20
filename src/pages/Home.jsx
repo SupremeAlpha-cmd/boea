@@ -11,6 +11,7 @@ import {
 import { HERO_SLIDES } from '../data/content';
 import { HOME } from '../data/site';
 import NominateCta from '../components/NominateCta';
+import InPageAdvert from '../components/InPageAdvert';
 import './Home.css';
 
 function HeroSlider() {
@@ -293,6 +294,7 @@ export default function Home() {
       />
       <PillarsSection />
       <ClosingSection />
+      <InPageAdvert />
       <NominateCta
         eyebrow="Your Voice Matters"
         title="Recognize the Greatness"

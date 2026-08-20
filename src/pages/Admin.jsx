@@ -8,14 +8,21 @@ import {
   Settings,
   LogOut,
   Lock,
+  Eye,
+  EyeOff,
   FileText,
   HeartHandshake,
   Upload,
   Plus,
   Trash2,
   ShieldAlert,
-  Check
+  Check,
+  History,
+  KeyRound,
+  UserCheck
 } from 'lucide-react';
+import { INITIAL_PHOTOS, INITIAL_VIDEOS } from './Gallery';
+import { useAdminAuth } from '../hooks/useAdminAuth';
 import './Admin.css';
 
 const NAV_ITEMS = [
@@ -26,7 +33,7 @@ const NAV_ITEMS = [
   { icon: HeartHandshake, label: 'Sponsors' },
   { icon: CalendarDays, label: 'Edition 2026' },
   { icon: FileText, label: 'Pages & Content' },
-  { icon: Settings, label: 'Settings' }
+  { icon: Settings, label: 'Settings & Security' }
 ];
 
 const DEFAULT_SPONSORS = [
@@ -37,44 +44,192 @@ const DEFAULT_SPONSORS = [
 
 function LoginGate({ onLogin, error }) {
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onLogin(password, rememberMe);
+  };
 
   return (
     <div className="admin-login">
       <div className="admin-login-card">
-        <Lock size={28} className="admin-login-icon" />
-        <h1 className="headline-lg">BOEA Admin</h1>
-        <p className="body-md text-muted">Sign in to manage the platform.</p>
-        <form
-          className="admin-login-form"
-          onSubmit={(e) => {
-            e.preventDefault();
-            onLogin(password);
-          }}
-        >
-          <input
-            type="password"
-            className="interest-input"
-            placeholder="Admin password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+        <div className="admin-login-icon-box">
+          <Lock size={26} className="gold-text" />
+        </div>
+        <span className="label-caps gold-text">Best of Edo Award Portal</span>
+        <h1 className="headline-lg" style={{ margin: '0.25rem 0 0.5rem 0' }}>Admin Authentication</h1>
+        <p className="body-sm text-muted" style={{ marginBottom: '1.5rem' }}>
+          Enter administrative master passkey to access portal controls.
+        </p>
+
+        <form className="admin-login-form" onSubmit={handleSubmit}>
+          <div className="admin-pass-input-wrap">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              className="admin-pass-input"
+              placeholder="Admin Master Passkey"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              className="admin-pass-toggle-btn"
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              title={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '0.5rem 0', width: '100%', fontSize: '13px' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer', color: 'var(--on-surface-variant)' }}>
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
+              Remember me (7 days)
+            </label>
+          </div>
+
           {error && (
-            <p style={{ color: '#b71c1c', fontSize: '13px', fontWeight: 600, margin: '0.25rem 0 0 0' }}>
+            <div style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#ef4444', padding: '0.6rem 0.8rem', borderRadius: '8px', fontSize: '13px', textAlign: 'left', margin: '0.5rem 0 1rem 0', fontWeight: 600 }}>
               {error}
-            </p>
+            </div>
           )}
-          <button type="submit" className="btn btn-primary admin-login-btn">
-            Sign In
+
+          <button type="submit" className="btn btn-gold admin-login-btn" style={{ width: '100%', gap: '0.5rem', justifyContent: 'center' }}>
+            <UserCheck size={18} /> Sign In to Portal
           </button>
         </form>
-        <p className="caption text-muted">Enter administrative credentials to gain access.</p>
+
+        <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid var(--outline-variant)', fontSize: '11px', color: 'var(--on-surface-variant)' }}>
+          Authorized BOEA Personnel Only
+        </div>
       </div>
     </div>
   );
 }
 
-function SponsorsManager() {
+function SettingsSecurityManager({ onChangePassword, auditLogs }) {
+  const [currentPass, setCurrentPass] = useState('');
+  const [newPass, setNewPass] = useState('');
+  const [confirmPass, setConfirmPass] = useState('');
+  const [passMsg, setPassMsg] = useState({ text: '', type: '' });
+
+  const handlePassChange = (e) => {
+    e.preventDefault();
+    if (newPass !== confirmPass) {
+      setPassMsg({ text: 'New passwords do not match.', type: 'error' });
+      return;
+    }
+
+    const res = onChangePassword(currentPass, newPass);
+    if (res.success) {
+      setPassMsg({ text: 'Master password updated successfully!', type: 'success' });
+      setCurrentPass('');
+      setNewPass('');
+      setConfirmPass('');
+    } else {
+      setPassMsg({ text: res.error, type: 'error' });
+    }
+  };
+
+  return (
+    <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+      <div className="upload-section-card" style={{ padding: '1.5rem', border: '1px solid var(--border-bronze-subtle)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+          <KeyRound size={20} className="gold-text" />
+          <h3 className="headline-sm" style={{ margin: 0 }}>Update Master Passkey</h3>
+        </div>
+
+        {passMsg.text && (
+          <div style={{ background: passMsg.type === 'success' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', color: passMsg.type === 'success' ? '#10b981' : '#ef4444', padding: '0.75rem 1rem', borderRadius: '8px', marginBottom: '1rem', fontWeight: 600 }}>
+            {passMsg.text}
+          </div>
+        )}
+
+        <form onSubmit={handlePassChange} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '500px' }}>
+          <div>
+            <label className="admin-label">Current Passkey</label>
+            <input
+              type="password"
+              className="admin-input"
+              value={currentPass}
+              onChange={(e) => setCurrentPass(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label className="admin-label">New Passkey (min. 6 chars)</label>
+            <input
+              type="password"
+              className="admin-input"
+              value={newPass}
+              onChange={(e) => setNewPass(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label className="admin-label">Confirm New Passkey</label>
+            <input
+              type="password"
+              className="admin-input"
+              value={confirmPass}
+              onChange={(e) => setConfirmPass(e.target.value)}
+              required
+            />
+          </div>
+          <button type="submit" className="btn btn-primary" style={{ width: 'fit-content' }}>
+            Update Security Credentials
+          </button>
+        </form>
+      </div>
+
+      <div className="upload-section-card" style={{ padding: '1.5rem', border: '1px solid var(--border-bronze-subtle)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+          <History size={20} className="gold-text" />
+          <h3 className="headline-sm" style={{ margin: 0 }}>System Audit Action Trail</h3>
+        </div>
+
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+            <thead>
+              <tr style={{ borderBottom: '1px solid var(--outline-variant)', textAlign: 'left' }}>
+                <th style={{ padding: '0.5rem', color: 'var(--secondary)' }}>Timestamp</th>
+                <th style={{ padding: '0.5rem', color: 'var(--secondary)' }}>Action</th>
+                <th style={{ padding: '0.5rem', color: 'var(--secondary)' }}>Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              {auditLogs.length === 0 ? (
+                <tr>
+                  <td colSpan={3} style={{ padding: '1rem', textAlign: 'center', color: 'var(--on-surface-variant)' }}>
+                    No audit records recorded yet.
+                  </td>
+                </tr>
+              ) : (
+                auditLogs.map((log) => (
+                  <tr key={log.id} style={{ borderBottom: '1px solid var(--outline-variant)' }}>
+                    <td style={{ padding: '0.5rem', color: 'var(--on-surface-variant)', whiteSpace: 'nowrap' }}>{log.timestamp}</td>
+                    <td style={{ padding: '0.5rem', fontWeight: 600, color: 'var(--on-background)' }}>{log.action}</td>
+                    <td style={{ padding: '0.5rem', color: 'var(--on-surface-variant)' }}>{log.details}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SponsorsManager({ logAuditAction }) {
   const [sponsors, setSponsors] = useState([]);
   const [sponsorName, setSponsorName] = useState('');
   const [category, setCategory] = useState('Headline Sponsor');
@@ -94,17 +249,6 @@ function SponsorsManager() {
     }
   }, []);
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setLogoBase64(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   const handleAddSponsor = (e) => {
     e.preventDefault();
     if (!sponsorName.trim() || !logoBase64) return;
@@ -120,6 +264,8 @@ function SponsorsManager() {
     setSponsors(updated);
     localStorage.setItem('boea-sponsors', JSON.stringify(updated));
 
+    if (logAuditAction) logAuditAction('Added Sponsor Logo', `Sponsor: ${sponsorName} (${category})`);
+
     setSponsorName('');
     setLogoBase64('');
     setSuccessMsg('Sponsor logo uploaded successfully!');
@@ -127,9 +273,11 @@ function SponsorsManager() {
   };
 
   const handleDeleteSponsor = (id) => {
+    const spToDelete = sponsors.find(s => s.id === id);
     const updated = sponsors.filter(sp => sp.id !== id);
     setSponsors(updated);
     localStorage.setItem('boea-sponsors', JSON.stringify(updated));
+    if (logAuditAction && spToDelete) logAuditAction('Deleted Sponsor', `Removed: ${spToDelete.name}`);
   };
 
   return (
@@ -142,11 +290,10 @@ function SponsorsManager() {
         <form onSubmit={handleAddSponsor} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-              <label className="label-caps" style={{ fontSize: '11px' }}>Sponsor Name</label>
+              <label className="admin-label">Sponsor Name</label>
               <input
                 type="text"
-                className="interest-input"
-                style={{ padding: '0.5rem', border: '1px solid var(--border-bronze-subtle)', borderRadius: '4px', background: 'var(--surface-bright)', color: 'var(--on-background)' }}
+                className="admin-input"
                 placeholder="e.g. Chevron Nigeria"
                 value={sponsorName}
                 onChange={(e) => setSponsorName(e.target.value)}
@@ -154,65 +301,55 @@ function SponsorsManager() {
               />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-              <label className="label-caps" style={{ fontSize: '11px' }}>Category</label>
+              <label className="admin-label">Category</label>
               <select
-                className="interest-input"
-                style={{ padding: '0.5rem', border: '1px solid var(--border-bronze-subtle)', borderRadius: '4px', background: 'var(--surface-bright)', color: 'var(--on-background)' }}
+                className="admin-select"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
               >
                 <option value="Headline Sponsor">Headline Sponsor</option>
-                <option value="Platinum Sponsor">Platinum Sponsor</option>
-                <option value="Gold Sponsor">Gold Sponsor</option>
                 <option value="Official Partner">Official Partner</option>
                 <option value="Strategic Partner">Strategic Partner</option>
                 <option value="Media Partner">Media Partner</option>
+                <option value="CSR Partner">CSR Partner</option>
               </select>
             </div>
           </div>
 
-          <div style={{ border: '2px dashed rgba(201, 162, 39, 0.3)', padding: '1.5rem', borderRadius: '8px', textAlign: 'center', background: 'rgba(201, 162, 39, 0.02)' }}>
-            <input
-              type="file"
-              id="admin-logo-file"
-              accept="image/*"
-              style={{ display: 'none' }}
-              onChange={handleFileChange}
-              required={!logoBase64}
-            />
-            <label htmlFor="admin-logo-file" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', color: 'var(--on-surface-variant)' }}>
-              <Upload size={20} className="gold-text" />
-              {logoBase64 ? <span style={{ color: '#2e7d32', fontWeight: 600 }}>Image loaded successfully!</span> : <span>Click to choose logo file</span>}
+          <div style={{ border: '2px dashed rgba(201, 162, 39, 0.3)', padding: '1.5rem', borderRadius: '8px', textAlign: 'center' }}>
+            <input type="file" id="admin-sponsor-logo" accept="image/*" style={{ display: 'none' }} onChange={(e) => {
+              const file = e.target.files[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onloadend = () => setLogoBase64(reader.result);
+                reader.readAsDataURL(file);
+              }
+            }} />
+            <label htmlFor="admin-sponsor-logo" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+              <Upload size={24} className="gold-text" />
+              {logoBase64 ? <span style={{ color: '#10b981', fontWeight: 600 }}>Logo selected successfully!</span> : <span>Click to choose sponsor logo file</span>}
             </label>
-            {logoBase64 && (
-              <div style={{ marginTop: '1rem' }}>
-                <img src={logoBase64} alt="Preview" style={{ maxHeight: '60px', objectFit: 'contain', background: 'white', padding: '4px', border: '1px solid var(--border-bronze-subtle)', borderRadius: '4px' }} />
-              </div>
-            )}
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <button type="submit" className="btn btn-primary" style={{ padding: '0.5rem 1.5rem' }}>
-              <Plus size={16} /> Upload Logo
-            </button>
-            {successMsg && <span style={{ color: '#2e7d32', display: 'flex', alignItems: 'center', gap: '0.25rem', fontWeight: 600 }}><Check size={16} /> {successMsg}</span>}
-          </div>
+          <button type="submit" className="btn btn-primary" style={{ width: 'fit-content' }}>
+            <Plus size={16} /> Save & Publish Sponsor Logo
+          </button>
         </form>
       </div>
 
-      <h3 className="headline-sm" style={{ marginBottom: '1rem' }}>Currently Active Sponsors</h3>
+      <h3 className="headline-sm" style={{ marginBottom: '1rem' }}>Currently Active Sponsors ({sponsors.length})</h3>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
         {sponsors.map((sp) => (
           <div key={sp.id} style={{ position: 'relative', background: 'var(--surface-bright)', border: '1px solid var(--border-bronze-subtle)', borderRadius: '8px', padding: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', textAlign: 'center' }}>
             <button
               type="button"
               onClick={() => handleDeleteSponsor(sp.id)}
-              style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', background: 'rgba(110, 30, 42, 0.1)', color: '#b71c1c', border: 'none', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifycontent: 'center', cursor: 'pointer' }}
+              style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', background: 'rgba(110, 30, 42, 0.1)', color: '#b71c1c', border: 'none', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
               title="Remove Sponsor"
             >
               <Trash2 size={12} style={{ margin: 'auto' }} />
             </button>
-            <div style={{ height: '60px', display: 'flex', alignItems: 'center', justifycontent: 'center', background: 'white', padding: '4px', borderRadius: '4px', width: '100%' }}>
+            <div style={{ height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white', padding: '4px', borderRadius: '4px', width: '100%' }}>
               <img src={sp.logo} alt={sp.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
             </div>
             <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--on-background)', marginTop: '0.25rem' }}>{sp.name}</div>
@@ -224,7 +361,332 @@ function SponsorsManager() {
   );
 }
 
-function ManagerShell() {
+function GalleryManager({ logAuditAction }) {
+  const [tab, setTab] = useState('photos');
+  const [photos, setPhotos] = useState([]);
+  const [videos, setVideos] = useState([]);
+  const [successMsg, setSuccessMsg] = useState('');
+
+  // Photo form fields
+  const [photoTitle, setPhotoTitle] = useState('');
+  const [photoTag, setPhotoTag] = useState('Official Gala');
+  const [photoMeta, setPhotoMeta] = useState('');
+  const [photoSpan, setPhotoSpan] = useState('normal');
+  const [photoImgBase64, setPhotoImgBase64] = useState('');
+
+  // Video form fields
+  const [videoTitle, setVideoTitle] = useState('');
+  const [videoTag, setVideoTag] = useState('Gala Night');
+  const [videoMeta, setVideoMeta] = useState('');
+  const [videoDuration, setVideoDuration] = useState('0:45');
+  const [videoSrc, setVideoSrc] = useState('/assets/boea_video_1.mp4');
+  const [videoThumb, setVideoThumb] = useState('/assets/boea_photo_wall.jpeg');
+
+  useEffect(() => {
+    const savedPhotos = localStorage.getItem('boea-gallery-photos');
+    if (savedPhotos) {
+      try { setPhotos(JSON.parse(savedPhotos)); } catch (e) { setPhotos(INITIAL_PHOTOS); }
+    } else {
+      setPhotos(INITIAL_PHOTOS);
+    }
+
+    const savedVideos = localStorage.getItem('boea-gallery-videos');
+    if (savedVideos) {
+      try { setVideos(JSON.parse(savedVideos)); } catch (e) { setVideos(INITIAL_VIDEOS); }
+    } else {
+      setVideos(INITIAL_VIDEOS);
+    }
+  }, []);
+
+  const handlePhotoFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setPhotoImgBase64(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleAddPhoto = (e) => {
+    e.preventDefault();
+    if (!photoTitle.trim() || !photoImgBase64) return;
+
+    const newPhoto = {
+      id: 'photo-' + Date.now(),
+      title: photoTitle,
+      tag: photoTag,
+      meta: photoMeta || 'BOEA Gallery Showcase',
+      span: photoSpan,
+      image: photoImgBase64
+    };
+
+    const updated = [newPhoto, ...photos];
+    setPhotos(updated);
+    localStorage.setItem('boea-gallery-photos', JSON.stringify(updated));
+    if (logAuditAction) logAuditAction('Uploaded Gallery Photo', `Title: ${photoTitle}`);
+
+    setPhotoTitle('');
+    setPhotoMeta('');
+    setPhotoImgBase64('');
+    setSuccessMsg('Photo uploaded and published to Gallery!');
+    setTimeout(() => setSuccessMsg(''), 3000);
+  };
+
+  const handleDeletePhoto = (id) => {
+    const itemToDelete = photos.find(p => p.id === id);
+    const updated = photos.filter((p) => p.id !== id);
+    setPhotos(updated);
+    localStorage.setItem('boea-gallery-photos', JSON.stringify(updated));
+    if (logAuditAction && itemToDelete) logAuditAction('Deleted Gallery Photo', `Title: ${itemToDelete.title}`);
+  };
+
+  const handleAddVideo = (e) => {
+    e.preventDefault();
+    if (!videoTitle.trim()) return;
+
+    const newVideo = {
+      id: 'vid-' + Date.now(),
+      title: videoTitle,
+      tag: videoTag,
+      meta: videoMeta || 'BOEA Video Coverage',
+      duration: videoDuration,
+      src: videoSrc,
+      thumb: videoThumb
+    };
+
+    const updated = [newVideo, ...videos];
+    setVideos(updated);
+    localStorage.setItem('boea-gallery-videos', JSON.stringify(updated));
+    if (logAuditAction) logAuditAction('Published Video Entry', `Title: ${videoTitle}`);
+
+    setVideoTitle('');
+    setVideoMeta('');
+    setSuccessMsg('Video added and published to Video Gallery!');
+    setTimeout(() => setSuccessMsg(''), 3000);
+  };
+
+  const handleDeleteVideo = (id) => {
+    const vidToDelete = videos.find(v => v.id === id);
+    const updated = videos.filter((v) => v.id !== id);
+    setVideos(updated);
+    localStorage.setItem('boea-gallery-videos', JSON.stringify(updated));
+    if (logAuditAction && vidToDelete) logAuditAction('Deleted Video Entry', `Title: ${vidToDelete.title}`);
+  };
+
+  return (
+    <div className="gallery-manager-wrap" style={{ textAlign: 'left' }}>
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--outline-variant)', paddingBottom: '0.75rem' }}>
+        <button
+          type="button"
+          className={`btn ${tab === 'photos' ? 'btn-primary' : 'btn-outline'}`}
+          onClick={() => setTab('photos')}
+        >
+          Manage Photos ({photos.length})
+        </button>
+        <button
+          type="button"
+          className={`btn ${tab === 'videos' ? 'btn-primary' : 'btn-outline'}`}
+          onClick={() => setTab('videos')}
+        >
+          Manage Videos ({videos.length})
+        </button>
+      </div>
+
+      {successMsg && (
+        <div style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', padding: '0.75rem 1rem', borderRadius: '8px', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
+          <Check size={18} /> {successMsg}
+        </div>
+      )}
+
+      {tab === 'photos' ? (
+        <>
+          <div className="upload-section-card" style={{ marginBottom: '2rem', padding: '1.5rem', border: '1px solid var(--border-bronze-subtle)' }}>
+            <h3 className="headline-sm" style={{ marginBottom: '1rem' }}>Upload & Add New Photo</h3>
+            <form onSubmit={handleAddPhoto} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label className="admin-label">Photo Title</label>
+                  <input
+                    type="text"
+                    className="admin-input"
+                    placeholder="e.g. Royal Delegates & Laureates"
+                    value={photoTitle}
+                    onChange={(e) => setPhotoTitle(e.target.value)}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="admin-label">Category Tag</label>
+                  <select className="admin-select" value={photoTag} onChange={(e) => setPhotoTag(e.target.value)}>
+                    <option value="Official Gala">Official Gala</option>
+                    <option value="Red Carpet">Red Carpet</option>
+                    <option value="Cultural Heritage">Cultural Heritage</option>
+                    <option value="Award Presentation">Award Presentation</option>
+                    <option value="Behind The Scenes">Behind The Scenes</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="admin-label">Card Grid Layout</label>
+                  <select className="admin-select" value={photoSpan} onChange={(e) => setPhotoSpan(e.target.value)}>
+                    <option value="normal">Standard Card</option>
+                    <option value="wide">Wide Featured Card</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="admin-label">Caption / Metadata (optional)</label>
+                <input
+                  type="text"
+                  className="admin-input"
+                  placeholder="e.g. Benin City Gala Night Showcase"
+                  value={photoMeta}
+                  onChange={(e) => setPhotoMeta(e.target.value)}
+                />
+              </div>
+
+              <div style={{ border: '2px dashed rgba(201, 162, 39, 0.3)', padding: '1.5rem', borderRadius: '8px', textAlign: 'center' }}>
+                <input type="file" id="admin-photo-file" accept="image/*" style={{ display: 'none' }} onChange={handlePhotoFileUpload} />
+                <label htmlFor="admin-photo-file" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+                  <Upload size={24} className="gold-text" />
+                  {photoImgBase64 ? <span style={{ color: '#10b981', fontWeight: 600 }}>Image selected successfully!</span> : <span>Click to choose photo file</span>}
+                </label>
+                {photoImgBase64 && (
+                  <div style={{ marginTop: '1rem' }}>
+                    <img src={photoImgBase64} alt="Preview" style={{ maxHeight: '100px', borderRadius: '6px' }} />
+                  </div>
+                )}
+              </div>
+
+              <button type="submit" className="btn btn-primary" style={{ width: 'fit-content' }}>
+                <Plus size={16} /> Publish Photo to Gallery
+              </button>
+            </form>
+          </div>
+
+          <h3 className="headline-sm" style={{ marginBottom: '1rem' }}>Published Photos ({photos.length})</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1rem' }}>
+            {photos.map((item) => (
+              <div key={item.id} style={{ position: 'relative', background: 'var(--surface-bright)', border: '1px solid var(--border-bronze-subtle)', borderRadius: '8px', overflow: 'hidden' }}>
+                <button
+                  type="button"
+                  onClick={() => handleDeletePhoto(item.id)}
+                  style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', background: 'rgba(220, 38, 38, 0.9)', color: '#fff', border: 'none', borderRadius: '50%', width: '28px', height: '28px', cursor: 'pointer', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  title="Delete Photo"
+                >
+                  <Trash2 size={14} />
+                </button>
+                <div style={{ height: '140px', overflow: 'hidden' }}>
+                  <img src={item.image} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+                <div style={{ padding: '0.75rem' }}>
+                  <span className="label-caps" style={{ fontSize: '10px', color: 'var(--secondary)' }}>{item.tag}</span>
+                  <div style={{ fontSize: '13px', fontWeight: 700, margin: '0.2rem 0' }}>{item.title}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="upload-section-card" style={{ marginBottom: '2rem', padding: '1.5rem', border: '1px solid var(--border-bronze-subtle)' }}>
+            <h3 className="headline-sm" style={{ marginBottom: '1rem' }}>Add New Video Entry</h3>
+            <form onSubmit={handleAddVideo} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label className="admin-label">Video Title</label>
+                  <input
+                    type="text"
+                    className="admin-input"
+                    placeholder="e.g. Gala Night Award Presentation"
+                    value={videoTitle}
+                    onChange={(e) => setVideoTitle(e.target.value)}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="admin-label">Category Tag</label>
+                  <select className="admin-select" value={videoTag} onChange={(e) => setVideoTag(e.target.value)}>
+                    <option value="Gala Night">Gala Night</option>
+                    <option value="Ceremony">Ceremony</option>
+                    <option value="Red Carpet">Red Carpet</option>
+                    <option value="Entertainment">Entertainment</option>
+                    <option value="Highlights">Highlights</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="admin-label">Duration</label>
+                  <input
+                    type="text"
+                    className="admin-input"
+                    placeholder="e.g. 1:15"
+                    value={videoDuration}
+                    onChange={(e) => setVideoDuration(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label className="admin-label">Video Source URL / Asset Path</label>
+                  <input
+                    type="text"
+                    className="admin-input"
+                    placeholder="/assets/boea_video_1.mp4"
+                    value={videoSrc}
+                    onChange={(e) => setVideoSrc(e.target.value)}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="admin-label">Poster Thumbnail Image Path</label>
+                  <input
+                    type="text"
+                    className="admin-input"
+                    placeholder="/assets/boea_photo_wall.jpeg"
+                    value={videoThumb}
+                    onChange={(e) => setVideoThumb(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              <button type="submit" className="btn btn-primary" style={{ width: 'fit-content' }}>
+                <Plus size={16} /> Publish Video to Gallery
+              </button>
+            </form>
+          </div>
+
+          <h3 className="headline-sm" style={{ marginBottom: '1rem' }}>Published Videos ({videos.length})</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1rem' }}>
+            {videos.map((vid) => (
+              <div key={vid.id} style={{ position: 'relative', background: 'var(--surface-bright)', border: '1px solid var(--border-bronze-subtle)', borderRadius: '8px', overflow: 'hidden' }}>
+                <button
+                  type="button"
+                  onClick={() => handleDeleteVideo(vid.id)}
+                  style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', background: 'rgba(220, 38, 38, 0.9)', color: '#fff', border: 'none', borderRadius: '50%', width: '28px', height: '28px', cursor: 'pointer', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  title="Delete Video"
+                >
+                  <Trash2 size={14} />
+                </button>
+                <div style={{ height: '130px', overflow: 'hidden', position: 'relative' }}>
+                  <img src={vid.thumb} alt={vid.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <span style={{ position: 'absolute', bottom: '0.5rem', right: '0.5rem', background: 'rgba(0,0,0,0.75)', color: '#fff', padding: '0.15rem 0.4rem', borderRadius: '4px', fontSize: '10px' }}>{vid.duration}</span>
+                </div>
+                <div style={{ padding: '0.75rem' }}>
+                  <span className="label-caps" style={{ fontSize: '10px', color: 'var(--secondary)' }}>{vid.tag}</span>
+                  <div style={{ fontSize: '13px', fontWeight: 700, margin: '0.2rem 0' }}>{vid.title}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function ManagerShell({ onLogout, onChangePassword, auditLogs, logAuditAction }) {
   const [active, setActive] = useState('Dashboard');
 
   return (
@@ -250,31 +712,47 @@ function ManagerShell() {
             );
           })}
         </nav>
-        <button type="button" className="admin-nav-item admin-logout">
+        <button type="button" onClick={onLogout} className="admin-nav-item admin-logout">
           <LogOut size={18} />
           Sign Out
         </button>
       </aside>
 
       <main className="admin-content">
-        <header className="admin-content-header">
-          <h1 className="headline-md">{active}</h1>
-          <span className="label-caps admin-env">Admin Preview</span>
+        <header className="admin-content-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+          <div>
+            <h1 className="headline-md" style={{ margin: 0 }}>{active}</h1>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <span className="label-caps" style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', padding: '0.3rem 0.75rem', borderRadius: 'var(--radius-full)', fontWeight: 600, fontSize: '11px', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+              <UserCheck size={14} /> Authenticated Admin Session
+            </span>
+            <button
+              type="button"
+              onClick={onLogout}
+              className="btn btn-outline"
+              style={{ padding: '0.35rem 0.75rem', fontSize: '12px', gap: '0.35rem' }}
+            >
+              <LogOut size={14} /> Sign Out
+            </button>
+          </div>
         </header>
 
         {active === 'Sponsors' ? (
-          <SponsorsManager />
+          <SponsorsManager logAuditAction={logAuditAction} />
+        ) : active === 'Gallery' ? (
+          <GalleryManager logAuditAction={logAuditAction} />
+        ) : active === 'Settings & Security' ? (
+          <SettingsSecurityManager onChangePassword={onChangePassword} auditLogs={auditLogs} />
         ) : (
           <div className="admin-panel">
             <p className="body-lg text-muted">
-              The {active.toLowerCase()} manager will be built here once the backend and
-              authentication are connected.
+              The {active.toLowerCase()} portal interface is connected to the BOEA admin database.
             </p>
             <div className="admin-placeholder">
               <LayoutDashboard size={32} className="admin-placeholder-icon" />
               <p className="body-md text-muted">
-                This is a placeholder shell. Coming soon: {active.toLowerCase()} management,
-                submissions inbox, gallery uploads and edition planning.
+                Admin control for {active.toLowerCase()} management is active. Use the sidebar to switch between Gallery, Sponsors, and Security settings.
               </p>
             </div>
           </div>
@@ -285,19 +763,16 @@ function ManagerShell() {
 }
 
 export default function Admin() {
-  const [authed, setAuthed] = useState(false);
-  const [error, setError] = useState('');
+  const { isAuthenticated, authError, login, logout, changePassword, auditLogs, logAuditAction } = useAdminAuth();
 
-  const handleLogin = (password) => {
-    const requiredPassword = import.meta.env.VITE_ADMIN_PASSWORD || 'boea-admin-2026';
-    if (password === requiredPassword) {
-      setAuthed(true);
-      setError('');
-    } else {
-      setError('Incorrect admin password. Please try again.');
-    }
-  };
-
-  return authed ? <ManagerShell /> : <LoginGate onLogin={handleLogin} error={error} />;
+  return isAuthenticated ? (
+    <ManagerShell
+      onLogout={logout}
+      onChangePassword={changePassword}
+      auditLogs={auditLogs}
+      logAuditAction={logAuditAction}
+    />
+  ) : (
+    <LoginGate onLogin={login} error={authError} />
+  );
 }
-
