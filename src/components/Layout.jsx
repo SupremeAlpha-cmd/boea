@@ -33,6 +33,7 @@ const NAV_GROUPS = [
     ]
   },
   { to: '/gallery', label: 'Gallery', type: 'link' },
+  { to: '/blog', label: 'Blog', type: 'link' },
   {
     label: 'Partners',
     type: 'dropdown',
@@ -242,6 +243,7 @@ export function Footer() {
           <span className="footer-heading">Connect</span>
           <div className="footer-links">
             <Link to="/contact">Contact Us</Link>
+            <Link to="/blog">Blog & News</Link>
             <Link to="/faq">FAQs</Link>
             <Link to="/gallery">Gallery</Link>
             <Link to="/media">Media & Publicity</Link>

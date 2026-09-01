@@ -28,6 +28,7 @@ const PAGE_TITLES = {
   '/media': 'Media & Publicity — Best of Edo Award',
   '/faq': 'Frequently Asked Questions — Best of Edo Award',
   '/contact': 'Contact & Inquiries — Best of Edo Award',
+  '/blog': 'Blog & Heritage Journal — The Prestigious Best of Edo Award',
   '/admin': 'Admin Portal — The Prestigious Best of Edo Award'
 };
 

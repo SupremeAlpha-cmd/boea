@@ -135,9 +135,11 @@ export const GALLERY_ITEMS = [
   }
 ];
 
-export const WINNERS = [];
+import { PAST_RECIPIENTS_DATA as GENERATED_RECIPIENTS } from './past_recipients_generated.js';
 
-export const PAST_RECIPIENTS_DATA = [];
+export const WINNERS = GENERATED_RECIPIENTS;
+
+export const PAST_RECIPIENTS_DATA = GENERATED_RECIPIENTS;
 
 export const FEATURED_PRESS_LINKS = [
   {
@@ -166,7 +168,7 @@ export const FEATURED_PRESS_LINKS = [
     id: 'press-independent-1',
     type: 'article',
     title: 'Best Of Edo Award: Ambrose Alli, Hosa Okunbo For Posthumous Honours',
-    description: 'BENIN - The organizer of Best of Edo Award, Mr. Paul Ofoni, has announced that plans were being put together by Walkfront African Network Limited.',
+    description: 'BENIN - The organizer of Best of Edo Award, Sir Paul Ofoni, has announced that plans were being put together by Walkfront African Network Limited.',
     source: 'Independent Newspaper Nigeria',
     domain: 'share.google',
     url: 'https://share.google/HUuvAqfHAdo78Nd2v',

@@ -20,3 +20,9 @@ npm-debug.log*
 
 # Tooling
 .qodo/
+
+# Project Info Files
+info.md
+new new info.md
+new_info
+new_info.md

@@ -10,42 +10,30 @@ import './PastRecipients.css';
 
 export default function PastRecipients() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [selectedYear, setSelectedYear] = useState('All');
-
-  // Extract unique categories and years for dropdown filters
-  const categories = useMemo(() => {
-    const set = new Set(PAST_RECIPIENTS_DATA.map((r) => r.category));
-    return ['All', ...Array.from(set)];
-  }, []);
-
-  const years = useMemo(() => {
-    const set = new Set(PAST_RECIPIENTS_DATA.map((r) => r.year));
-    return ['All', ...Array.from(set).sort().reverse()];
-  }, []);
 
   // Filter logic
   const filteredRecipients = useMemo(() => {
     return PAST_RECIPIENTS_DATA.filter((item) => {
-      const matchesSearch =
+      return (
         searchQuery.trim() === '' ||
         item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.citation.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.category.toLowerCase().includes(searchQuery.toLowerCase());
-
-      const matchesCategory =
-        selectedCategory === 'All' || item.category === selectedCategory;
-
-      const matchesYear = selectedYear === 'All' || item.year === selectedYear;
-
-      return matchesSearch && matchesCategory && matchesYear;
+        item.citation.toLowerCase().includes(searchQuery.toLowerCase())
+      );
     });
-  }, [searchQuery, selectedCategory, selectedYear]);
+  }, [searchQuery]);
 
   const resetFilters = () => {
     setSearchQuery('');
-    setSelectedCategory('All');
-    setSelectedYear('All');
+  };
+
+  const getMonogram = (name) => {
+    if (!name) return 'B';
+    const clean = name.replace(/^(Prince|HRH|Dr\.|Barr\.|Hon\.|Amb\.|Mrs|Enogie)\s+/gi, '').trim();
+    const parts = clean.split(' ').filter(Boolean);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return parts[0] ? parts[0].substring(0, 2).toUpperCase() : 'B';
   };
 
   return (
@@ -62,7 +50,7 @@ export default function PastRecipients() {
           <div className="recipients-stats-grid">
             <div className="recipients-stat-card">
               <Trophy size={28} className="stat-icon" />
-              <div className="stat-number">9+</div>
+              <div className="stat-number">{PAST_RECIPIENTS_DATA.length}+</div>
               <div className="stat-label">Distinguished Laureates</div>
             </div>
             <div className="recipients-stat-card">
@@ -83,7 +71,7 @@ export default function PastRecipients() {
               <Search size={18} className="search-icon" />
               <input
                 type="text"
-                placeholder="Search laureate by name, category, or citation..."
+                placeholder="Search laureate by name..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="recipients-search-input"
@@ -91,53 +79,17 @@ export default function PastRecipients() {
               />
             </div>
 
-            <div className="filter-selects">
-              <div className="select-wrapper">
-                <Filter size={16} className="select-icon" />
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="recipients-select"
-                  aria-label="Filter by Category"
-                >
-                  <option value="All">All Categories</option>
-                  {categories.filter((c) => c !== 'All').map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="select-wrapper">
-                <Award size={16} className="select-icon" />
-                <select
-                  value={selectedYear}
-                  onChange={(e) => setSelectedYear(e.target.value)}
-                  className="recipients-select"
-                  aria-label="Filter by Edition Year"
-                >
-                  <option value="All">All Editions</option>
-                  {years.filter((y) => y !== 'All').map((year) => (
-                    <option key={year} value={year}>
-                      {year} Edition
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {(searchQuery || selectedCategory !== 'All' || selectedYear !== 'All') && (
-                <button
-                  type="button"
-                  onClick={resetFilters}
-                  className="btn btn-outline reset-filter-btn"
-                  aria-label="Reset filters"
-                >
-                  <RefreshCw size={14} />
-                  Reset
-                </button>
-              )}
-            </div>
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="btn btn-outline reset-filter-btn"
+                aria-label="Reset filters"
+              >
+                <RefreshCw size={14} />
+                Reset
+              </button>
+            )}
           </div>
 
           {/* Laureates Cards Grid */}
@@ -145,16 +97,18 @@ export default function PastRecipients() {
             <div className="recipients-grid">
               {filteredRecipients.map((rec) => (
                 <article key={rec.id} className="recipient-card">
-                  <div className="recipient-image-wrapper">
-                    <img src={rec.image} alt={rec.name} className="recipient-image" />
-                    <span className="laurel-badge recipient-badge">
-                      <Award size={12} />
-                      {rec.year} Laureate
-                    </span>
-                    <span className="edition-tag">{rec.edition}</span>
-                  </div>
+                  {rec.image ? (
+                    <div className="recipient-image-wrapper">
+                      <img src={rec.image} alt={rec.name} className="recipient-image" />
+                    </div>
+                  ) : (
+                    <div className="recipient-title-card-header">
+                      <div className="title-card-monogram">
+                        {getMonogram(rec.name)}
+                      </div>
+                    </div>
+                  )}
                   <div className="recipient-card-body">
-                    <span className="label-caps recipient-category">{rec.category}</span>
                     <h3 className="headline-md recipient-name">{rec.name}</h3>
                     <p className="body-md recipient-citation">{rec.citation}</p>
                   </div>

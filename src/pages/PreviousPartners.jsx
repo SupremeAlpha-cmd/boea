@@ -50,7 +50,7 @@ const CATEGORIZED_PARTNERS = [
     partners: [
       { id: 'media-1', name: 'Vibes FM 97.3 Benin', tagline: 'Official Radio Broadcast Partner', logo: '/assets/vibes_fm_partner.jpeg' },
       { id: 'media-2', name: 'Speed FM 96.9 Benin', tagline: 'Youth & Urban Broadcast Partner', logo: '/assets/speed_fm_partner.jpeg' },
-      { id: 'media-3', name: 'Iku FM', tagline: 'Cultural Broadcast Network', logo: '/assets/iku_fm_partner.jpeg' }
+      { id: 'media-3', name: 'Ku FM', tagline: 'Cultural Broadcast Network', logo: '/assets/iku_fm_partner.jpeg' }
     ]
   },
   {
@@ -93,7 +93,7 @@ const NEWSPAPER_FEATURES = [
     title: 'Vanguard News — Walkfront African Network Unveils 2026 BOEA Vision',
     date: 'November 2024',
     source: 'Vanguard Daily',
-    snippet: 'Convener Paul Ofoni highlighted the growing international reach of Edo heritage and the launch of the Humanitarian Empowerment Support Scheme...',
+    snippet: 'Convener Sir Paul Ofoni highlighted the growing international reach of Edo heritage and the launch of the Humanitarian Empowerment Support Scheme...',
     image: '/assets/boea_photo_wall.jpeg',
     link: '#'
   },

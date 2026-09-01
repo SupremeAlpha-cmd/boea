@@ -185,6 +185,40 @@
   background: var(--surface-dim);
 }
 
+.recipient-title-card-header {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  background: linear-gradient(135deg, rgba(201, 162, 39, 0.15) 0%, rgba(20, 13, 15, 0.95) 100%);
+  border-bottom: 1px solid var(--border-bronze-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.title-card-monogram {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #c9a227 0%, #8a6c14 100%);
+  color: #12090b;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 25px rgba(201, 162, 39, 0.35);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.recipient-card:hover .title-card-monogram {
+  transform: scale(1.08);
+  box-shadow: 0 14px 30px rgba(201, 162, 39, 0.5);
+}
+
 .recipient-image {
   width: 100%;
   height: 100%;

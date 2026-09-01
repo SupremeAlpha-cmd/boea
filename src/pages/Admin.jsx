@@ -19,14 +19,20 @@ import {
   Check,
   History,
   KeyRound,
-  UserCheck
+  UserCheck,
+  Newspaper,
+  ExternalLink,
+  Edit3,
+  PlusCircle
 } from 'lucide-react';
 import { INITIAL_PHOTOS, INITIAL_VIDEOS } from './Gallery';
+import { getStoredBlogPosts, saveBlogPosts } from '../data/blogData';
 import { useAdminAuth } from '../hooks/useAdminAuth';
 import './Admin.css';
 
 const NAV_ITEMS = [
   { icon: LayoutDashboard, label: 'Dashboard' },
+  { icon: Newspaper, label: 'Blog & News' },
   { icon: Award, label: 'Categories' },
   { icon: Users, label: 'Nominations' },
   { icon: Image, label: 'Gallery' },
@@ -686,8 +692,310 @@ function GalleryManager({ logAuditAction }) {
   );
 }
 
+function BlogManager({ logAuditAction }) {
+  const [posts, setPosts] = useState(() => getStoredBlogPosts());
+  const [editingId, setEditingId] = useState(null);
+
+  // Form states
+  const [title, setTitle] = useState('');
+  const [author, setAuthor] = useState('BOEA Editorial Board');
+  const [coverImage, setCoverImage] = useState('');
+  const [excerpt, setExcerpt] = useState('');
+  const [content, setContent] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setCoverImage(event.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleEdit = (post) => {
+    setEditingId(post.id);
+    setTitle(post.title);
+    setAuthor(post.author || 'BOEA Editorial Board');
+    setCoverImage(post.coverImage || '');
+    setExcerpt(post.excerpt || '');
+    setContent(Array.isArray(post.content) ? post.content.join('\n\n') : post.content || '');
+    setSuccessMsg('');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const resetForm = () => {
+    setEditingId(null);
+    setTitle('');
+    setAuthor('BOEA Editorial Board');
+    setCoverImage('');
+    setExcerpt('');
+    setContent('');
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!title.trim() || !content.trim()) return;
+
+    const wordCount = content.trim().split(/\s+/).length;
+    const computedReadTime = `${Math.max(1, Math.ceil(wordCount / 200))} min read`;
+
+    const formattedContent = content
+      .split('\n\n')
+      .map((p) => p.trim())
+      .filter(Boolean);
+
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    });
+
+    let updatedPosts;
+
+    if (editingId) {
+      updatedPosts = posts.map((p) =>
+        p.id === editingId
+          ? {
+              ...p,
+              title: title.trim(),
+              author: author.trim() || 'BOEA Editorial Board',
+              coverImage: coverImage.trim() || '/assets/boea_brand_logo+branding.jpeg',
+              excerpt: excerpt.trim() || title.trim(),
+              content: formattedContent,
+              readTime: computedReadTime
+            }
+          : p
+      );
+      if (logAuditAction) logAuditAction(`Updated Blog Post: "${title.trim()}"`);
+      setSuccessMsg('Article updated successfully! Changes are live on the website.');
+    } else {
+      const newPost = {
+        id: `post-${Date.now()}`,
+        title: title.trim(),
+        slug: title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+        author: author.trim() || 'BOEA Editorial Board',
+        date: dateStr,
+        readTime: computedReadTime,
+        coverImage: coverImage.trim() || '/assets/boea_brand_logo+branding.jpeg',
+        excerpt: excerpt.trim() || title.trim(),
+        content: formattedContent
+      };
+      updatedPosts = [newPost, ...posts];
+      if (logAuditAction) logAuditAction(`Published New Blog Post: "${title.trim()}"`);
+      setSuccessMsg('New article published successfully! It is now live on the website.');
+    }
+
+    setPosts(updatedPosts);
+    saveBlogPosts(updatedPosts);
+    resetForm();
+
+    setTimeout(() => setSuccessMsg(''), 6000);
+  };
+
+  const handleDelete = (id, postTitle) => {
+    if (window.confirm(`Are you sure you want to delete "${postTitle}"?`)) {
+      const filtered = posts.filter((p) => p.id !== id);
+      setPosts(filtered);
+      saveBlogPosts(filtered);
+      if (logAuditAction) logAuditAction(`Deleted Blog Post: "${postTitle}"`);
+    }
+  };
+
+  return (
+    <div className="admin-panel">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+        <div>
+          <h2 className="headline-md" style={{ margin: 0 }}>BOEA Blog & News Publisher</h2>
+          <p className="body-sm text-muted" style={{ margin: '0.25rem 0 0 0' }}>
+            Publish press releases, ceremony updates, and laureate features for non-technical admins.
+          </p>
+        </div>
+      </div>
+
+      {successMsg && (
+        <div style={{ background: 'rgba(16, 185, 129, 0.15)', border: '1px solid #10b981', color: '#10b981', padding: '0.9rem 1.25rem', borderRadius: '12px', marginBottom: '1.5rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <Check size={18} /> {successMsg}
+        </div>
+      )}
+
+      {/* Create / Edit Article Form */}
+      <div style={{ background: 'var(--surface-bright)', border: '1.5px solid var(--border-bronze-subtle)', borderRadius: '16px', padding: '1.75rem', marginBottom: '2.5rem' }}>
+        <h3 className="headline-sm" style={{ marginTop: 0, marginBottom: '1.25rem', color: 'var(--color-gold)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          {editingId ? <Edit3 size={18} /> : <PlusCircle size={18} />}
+          {editingId ? 'Edit Article' : 'Publish New Article'}
+        </h3>
+
+        <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '1.25rem' }}>
+          <div>
+            <label className="admin-label" style={{ display: 'block', marginBottom: '0.35rem', fontSize: '13px', fontWeight: 700 }}>
+              Article Headline / Title *
+            </label>
+            <input
+              type="text"
+              className="admin-input"
+              placeholder="e.g. Unveiling the 2026 Gala Night in Benin City"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
+          </div>
+
+          <div>
+            <label className="admin-label" style={{ display: 'block', marginBottom: '0.35rem', fontSize: '13px', fontWeight: 700 }}>
+              Author Name
+            </label>
+            <input
+              type="text"
+              className="admin-input"
+              placeholder="e.g. BOEA Editorial Board"
+              value={author}
+              onChange={(e) => setAuthor(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="admin-label" style={{ display: 'block', marginBottom: '0.35rem', fontSize: '13px', fontWeight: 700 }}>
+              Cover Photo (Upload from device or paste image URL)
+            </label>
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
+              <label className="btn btn-outline" style={{ cursor: 'pointer', padding: '0.65rem 1rem', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                <Upload size={16} /> Choose Image File
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  style={{ display: 'none' }}
+                />
+              </label>
+              <input
+                type="text"
+                className="admin-input"
+                style={{ flex: 1, minWidth: '220px' }}
+                placeholder="Or paste image URL (e.g. /assets/coral_beads.jpeg)"
+                value={coverImage}
+                onChange={(e) => setCoverImage(e.target.value)}
+              />
+            </div>
+            {coverImage && (
+              <div style={{ marginTop: '0.75rem', width: '120px', height: '80px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--color-gold)' }}>
+                <img src={coverImage} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
+            )}
+          </div>
+
+          <div>
+            <label className="admin-label" style={{ display: 'block', marginBottom: '0.35rem', fontSize: '13px', fontWeight: 700 }}>
+              Short Summary / Excerpt (shown on the main blog page)
+            </label>
+            <textarea
+              className="admin-input"
+              rows={2}
+              placeholder="Brief 2-sentence summary of the article..."
+              value={excerpt}
+              onChange={(e) => setExcerpt(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="admin-label" style={{ display: 'block', marginBottom: '0.35rem', fontSize: '13px', fontWeight: 700 }}>
+              Full Article Story * (Separate paragraphs with a blank line)
+            </label>
+            <textarea
+              className="admin-input"
+              rows={7}
+              placeholder="Write or paste your full article content here..."
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              required
+            />
+          </div>
+
+          <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
+            <button type="submit" className="btn btn-gold" style={{ padding: '0.75rem 1.75rem' }}>
+              {editingId ? 'Save Changes & Update Article' : 'Publish Article Now'}
+            </button>
+            {editingId && (
+              <button type="button" onClick={resetForm} className="btn btn-outline">
+                Cancel Edit
+              </button>
+            )}
+          </div>
+        </form>
+      </div>
+
+      {/* Published Articles List */}
+      <h3 className="headline-sm" style={{ marginBottom: '1rem' }}>Published Blog Articles ({posts.length})</h3>
+      <div style={{ display: 'grid', gap: '1rem' }}>
+        {posts.map((p) => (
+          <div
+            key={p.id}
+            style={{
+              background: 'var(--surface-bright)',
+              border: '1px solid var(--border-bronze-subtle)',
+              borderRadius: '12px',
+              padding: '1.25rem',
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '1rem'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: '1 1 300px' }}>
+              <img
+                src={p.coverImage || '/assets/boea_brand_logo+branding.jpeg'}
+                alt={p.title}
+                style={{ width: '70px', height: '50px', objectFit: 'cover', borderRadius: '6px' }}
+              />
+              <div>
+                <h4 style={{ margin: '0.1rem 0 0.25rem 0', fontSize: '15px' }}>{p.title}</h4>
+                <div style={{ fontSize: '12px', color: 'var(--on-surface-variant)' }}>
+                  {p.date} &middot; {p.readTime} &middot; By {p.author}
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <a
+                href={`/blog/${p.id}`}
+                target="_blank"
+                rel="noreferrer"
+                className="btn btn-outline"
+                style={{ padding: '0.4rem 0.75rem', fontSize: '12px', gap: '0.3rem' }}
+                title="View live article on site"
+              >
+                <ExternalLink size={14} /> View
+              </a>
+              <button
+                type="button"
+                onClick={() => handleEdit(p)}
+                className="btn btn-outline"
+                style={{ padding: '0.4rem 0.75rem', fontSize: '12px', gap: '0.3rem' }}
+              >
+                <Edit3 size={14} /> Edit
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDelete(p.id, p.title)}
+                className="btn btn-outline"
+                style={{ padding: '0.4rem 0.75rem', fontSize: '12px', color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.4)' }}
+              >
+                <Trash2 size={14} /> Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ManagerShell({ onLogout, onChangePassword, auditLogs, logAuditAction }) {
-  const [active, setActive] = useState('Dashboard');
+  const [active, setActive] = useState('Blog & News');
 
   return (
     <div className="admin-shell">
@@ -738,7 +1046,9 @@ function ManagerShell({ onLogout, onChangePassword, auditLogs, logAuditAction })
           </div>
         </header>
 
-        {active === 'Sponsors' ? (
+        {active === 'Blog & News' ? (
+          <BlogManager logAuditAction={logAuditAction} />
+        ) : active === 'Sponsors' ? (
           <SponsorsManager logAuditAction={logAuditAction} />
         ) : active === 'Gallery' ? (
           <GalleryManager logAuditAction={logAuditAction} />

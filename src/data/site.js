@@ -996,18 +996,18 @@ export const FAQS = [
 // FOUNDER
 // ---------------------------------------------------------------------------
 export const FOUNDER = {
-  eyebrow: 'Founder & CEO',
-  name: 'Paul Ofoni',
-  title: 'Founder & Chief Executive Officer, The Prestigious Best of Edo Award',
-  role: 'CEO/Convener, Walkfront African Network Limited',
+  eyebrow: 'CEO & Convener',
+  name: 'Sir Paul Ofoni',
+  title: 'Sir Paul Ofoni — CEO / Convener, Best of Edo Award',
+  role: 'CEO / Convener, Best of Edo Award',
   intro:
-    'Paul Ofoni is the Founder and Chief Executive Officer of the Prestigious Best of Edo Award, an annual platform dedicated to identifying, celebrating and documenting exceptional individuals and organisations whose achievements and contributions create meaningful impact in Edo State, Nigeria and beyond.',
+    'Sir Paul Ofoni is the CEO and Convener of the Prestigious Best of Edo Award, an annual platform dedicated to identifying, celebrating and documenting exceptional individuals and organisations whose achievements and contributions create meaningful impact in Edo State, Nigeria and beyond.',
   blocks: [
     {
       heading: 'Building a Legacy of Excellence',
       paragraphs: [
         'His vision for the Award goes beyond an annual ceremony. It is to build a lasting institution that promotes excellence, leadership, innovation, cultural heritage, service and positive social impact.',
-        'Inspired by the rich history and enduring values of the Edo people, Paul believes that today\u2019s achievements should become tomorrow\u2019s inspiration. Through the Best of Edo Award, deserving individuals are given visibility, their stories are documented, and their contributions are preserved as part of Edo\u2019s contemporary legacy.',
+        'Inspired by the rich history and enduring values of the Edo people, Sir Paul believes that today’s achievements should become tomorrow’s inspiration. Through the Best of Edo Award, deserving individuals are given visibility, their stories are documented, and their contributions are preserved as part of Edo’s contemporary legacy.',
         'Under his leadership, the platform has evolved as a space for recognition, networking, partnership, cultural promotion and humanitarian engagement, including the Best of Edo Humanitarian Empowerment Support Scheme.'
       ]
     },
@@ -1020,7 +1020,7 @@ export const FOUNDER = {
   ],
   quote: 'Our heritage is our foundation. Excellence is our responsibility. Impact is our legacy.',
   projectsLink: {
-    label: 'Click to See More of Sir Paul\u2019s Projects',
-    note: 'The list of Sir Paul\u2019s projects is being compiled and will be published soon.'
+    label: 'Click to See More of Sir Paul’s Projects',
+    note: 'The list of Sir Paul’s projects is being compiled and will be published soon.'
   }
 };
