@@ -23,15 +23,20 @@ import {
   Newspaper,
   ExternalLink,
   Edit3,
-  PlusCircle
+  PlusCircle,
+  Trophy,
+  Menu,
+  X
 } from 'lucide-react';
 import { INITIAL_PHOTOS, INITIAL_VIDEOS } from './Gallery';
 import { getStoredBlogPosts, saveBlogPosts } from '../data/blogData';
 import { useAdminAuth } from '../hooks/useAdminAuth';
+import PastRecipientsManager from '../components/PastRecipientsManager';
 import './Admin.css';
 
 const NAV_ITEMS = [
   { icon: LayoutDashboard, label: 'Dashboard' },
+  { icon: Trophy, label: 'Past Recipients' },
   { icon: Newspaper, label: 'Blog & News' },
   { icon: Award, label: 'Categories' },
   { icon: Users, label: 'Nominations' },
@@ -294,7 +299,7 @@ function SponsorsManager({ logAuditAction }) {
           <h3 className="headline-sm" style={{ margin: 0 }}>Add New Sponsor / Partner Logo</h3>
         </div>
         <form onSubmit={handleAddSponsor} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div className="admin-form-grid-2">
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
               <label className="admin-label">Sponsor Name</label>
               <input
@@ -509,7 +514,7 @@ function GalleryManager({ logAuditAction }) {
           <div className="upload-section-card" style={{ marginBottom: '2rem', padding: '1.5rem', border: '1px solid var(--border-bronze-subtle)' }}>
             <h3 className="headline-sm" style={{ marginBottom: '1rem' }}>Upload & Add New Photo</h3>
             <form onSubmit={handleAddPhoto} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '1rem' }}>
+              <div className="admin-form-grid-3">
                 <div>
                   <label className="admin-label">Photo Title</label>
                   <input
@@ -598,7 +603,7 @@ function GalleryManager({ logAuditAction }) {
           <div className="upload-section-card" style={{ marginBottom: '2rem', padding: '1.5rem', border: '1px solid var(--border-bronze-subtle)' }}>
             <h3 className="headline-sm" style={{ marginBottom: '1rem' }}>Add New Video Entry</h3>
             <form onSubmit={handleAddVideo} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '1rem' }}>
+              <div className="admin-form-grid-3">
                 <div>
                   <label className="admin-label">Video Title</label>
                   <input
@@ -632,7 +637,7 @@ function GalleryManager({ logAuditAction }) {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="admin-form-grid-2">
                 <div>
                   <label className="admin-label">Video Source URL / Asset Path</label>
                   <input
@@ -995,11 +1000,36 @@ function BlogManager({ logAuditAction }) {
 }
 
 function ManagerShell({ onLogout, onChangePassword, auditLogs, logAuditAction }) {
-  const [active, setActive] = useState('Blog & News');
+  const [active, setActive] = useState('Past Recipients');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <div className="admin-shell">
-      <aside className="admin-sidebar">
+      {/* Mobile Top Bar */}
+      <div className="admin-mobile-bar">
+        <div className="admin-mobile-bar-brand">
+          <span className="admin-brand-mark">B</span>
+          <span>BOEA Admin</span>
+        </div>
+        <button
+          type="button"
+          className="admin-menu-toggle-btn"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle Navigation Menu"
+        >
+          {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+        </button>
+      </div>
+
+      {/* Drawer Overlay Backdrop on Mobile */}
+      {mobileMenuOpen && (
+        <div
+          className="admin-drawer-backdrop"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
+      <aside className={`admin-sidebar ${mobileMenuOpen ? 'open' : ''}`}>
         <div className="admin-brand">
           <span className="admin-brand-mark">B</span>
           <span>BOEA Admin</span>
@@ -1012,7 +1042,10 @@ function ManagerShell({ onLogout, onChangePassword, auditLogs, logAuditAction })
                 key={item.label}
                 type="button"
                 className={`admin-nav-item ${active === item.label ? 'active' : ''}`}
-                onClick={() => setActive(item.label)}
+                onClick={() => {
+                  setActive(item.label);
+                  setMobileMenuOpen(false);
+                }}
               >
                 <Icon size={18} />
                 {item.label}
@@ -1020,7 +1053,14 @@ function ManagerShell({ onLogout, onChangePassword, auditLogs, logAuditAction })
             );
           })}
         </nav>
-        <button type="button" onClick={onLogout} className="admin-nav-item admin-logout">
+        <button
+          type="button"
+          onClick={() => {
+            setMobileMenuOpen(false);
+            onLogout();
+          }}
+          className="admin-nav-item admin-logout"
+        >
           <LogOut size={18} />
           Sign Out
         </button>
@@ -1031,7 +1071,7 @@ function ManagerShell({ onLogout, onChangePassword, auditLogs, logAuditAction })
           <div>
             <h1 className="headline-md" style={{ margin: 0 }}>{active}</h1>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
             <span className="label-caps" style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', padding: '0.3rem 0.75rem', borderRadius: 'var(--radius-full)', fontWeight: 600, fontSize: '11px', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
               <UserCheck size={14} /> Authenticated Admin Session
             </span>
@@ -1046,7 +1086,9 @@ function ManagerShell({ onLogout, onChangePassword, auditLogs, logAuditAction })
           </div>
         </header>
 
-        {active === 'Blog & News' ? (
+        {active === 'Past Recipients' ? (
+          <PastRecipientsManager logAuditAction={logAuditAction} />
+        ) : active === 'Blog & News' ? (
           <BlogManager logAuditAction={logAuditAction} />
         ) : active === 'Sponsors' ? (
           <SponsorsManager logAuditAction={logAuditAction} />
@@ -1062,7 +1104,7 @@ function ManagerShell({ onLogout, onChangePassword, auditLogs, logAuditAction })
             <div className="admin-placeholder">
               <LayoutDashboard size={32} className="admin-placeholder-icon" />
               <p className="body-md text-muted">
-                Admin control for {active.toLowerCase()} management is active. Use the sidebar to switch between Gallery, Sponsors, and Security settings.
+                Admin control for {active.toLowerCase()} management is active. Use the sidebar to switch between Past Recipients, Gallery, Sponsors, and Security settings.
               </p>
             </div>
           </div>

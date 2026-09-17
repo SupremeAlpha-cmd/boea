@@ -24,7 +24,7 @@ export const PAST_RECIPIENTS_DATA = [
     "year": "Historic Laureate",
     "edition": "BOEA Laureate",
     "citation": "Recognized at the Best of Edo Award for outstanding leadership, distinction, and impact in Edo State and beyond.",
-    "image": null
+    "image": "/images/loretta_odware.jpg"
   },
   {
     "id": "laureate-4",
@@ -60,7 +60,7 @@ export const PAST_RECIPIENTS_DATA = [
     "year": "Historic Laureate",
     "edition": "BOEA Laureate",
     "citation": "Recognized at the Best of Edo Award for outstanding leadership, distinction, and impact in Edo State and beyond.",
-    "image": null
+    "image": "/images/owen_omogiafo.jpg"
   },
   {
     "id": "laureate-8",
@@ -69,7 +69,7 @@ export const PAST_RECIPIENTS_DATA = [
     "year": "Historic Laureate",
     "edition": "BOEA Laureate",
     "citation": "Recognized at the Best of Edo Award for outstanding leadership, distinction, and impact in Edo State and beyond.",
-    "image": "/assets/Dr. Noah Inu MOmodu.jpeg"
+    "image": "/images/noah_momodu.jpg"
   },
   {
     "id": "laureate-9",
@@ -321,7 +321,7 @@ export const PAST_RECIPIENTS_DATA = [
     "year": "Historic Laureate",
     "edition": "BOEA Laureate",
     "citation": "Recognized at the Best of Edo Award for outstanding leadership, distinction, and impact in Edo State and beyond.",
-    "image": null
+    "image": "/images/benson_idahosa.jpg"
   },
   {
     "id": "laureate-37",
@@ -357,7 +357,7 @@ export const PAST_RECIPIENTS_DATA = [
     "year": "Historic Laureate",
     "edition": "BOEA Laureate",
     "citation": "Recognized at the Best of Edo Award for outstanding leadership, distinction, and impact in Edo State and beyond.",
-    "image": "/assets/Drt. Kazeem Bello-Osagie.jpeg"
+    "image": "/images/kazeem_bello.jpg"
   },
   {
     "id": "laureate-41",
@@ -375,7 +375,7 @@ export const PAST_RECIPIENTS_DATA = [
     "year": "Historic Laureate",
     "edition": "BOEA Laureate",
     "citation": "Recognized at the Best of Edo Award for outstanding leadership, distinction, and impact in Edo State and beyond.",
-    "image": "/assets/dr_ehizojie.jpeg"
+    "image": "/images/ehizojie.jpg"
   },
   {
     "id": "laureate-43",

@@ -1,26 +1,34 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Award, Filter, RefreshCw, Trophy, Users, Globe } from 'lucide-react';
 import PageHero from '../components/PageHero';
 import NominateCta from '../components/NominateCta';
 import { RECIPIENTS } from '../data/site';
-import { PAST_RECIPIENTS_DATA } from '../data/content';
+import { getStoredRecipients, subscribeToRecipients } from '../data/recipientsData';
 import '../styles/pages.css';
 import './PastRecipients.css';
 
 export default function PastRecipients() {
+  const [recipients, setRecipients] = useState(() => getStoredRecipients());
   const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    return subscribeToRecipients((updated) => {
+      setRecipients(updated);
+    });
+  }, []);
 
   // Filter logic
   const filteredRecipients = useMemo(() => {
-    return PAST_RECIPIENTS_DATA.filter((item) => {
+    return recipients.filter((item) => {
       return (
         searchQuery.trim() === '' ||
         item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.citation.toLowerCase().includes(searchQuery.toLowerCase())
+        (item.citation && item.citation.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (item.category && item.category.toLowerCase().includes(searchQuery.toLowerCase()))
       );
     });
-  }, [searchQuery]);
+  }, [recipients, searchQuery]);
 
   const resetFilters = () => {
     setSearchQuery('');
@@ -50,7 +58,7 @@ export default function PastRecipients() {
           <div className="recipients-stats-grid">
             <div className="recipients-stat-card">
               <Trophy size={28} className="stat-icon" />
-              <div className="stat-number">{PAST_RECIPIENTS_DATA.length}+</div>
+              <div className="stat-number">{recipients.length}+</div>
               <div className="stat-label">Distinguished Laureates</div>
             </div>
             <div className="recipients-stat-card">
