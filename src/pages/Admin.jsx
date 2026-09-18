@@ -26,16 +26,19 @@ import {
   PlusCircle,
   Trophy,
   Menu,
-  X
+  X,
+  Radio
 } from 'lucide-react';
 import { INITIAL_PHOTOS, INITIAL_VIDEOS } from './Gallery';
 import { getStoredBlogPosts, saveBlogPosts } from '../data/blogData';
 import { useAdminAuth } from '../hooks/useAdminAuth';
 import PastRecipientsManager from '../components/PastRecipientsManager';
+import LiveStreamManager from '../components/LiveStreamManager';
 import './Admin.css';
 
 const NAV_ITEMS = [
   { icon: LayoutDashboard, label: 'Dashboard' },
+  { icon: Radio, label: 'Live Stream PPV' },
   { icon: Trophy, label: 'Past Recipients' },
   { icon: Newspaper, label: 'Blog & News' },
   { icon: Award, label: 'Categories' },
@@ -1086,7 +1089,9 @@ function ManagerShell({ onLogout, onChangePassword, auditLogs, logAuditAction })
           </div>
         </header>
 
-        {active === 'Past Recipients' ? (
+        {active === 'Live Stream PPV' ? (
+          <LiveStreamManager logAuditAction={logAuditAction} />
+        ) : active === 'Past Recipients' ? (
           <PastRecipientsManager logAuditAction={logAuditAction} />
         ) : active === 'Blog & News' ? (
           <BlogManager logAuditAction={logAuditAction} />

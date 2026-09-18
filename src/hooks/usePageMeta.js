@@ -29,6 +29,7 @@ const PAGE_TITLES = {
   '/faq': 'Frequently Asked Questions — Best of Edo Award',
   '/contact': 'Contact & Inquiries — Best of Edo Award',
   '/blog': 'Blog & Heritage Journal — The Prestigious Best of Edo Award',
+  '/livestream': 'Official Gala Night Live Stream PPV — The Prestigious Best of Edo Award',
   '/admin': 'Admin Portal — The Prestigious Best of Edo Award'
 };
 

@@ -1,5 +1,5 @@
 import { NavLink, Link, useLocation } from 'react-router-dom';
-import { Menu, X, Sun, Moon, ChevronDown, ChevronRight } from 'lucide-react';
+import { Menu, X, Sun, Moon, ChevronDown, ChevronRight, Radio } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import './Layout.css';
 
@@ -99,6 +99,20 @@ export function ThemeToggle() {
   );
 }
 
+export function LiveStreamToggle() {
+  return (
+    <Link
+      to="/livestream"
+      className="livestream-toggle"
+      aria-label="Watch Gala Night Live Stream"
+      title="Watch Gala Night Live Stream"
+    >
+      <Radio size={18} />
+      <span className="live-indicator-dot"></span>
+    </Link>
+  );
+}
+
 function DropdownNav({ group, pathname, onNavigate, expanded, onToggle }) {
   const active = isGroupActive(group, pathname);
 
@@ -184,9 +198,18 @@ export function Navbar() {
               </NavLink>
             )
           )}
+          <div className="mobile-drawer-actions">
+            <Link to="/livestream" className="btn nav-livestream-btn mobile-drawer-btn" onClick={() => setOpen(false)}>
+              <Radio size={14} className="live-icon-pulse" /> Live Stream
+            </Link>
+            <Link to="/nomination" className="btn btn-primary nav-nominate mobile-drawer-btn" onClick={() => setOpen(false)}>
+              Nominate a Laureate
+            </Link>
+          </div>
         </div>
 
         <div className="nav-actions">
+          <LiveStreamToggle />
           <ThemeToggle />
           <Link to="/nomination" className="btn btn-primary nav-nominate">Nominate a Laureate</Link>
           <button
@@ -236,6 +259,7 @@ export function Footer() {
             <Link to="/nomination">Nomination & Selection</Link>
             <Link to="/edition-2026">9th Edition 2026</Link>
             <Link to="/recipients">Past Recipients</Link>
+            <Link to="/livestream">Live Stream PPV 🔴</Link>
           </div>
         </div>
 
