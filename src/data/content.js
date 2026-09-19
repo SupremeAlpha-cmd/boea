@@ -128,7 +128,7 @@ export const GALLERY_ITEMS = [
   {
     id: 1,
     span: 'solo',
-    tag: 'Red Carpet',
+    tag: 'Black Carpet',
     title: 'BOEA Official Photo Wall',
     meta: 'Best of Edo Awards Media Coverage',
     image: '/assets/boea_photo_wall.jpeg'

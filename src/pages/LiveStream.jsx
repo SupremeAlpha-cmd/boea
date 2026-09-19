@@ -326,7 +326,7 @@ export default function LiveStream() {
               <div className="timeline-item">
                 <div className="timeline-time">5:00 PM WAT</div>
                 <div>
-                  <div className="timeline-title">Red Carpet Arrival & Celebrity Spotlights</div>
+                  <div className="timeline-title">Black Carpet Arrival & Celebrity Spotlights</div>
                   <div className="timeline-desc">Live arrivals of royal delegates, nominees, corporate sponsors, and cultural icons.</div>
                 </div>
               </div>
@@ -404,7 +404,7 @@ export default function LiveStream() {
                 <CheckCircle size={18} className="gold-text" /> 1080p High-Definition YouTube Live Stream
               </li>
               <li className="paywall-feature-item">
-                <CheckCircle size={18} className="gold-text" /> Full Red Carpet & Main Award Ceremony Coverage
+                <CheckCircle size={18} className="gold-text" /> Full Black Carpet & Main Award Ceremony Coverage
               </li>
               <li className="paywall-feature-item">
                 <CheckCircle size={18} className="gold-text" /> Instant Replay Access & On-Demand Highlights

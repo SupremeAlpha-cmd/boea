@@ -275,7 +275,7 @@ export default function Home() {
           '/assets/boea_6th_edition_poster.jpeg',
           '/assets/coral_beads.jpeg'
         ]}
-        alt="Best of Edo Award gala red carpet"
+        alt="Best of Edo Award gala black carpet"
         cta="See Past Recipients"
         ctaTo="/recipients"
       />

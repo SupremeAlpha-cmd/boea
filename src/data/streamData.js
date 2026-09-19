@@ -1,13 +1,13 @@
 // Default Live Stream Configuration for Best of Edo Award (BOEA)
 const DEFAULT_STREAM_CONFIG = {
   title: '9th Edition Best of Edo Award Gala Night 2026 — Official Live Stream',
-  subtitle: 'Experience the grandeur, red carpet highlights, and royal award presentations live from Benin City, Edo State.',
+  subtitle: 'Experience the grandeur, black carpet highlights, and royal award presentations live from Benin City, Edo State.',
   status: 'upcoming', // 'upcoming' | 'live' | 'ended'
   eventDate: '2026-11-15T18:00:00',
-  youtubeUrl: 'https://youtu.be/gnFr2I8xIhA', // Current featured video
+  youtubeUrl: 'https://youtu.be/lHaKtEVysk8?si=UuJtm_lDqVXXt_qy', // Current featured video
   foreignPriceUSD: 5,
   nigeriaFreeAccess: true,
-  announcement: '🔴 Red Carpet Coverage starts at 5:00 PM WAT. Main Gala Award Ceremony commences at 6:30 PM WAT live on YouTube.',
+  announcement: '🔴 Black Carpet Coverage starts at 5:00 PM WAT. Main Gala Award Ceremony commences at 6:30 PM WAT live on YouTube.',
   bannerImage: '/assets/boea_gala_night_hall.jpeg'
 };
 
@@ -30,7 +30,7 @@ export function extractYouTubeId(urlOrId) {
 }
 
 export function formatYouTubeEmbedUrl(urlOrId) {
-  if (!urlOrId) return 'https://www.youtube-nocookie.com/embed/gnFr2I8xIhA?autoplay=1&modestbranding=1&rel=0';
+  if (!urlOrId) return 'https://www.youtube-nocookie.com/embed/lHaKtEVysk8?autoplay=1&modestbranding=1&rel=0';
   const trimmed = urlOrId.trim();
   const videoId = extractYouTubeId(trimmed);
   if (videoId && videoId.length === 11) {
@@ -42,7 +42,7 @@ export function formatYouTubeEmbedUrl(urlOrId) {
   if (trimmed.includes('embed/')) {
     return trimmed;
   }
-  return 'https://www.youtube-nocookie.com/embed/gnFr2I8xIhA?autoplay=1&modestbranding=1&rel=0';
+  return 'https://www.youtube-nocookie.com/embed/lHaKtEVysk8?autoplay=1&modestbranding=1&rel=0';
 }
 
 export function getStoredStreamConfig() {
@@ -54,7 +54,9 @@ export function getStoredStreamConfig() {
       // Clean up legacy test data or upgrade default channel link to the specific featured video
       if (
         parsed.youtubeUrl &&
-        (parsed.youtubeUrl.includes('dQw4w9WgXcQ') || parsed.youtubeUrl.includes('@BestofEdoAwards'))
+        (parsed.youtubeUrl.includes('dQw4w9WgXcQ') ||
+          parsed.youtubeUrl.includes('@BestofEdoAwards') ||
+          parsed.youtubeUrl.includes('gnFr2I8xIhA'))
       ) {
         parsed.youtubeUrl = DEFAULT_STREAM_CONFIG.youtubeUrl;
         localStorage.setItem('boea_stream_config', JSON.stringify({ ...DEFAULT_STREAM_CONFIG, ...parsed }));

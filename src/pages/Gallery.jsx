@@ -35,8 +35,8 @@ export const INITIAL_PHOTOS = [
   {
     "id": 4,
     "span": "wide",
-    "tag": "Red Carpet",
-    "title": "BOEA Official Red Carpet Backdrop",
+    "tag": "Black Carpet",
+    "title": "BOEA Official Black Carpet Backdrop",
     "meta": "Best of Edo Awards Ceremonial Wall",
     "image": "/assets/boea_red_carpet_backdrop.jpeg"
   },
@@ -83,7 +83,7 @@ export const INITIAL_PHOTOS = [
   {
     "id": 10,
     "span": "normal",
-    "tag": "Red Carpet",
+    "tag": "Black Carpet",
     "title": "Best of Edo Award Gala Moment #2",
     "meta": "Official BOEA Ceremonial Showcase",
     "image": "/images/boea_gallery_photo_02.jpeg"
@@ -131,7 +131,7 @@ export const INITIAL_PHOTOS = [
   {
     "id": 16,
     "span": "normal",
-    "tag": "Red Carpet",
+    "tag": "Black Carpet",
     "title": "Best of Edo Award Gala Moment #8",
     "meta": "Official BOEA Ceremonial Showcase",
     "image": "/images/boea_gallery_photo_08.jpeg"
@@ -179,7 +179,7 @@ export const INITIAL_PHOTOS = [
   {
     "id": 22,
     "span": "normal",
-    "tag": "Red Carpet",
+    "tag": "Black Carpet",
     "title": "Best of Edo Award Gala Moment #14",
     "meta": "Official BOEA Ceremonial Showcase",
     "image": "/images/boea_gallery_photo_14.jpeg"
@@ -227,7 +227,7 @@ export const INITIAL_PHOTOS = [
   {
     "id": 28,
     "span": "normal",
-    "tag": "Red Carpet",
+    "tag": "Black Carpet",
     "title": "Best of Edo Award Gala Moment #20",
     "meta": "Official BOEA Ceremonial Showcase",
     "image": "/images/boea_gallery_photo_20.jpeg"
@@ -275,7 +275,7 @@ export const INITIAL_PHOTOS = [
   {
     "id": 34,
     "span": "wide",
-    "tag": "Red Carpet",
+    "tag": "Black Carpet",
     "title": "Best of Edo Award Gala Moment #26",
     "meta": "Official BOEA Ceremonial Showcase",
     "image": "/images/boea_gallery_photo_26.jpeg"
@@ -323,7 +323,7 @@ export const INITIAL_PHOTOS = [
   {
     "id": 40,
     "span": "normal",
-    "tag": "Red Carpet",
+    "tag": "Black Carpet",
     "title": "Best of Edo Award Gala Moment #32",
     "meta": "Official BOEA Ceremonial Showcase",
     "image": "/images/boea_gallery_photo_32.jpeg"
@@ -371,7 +371,7 @@ export const INITIAL_PHOTOS = [
   {
     "id": 46,
     "span": "normal",
-    "tag": "Red Carpet",
+    "tag": "Black Carpet",
     "title": "Best of Edo Award Gala Moment #38",
     "meta": "Official BOEA Ceremonial Showcase",
     "image": "/images/boea_gallery_photo_38.jpeg"
@@ -419,7 +419,7 @@ export const INITIAL_PHOTOS = [
   {
     "id": 52,
     "span": "normal",
-    "tag": "Red Carpet",
+    "tag": "Black Carpet",
     "title": "Best of Edo Award Gala Moment #44",
     "meta": "Official BOEA Ceremonial Showcase",
     "image": "/images/boea_gallery_photo_44.jpeg"
@@ -467,7 +467,7 @@ export const INITIAL_PHOTOS = [
   {
     "id": 58,
     "span": "normal",
-    "tag": "Red Carpet",
+    "tag": "Black Carpet",
     "title": "Best of Edo Award Gala Moment #50",
     "meta": "Official BOEA Ceremonial Showcase",
     "image": "/images/boea_gallery_photo_50.jpeg"
@@ -515,7 +515,7 @@ export const INITIAL_PHOTOS = [
   {
     "id": 64,
     "span": "wide",
-    "tag": "Red Carpet",
+    "tag": "Black Carpet",
     "title": "Best of Edo Award Gala Moment #56",
     "meta": "Official BOEA Ceremonial Showcase",
     "image": "/images/boea_gallery_photo_56.jpeg"
@@ -563,7 +563,7 @@ export const INITIAL_PHOTOS = [
   {
     "id": 70,
     "span": "normal",
-    "tag": "Red Carpet",
+    "tag": "Black Carpet",
     "title": "Best of Edo Award Gala Moment #62",
     "meta": "Official BOEA Ceremonial Showcase",
     "image": "/images/boea_gallery_photo_62.jpeg"
@@ -632,10 +632,10 @@ export const INITIAL_VIDEOS = [
   },
   {
     "id": "vid-4",
-    "title": "BOEA Award Night — Red Carpet Coverage",
-    "meta": "Best of Edo Award — Red Carpet",
+    "title": "BOEA Award Night — Black Carpet Coverage",
+    "meta": "Best of Edo Award — Black Carpet",
     "duration": "0:59",
-    "tag": "Red Carpet",
+    "tag": "Black Carpet",
     "thumb": "/assets/boea_6th_edition_poster.jpeg",
     "src": "/assets/boea_video_4.mp4"
   },

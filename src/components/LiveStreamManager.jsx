@@ -189,7 +189,7 @@ export default function LiveStreamManager({ logAuditAction }) {
               <input
                 type="text"
                 className="admin-input"
-                placeholder="e.g. Red Carpet starts at 5:00 PM..."
+                placeholder="e.g. Black Carpet starts at 5:00 PM..."
                 value={config.announcement}
                 onChange={(e) => setConfig({ ...config, announcement: e.target.value })}
               />

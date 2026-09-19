@@ -533,7 +533,7 @@ function GalleryManager({ logAuditAction }) {
                   <label className="admin-label">Category Tag</label>
                   <select className="admin-select" value={photoTag} onChange={(e) => setPhotoTag(e.target.value)}>
                     <option value="Official Gala">Official Gala</option>
-                    <option value="Red Carpet">Red Carpet</option>
+                    <option value="Black Carpet">Black Carpet</option>
                     <option value="Cultural Heritage">Cultural Heritage</option>
                     <option value="Award Presentation">Award Presentation</option>
                     <option value="Behind The Scenes">Behind The Scenes</option>
@@ -623,7 +623,7 @@ function GalleryManager({ logAuditAction }) {
                   <select className="admin-select" value={videoTag} onChange={(e) => setVideoTag(e.target.value)}>
                     <option value="Gala Night">Gala Night</option>
                     <option value="Ceremony">Ceremony</option>
-                    <option value="Red Carpet">Red Carpet</option>
+                    <option value="Black Carpet">Black Carpet</option>
                     <option value="Entertainment">Entertainment</option>
                     <option value="Highlights">Highlights</option>
                   </select>
