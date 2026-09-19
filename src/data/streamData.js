@@ -4,7 +4,7 @@ const DEFAULT_STREAM_CONFIG = {
   subtitle: 'Experience the grandeur, red carpet highlights, and royal award presentations live from Benin City, Edo State.',
   status: 'upcoming', // 'upcoming' | 'live' | 'ended'
   eventDate: '2026-11-15T18:00:00',
-  youtubeUrl: 'https://www.youtube.com/@BestofEdoAwards', // Official BOEA YouTube Channel
+  youtubeUrl: 'https://youtu.be/gnFr2I8xIhA', // Current featured video
   foreignPriceUSD: 5,
   nigeriaFreeAccess: true,
   announcement: '🔴 Red Carpet Coverage starts at 5:00 PM WAT. Main Gala Award Ceremony commences at 6:30 PM WAT live on YouTube.',
@@ -30,7 +30,7 @@ export function extractYouTubeId(urlOrId) {
 }
 
 export function formatYouTubeEmbedUrl(urlOrId) {
-  if (!urlOrId) return 'https://www.youtube-nocookie.com/embed/live_stream?channel=BestofEdoAwards';
+  if (!urlOrId) return 'https://www.youtube-nocookie.com/embed/gnFr2I8xIhA?autoplay=1&modestbranding=1&rel=0';
   const trimmed = urlOrId.trim();
   const videoId = extractYouTubeId(trimmed);
   if (videoId && videoId.length === 11) {
@@ -42,7 +42,7 @@ export function formatYouTubeEmbedUrl(urlOrId) {
   if (trimmed.includes('embed/')) {
     return trimmed;
   }
-  return 'https://www.youtube-nocookie.com/embed/live_stream?channel=BestofEdoAwards';
+  return 'https://www.youtube-nocookie.com/embed/gnFr2I8xIhA?autoplay=1&modestbranding=1&rel=0';
 }
 
 export function getStoredStreamConfig() {
@@ -51,9 +51,13 @@ export function getStoredStreamConfig() {
   if (saved) {
     try {
       const parsed = JSON.parse(saved);
-      // Clean up legacy test data if found
-      if (parsed.youtubeUrl && parsed.youtubeUrl.includes('dQw4w9WgXcQ')) {
+      // Clean up legacy test data or upgrade default channel link to the specific featured video
+      if (
+        parsed.youtubeUrl &&
+        (parsed.youtubeUrl.includes('dQw4w9WgXcQ') || parsed.youtubeUrl.includes('@BestofEdoAwards'))
+      ) {
         parsed.youtubeUrl = DEFAULT_STREAM_CONFIG.youtubeUrl;
+        localStorage.setItem('boea_stream_config', JSON.stringify({ ...DEFAULT_STREAM_CONFIG, ...parsed }));
       }
       return { ...DEFAULT_STREAM_CONFIG, ...parsed };
     } catch (e) {

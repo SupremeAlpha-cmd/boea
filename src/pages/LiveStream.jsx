@@ -307,13 +307,13 @@ export default function LiveStream() {
             </div>
 
             <a
-              href="https://www.youtube.com/@BestofEdoAwards"
+              href={rawVideoId ? `https://www.youtube.com/watch?v=${rawVideoId}` : 'https://www.youtube.com/@BestofEdoAwards'}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-outline"
               style={{ fontSize: '12px', padding: '0.4rem 0.8rem', gap: '0.4rem' }}
             >
-              <ExternalLink size={14} /> Open Channel on YouTube
+              <ExternalLink size={14} /> Watch on YouTube
             </a>
           </div>
 
