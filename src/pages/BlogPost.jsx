@@ -14,6 +14,7 @@ import NominateCta from '../components/NominateCta';
 import { getStoredBlogPosts } from '../data/blogData';
 import '../styles/pages.css';
 import './BlogPost.css';
+import InPageAdvert from '../components/InPageAdvert';
 
 export default function BlogPost() {
   const { id } = useParams();
@@ -153,20 +154,24 @@ export default function BlogPost() {
             )}
 
             <div className="blog-post-prose">
-              {Array.isArray(post.content) ? (
-                post.content.map((paragraph, idx) => (
-                  <p key={idx} className="body-lg blog-paragraph">
-                    {paragraph}
-                  </p>
-                ))
-              ) : (
-                typeof post.content === 'string' &&
-                post.content.split('\n\n').map((paragraph, idx) => (
-                  <p key={idx} className="body-lg blog-paragraph">
-                    {paragraph}
-                  </p>
-                ))
-              )}
+              {(() => {
+                const paras = Array.isArray(post.content)
+                  ? post.content
+                  : typeof post.content === 'string'
+                    ? post.content.split('\n\n')
+                    : [];
+                const mid = Math.ceil(paras.length / 2);
+                return paras.map((paragraph, idx) => (
+                  <div key={idx}>
+                    <p className="body-lg blog-paragraph">{paragraph}</p>
+                    {idx === mid - 1 && paras.length > 2 && (
+                      <div className="blog-mid-ad">
+                        <InPageAdvert />
+                      </div>
+                    )}
+                  </div>
+                ));
+              })()}
             </div>
 
             {/* Share Article Section */}
