@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Outlet, useLocation } from 'react-router-dom';
+import { useAnalyticsTracking } from './hooks/useAnalyticsTracking';
 import { useEffect, lazy, Suspense } from 'react';
 import { Navbar, Footer } from './components/Layout';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -77,9 +78,15 @@ function Layout() {
   );
 }
 
+function AnalyticsTracker() {
+  useAnalyticsTracking();
+  return null;
+}
+
 export default function App() {
   return (
     <BrowserRouter>
+      <AnalyticsTracker />
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
