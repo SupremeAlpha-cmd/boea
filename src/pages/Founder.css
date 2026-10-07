@@ -8,7 +8,7 @@
 
 @media (min-width: 1024px) {
   .founder-grid {
-    grid-template-columns: 420px 1fr;
+    grid-template-columns: 520px 1fr;
     gap: 4.5rem;
   }
 }
@@ -21,9 +21,9 @@
 }
 
 .founder-portrait-ring {
-  width: 380px;
+  width: 480px;
   max-width: 100%;
-  height: 450px;
+  height: 570px;
   border-radius: 28px;
   display: flex;
   align-items: center;

@@ -998,29 +998,35 @@ export const FAQS = [
 export const FOUNDER = {
   eyebrow: 'CEO & Convener',
   name: 'Sir Paul Ofoni',
-  title: 'Sir Paul Ofoni — CEO / Convener, Best of Edo Award',
+  title: 'Sir Paul Ofoni \u2014 CEO / Convener, Best of Edo Award',
   role: 'CEO / Convener, Best of Edo Award',
   intro:
-    'Sir Paul Ofoni is the CEO and Convener of the Prestigious Best of Edo Award, an annual platform dedicated to identifying, celebrating and documenting exceptional individuals and organisations whose achievements and contributions create meaningful impact in Edo State, Nigeria and beyond.',
+    'Sir Paul Ofoni is a Nigerian entrepreneur, media and events consultant, leadership advocate, public speaker, author and social-impact strategist, and the CEO/Convener of the Best of Edo Award.',
   blocks: [
     {
-      heading: 'Building a Legacy of Excellence',
+      heading: 'About Sir Paul',
       paragraphs: [
-        'His vision for the Award goes beyond an annual ceremony. It is to build a lasting institution that promotes excellence, leadership, innovation, cultural heritage, service and positive social impact.',
-        'Inspired by the rich history and enduring values of the Edo people, Sir Paul believes that today’s achievements should become tomorrow’s inspiration. Through the Best of Edo Award, deserving individuals are given visibility, their stories are documented, and their contributions are preserved as part of Edo’s contemporary legacy.',
-        'Under his leadership, the platform has evolved as a space for recognition, networking, partnership, cultural promotion and humanitarian engagement, including the Best of Edo Humanitarian Empowerment Support Scheme.'
+        'Sir Paul Ofoni is a Nigerian entrepreneur, media and events consultant, leadership advocate, public speaker, author and social-impact strategist, and the CEO/Convener of the Best of Edo Award. He is also the CEO/President of Walkfront African Network Limited, through which he is involved in leadership development, youth empowerment, entrepreneurship, education, media, events, strategic communications and social-impact initiatives. His professional mission is centred on empowering young people through leadership, innovation, entrepreneurship, education and social impact.',
+        'As CEO/Convener of the Best of Edo Award, Sir Paul provides the strategic vision and leadership behind a platform dedicated to identifying, celebrating and documenting individuals whose excellence, leadership, service, innovation and contributions are making meaningful impact in Edo State, Nigeria and beyond. Under his leadership, the award brings together individuals and stakeholders across government, business, academia, traditional institutions, professional bodies, security, civil society and the international community. The 9th Edition of the Best of Edo Award 2026, themed \u201CExcellence & Legacy,\u201D continues this vision, with the enduring brand philosophy \u201CEdo to the World.\u201D'
       ]
     },
     {
-      heading: 'His Vision',
+      heading: 'Beyond the Award',
       paragraphs: [
-        'To build a globally respected recognition platform that connects Edo heritage with contemporary excellence, celebrates those making a difference, inspires the next generation and preserves the stories of achievers for generations to come.'
+        'Beyond the Best of Edo Award, Sir Paul is committed to building platforms and institutions that create opportunities for people and communities. His professional engagements include The Future Conference Edo, The Young CEO, Ideal Institute of Business, Leadership, Human Resources, Entrepreneurship Development and Artificial Intelligence, as well as media, leadership, entrepreneurship and social-impact initiatives. He is an author and public speaker with interests in leadership, resilience, values, personal development, entrepreneurship and purposeful living, with works including Resilient Dream(s) and Values for Living Well.',
+        'Sir Paul Ofoni also serves in professional and institutional capacities that extend his leadership and development work beyond the Best of Edo Award. He is a representative of Cornerstone Christian University, Cumming, Georgia, USA, and Mainseed Christian University, USA, reflecting his interest in connecting education, leadership development and professional opportunities across borders. Through these engagements and his broader professional network, he continues to promote collaboration, knowledge, leadership and human-capital development.'
+      ]
+    },
+    {
+      heading: 'His Philosophy',
+      paragraphs: [
+        'For Sir Paul Ofoni, leadership is fundamentally about service, opportunity and legacy. His work is driven by the belief that excellence should be recognised, meaningful contributions should be documented, young people should be empowered, and sustainable platforms should be built to outlive their founders. Through the Best of Edo Award and his wider professional engagements, he continues to champion a culture in which excellence is celebrated, service is honoured, innovation is encouraged and positive impact becomes a lasting legacy.'
       ]
     }
   ],
   quote: 'Our heritage is our foundation. Excellence is our responsibility. Impact is our legacy.',
   projectsLink: {
-    label: 'Click to See More of Sir Paul’s Projects',
-    note: 'The list of Sir Paul’s projects is being compiled and will be published soon.'
+    label: 'Click to See More of Sir Paul\u2019s Projects',
+    note: 'The list of Sir Paul\u2019s projects is being compiled and will be published soon.'
   }
-};
+};;
