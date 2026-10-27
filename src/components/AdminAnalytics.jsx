@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
-import { BarChart3, Users, Eye, Globe, Link2, CalendarDays, AlertCircle } from 'lucide-react';
+import { BarChart3, Users, Eye, Globe, Link2, CalendarDays, AlertCircle, CreditCard, DollarSign } from 'lucide-react';
 import {
   isAnalyticsEnabled,
   getRecentPageViews,
   computeStats,
+  getRecentPPVPurchases,
+  computePPVStats,
 } from '../lib/analytics';
 import './AdminAnalytics.css';
 
@@ -13,6 +15,7 @@ import './AdminAnalytics.css';
  */
 export default function AdminAnalytics() {
   const [stats, setStats] = useState(null);
+  const [ppvStats, setPpvStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -20,9 +23,18 @@ export default function AdminAnalytics() {
       setLoading(false);
       return;
     }
-    getRecentPageViews()
-      .then((views) => setStats(computeStats(views)))
-      .catch(() => setStats(null))
+    Promise.all([
+      getRecentPageViews().then((views) => computeStats(views)),
+      getRecentPPVPurchases().then((purchases) => computePPVStats(purchases))
+    ])
+      .then(([viewStats, salesStats]) => {
+        setStats(viewStats);
+        setPpvStats(salesStats);
+      })
+      .catch(() => {
+        setStats(null);
+        setPpvStats(null);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -70,6 +82,20 @@ export default function AdminAnalytics() {
           <div>
             <p className="analytics-kpi-value">{stats.uniqueVisitors.toLocaleString()}</p>
             <p className="analytics-kpi-label">Unique Visitors</p>
+          </div>
+        </div>
+        <div className="analytics-kpi">
+          <CreditCard size={18} />
+          <div>
+            <p className="analytics-kpi-value">{ppvStats ? ppvStats.totalTickets.toLocaleString() : '0'}</p>
+            <p className="analytics-kpi-label">PPV Tickets Sold</p>
+          </div>
+        </div>
+        <div className="analytics-kpi">
+          <DollarSign size={18} />
+          <div>
+            <p className="analytics-kpi-value">${ppvStats ? ppvStats.totalRevenueUSD.toLocaleString() : '0'} USD</p>
+            <p className="analytics-kpi-label">PPV Live Revenue</p>
           </div>
         </div>
       </div>

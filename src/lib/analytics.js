@@ -124,3 +124,80 @@ export function computeStats(views) {
       .map(([date, views]) => ({ date, views })),
   };
 }
+
+// ---------------------------------------------------------------------------
+// PPV Purchase Tracking — Logged to Firebase Realtime Database
+// ---------------------------------------------------------------------------
+
+/**
+ * Log a PPV Purchase event to Firebase Realtime Database.
+ * Fire-and-forget — never blocks or fails client flow.
+ */
+export function trackPPVPurchase(purchase) {
+  try {
+    const database = getDb();
+    if (!database) return;
+
+    push(ref(database, 'ppv_purchases'), {
+      reference: purchase.reference || null,
+      email: purchase.email || 'anonymous',
+      fullName: purchase.fullName || 'Patron',
+      amount: Number(purchase.amount) || 5,
+      currency: (purchase.currency || 'USD').toUpperCase(),
+      gateway: purchase.gateway || 'paystack',
+      ts: Date.now(),
+      date: new Date().toISOString()
+    }).catch(() => {});
+  } catch {
+    // Non-blocking
+  }
+}
+
+/**
+ * Fetch recent PPV purchases from Firebase for Admin Analytics.
+ */
+export async function getRecentPPVPurchases(limit = 1000) {
+  const database = getDb();
+  if (!database) return [];
+  try {
+    const snap = await get(
+      query(ref(database, 'ppv_purchases'), orderByChild('ts'), limitToLast(limit))
+    );
+    const out = [];
+    snap.forEach((child) => {
+      out.push({ id: child.key, ...child.val() });
+    });
+    return out.sort((a, b) => b.ts - a.ts);
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Compute revenue and ticket statistics for PPV purchases.
+ */
+export function computePPVStats(purchases = []) {
+  let totalRevenueUSD = 0;
+  let totalRevenueNGN = 0;
+  const buyerEmails = new Set();
+
+  for (const p of purchases) {
+    if (p.currency === 'USD') {
+      totalRevenueUSD += Number(p.amount) || 0;
+    } else if (p.currency === 'NGN') {
+      totalRevenueNGN += Number(p.amount) || 0;
+    } else {
+      totalRevenueUSD += Number(p.amount) || 0;
+    }
+    if (p.email) buyerEmails.add(p.email.toLowerCase());
+  }
+
+  return {
+    totalTickets: purchases.length,
+    uniqueBuyers: buyerEmails.size,
+    totalRevenueUSD,
+    totalRevenueNGN,
+    recentPurchases: purchases.slice(0, 10)
+  };
+}
+

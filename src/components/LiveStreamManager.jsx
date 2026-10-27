@@ -12,7 +12,8 @@ import {
   Sparkles,
   ExternalLink,
   ShieldCheck,
-  AlertCircle
+  AlertCircle,
+  CreditCard
 } from 'lucide-react';
 import {
   getStoredStreamConfig,
@@ -23,12 +24,14 @@ import {
   savePasskeys,
   generatePasskey,
   extractYouTubeId,
-  formatYouTubeEmbedUrl
+  formatYouTubeEmbedUrl,
+  getStoredTransactions
 } from '../data/streamData';
 
 export default function LiveStreamManager({ logAuditAction }) {
   const [config, setConfig] = useState(getStoredStreamConfig());
   const [passkeys, setPasskeys] = useState(getStoredPasskeys());
+  const [transactions, setTransactions] = useState(getStoredTransactions());
   const [successMsg, setSuccessMsg] = useState('');
   const [copiedCode, setCopiedCode] = useState('');
   // Freshly generated code — shown ONCE, right after creation. Only the
@@ -210,6 +213,34 @@ export default function LiveStreamManager({ logAuditAction }) {
             </div>
           </div>
 
+          <div className="admin-form-grid-2">
+            <div>
+              <label className="admin-label">Paystack Public Key (for PPV Checkout)</label>
+              <input
+                type="text"
+                className="admin-input"
+                placeholder="pk_live_... or pk_test_..."
+                value={config.paystackPublicKey || ''}
+                onChange={(e) => setConfig({ ...config, paystackPublicKey: e.target.value })}
+              />
+              <span style={{ fontSize: '11px', color: 'var(--on-surface-variant)', marginTop: '0.25rem', display: 'block' }}>
+                Found in your Paystack Dashboard &rarr; Settings &rarr; API Keys.
+              </span>
+            </div>
+
+            <div>
+              <label className="admin-label">Checkout Currency</label>
+              <select
+                className="admin-input admin-select"
+                value={config.paystackCurrency || 'USD'}
+                onChange={(e) => setConfig({ ...config, paystackCurrency: e.target.value })}
+              >
+                <option value="USD">USD ($)</option>
+                <option value="NGN">NGN (₦)</option>
+              </select>
+            </div>
+          </div>
+
           {/* YouTube Player Preview */}
           {previewEmbedUrl && (
             <div style={{ marginTop: '1rem', padding: '1rem', background: 'var(--surface-bright)', borderRadius: '8px', border: '1px solid var(--border-bronze-subtle)' }}>
@@ -327,6 +358,70 @@ export default function LiveStreamManager({ logAuditAction }) {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* PPV Transactions Ledger */}
+      <div className="upload-section-card" style={{ marginTop: '2rem', padding: '1.5rem', border: '1px solid var(--border-bronze-subtle)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <CreditCard size={20} className="gold-text" />
+            <h3 className="headline-sm" style={{ margin: 0 }}>PPV Live Stream Transactions</h3>
+          </div>
+          <div style={{ display: 'flex', gap: '1rem', fontSize: '13px' }}>
+            <span><strong>Total Orders:</strong> {transactions.length}</span>
+            <span>
+              <strong>Total Volume:</strong> $
+              {transactions
+                .filter((t) => t.currency === 'USD')
+                .reduce((acc, t) => acc + (Number(t.amount) || 0), 0)
+                .toLocaleString()}{' '}
+              USD
+            </span>
+          </div>
+        </div>
+
+        {transactions.length === 0 ? (
+          <p style={{ fontSize: '13px', color: 'var(--on-surface-variant)' }}>
+            No online PPV ticket purchases recorded yet. Foreign viewer purchases via Paystack will appear here automatically.
+          </p>
+        ) : (
+          <div style={{ display: 'grid', gap: '0.75rem' }}>
+            {transactions.slice(0, 15).map((tx) => (
+              <div
+                key={tx.id}
+                style={{
+                  background: 'var(--surface-bright)',
+                  border: '1px solid var(--border-bronze-subtle)',
+                  borderRadius: '8px',
+                  padding: '0.85rem 1.15rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '0.5rem'
+                }}
+              >
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: '14px', color: '#ffffff' }}>
+                    {tx.fullName} &middot; <span style={{ color: 'var(--on-surface-variant)', fontWeight: 400 }}>{tx.email}</span>
+                  </div>
+                  <div style={{ fontSize: '12px', color: 'var(--on-surface-variant)', marginTop: '0.15rem' }}>
+                    Ref: <code>{tx.reference}</code> &middot; Passkey: <code style={{ color: 'var(--color-gold)' }}>{tx.passCode}</code> &middot; {tx.formattedDate || tx.createdAt}
+                  </div>
+                </div>
+
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontSize: '15px', fontWeight: 800, color: 'var(--color-gold)' }}>
+                    ${tx.amount} {tx.currency}
+                  </div>
+                  <span style={{ fontSize: '11px', background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', padding: '0.15rem 0.45rem', borderRadius: '4px', fontWeight: 700 }}>
+                    Paid ({tx.gateway || 'Paystack'})
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

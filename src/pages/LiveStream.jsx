@@ -23,8 +23,15 @@ import {
   fetchStreamConfig,
   formatYouTubeEmbedUrl,
   verifyPasskey,
-  extractYouTubeId
+  extractYouTubeId,
+  recordPPVPurchase
 } from '../data/streamData';
+import {
+  initializePaystackPayment,
+  initializeServerPaystackPayment,
+  verifyServerPaystackPayment
+} from '../utils/paystack';
+import { trackPPVPurchase } from '../lib/analytics';
 import './LiveStream.css';
 
 // IP Geolocation detector with resilient fallbacks
@@ -70,6 +77,7 @@ export default function LiveStream() {
   const [buyerName, setBuyerName] = useState('');
   const [buyerEmail, setBuyerEmail] = useState('');
   const [isProcessingPay, setIsProcessingPay] = useState(false);
+  const [payError, setPayError] = useState('');
   const [paidPassCode, setPaidPassCode] = useState('');
 
   // Countdown timer state
@@ -96,6 +104,42 @@ export default function LiveStream() {
           setActivePassInfo(parsed);
         } catch (e) {
           // ignore
+        }
+      }
+
+      // Check for return from Paystack redirect checkout
+      const urlParams = new URLSearchParams(window.location.search);
+      const verifyRef = urlParams.get('verify_ref') || urlParams.get('reference');
+      if (verifyRef) {
+        try {
+          const verified = await verifyServerPaystackPayment(verifyRef);
+          if (verified && verified.success) {
+            let pending = {};
+            try {
+              pending = JSON.parse(sessionStorage.getItem('boea_pending_ppv') || '{}');
+            } catch (e) {
+              // ignore
+            }
+
+            const { transaction, passCode, info } = await recordPPVPurchase({
+              reference: verified.reference,
+              email: verified.email || pending.email || 'patron@example.com',
+              fullName: pending.fullName || 'BOEA Gala Patron',
+              amount: verified.amount || pending.amount || 5,
+              currency: verified.currency || pending.currency || 'USD',
+              gateway: 'paystack_server'
+            });
+
+            trackPPVPurchase(transaction);
+            setPaidPassCode(passCode);
+            setUnlocked(true);
+            setActivePassInfo(info);
+            setShowPaymentModal(true);
+            sessionStorage.removeItem('boea_pending_ppv');
+            window.history.replaceState({}, document.title, window.location.pathname);
+          }
+        } catch (err) {
+          console.error('Payment verification return error:', err);
         }
       }
 
@@ -174,30 +218,72 @@ export default function LiveStream() {
     localStorage.setItem('boea_ppv_session_unlocked', JSON.stringify(info));
   };
 
-  // Handle Online Foreign Payment Simulation ($5 USD)
-  const handleCompletePayment = (e) => {
+  // Handle Online Foreign Payment via Paystack
+  const handleCompletePayment = async (e) => {
     e.preventDefault();
-    if (!buyerName.trim() || !buyerEmail.trim()) return;
+    setPayError('');
+    if (!buyerName.trim() || !buyerEmail.trim()) {
+      setPayError('Please provide both your full name and a valid email address.');
+      return;
+    }
 
     setIsProcessingPay(true);
-    setTimeout(() => {
-      const generatedCode = `BOEA-PPV-${Math.floor(10000 + Math.random() * 90000)}`;
-      const info = {
-        type: 'paid_usd',
-        label: `Foreign PPV Ticket ($${config.foreignPriceUSD} USD)`,
-        code: generatedCode,
-        buyer: buyerName
-      };
+    const price = config.foreignPriceUSD || 5;
+    const currency = config.paystackCurrency || 'USD';
+    const paystackKey = config.paystackPublicKey || import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || '';
 
-      // Save locally
-      localStorage.setItem(`boea_purchased_pass_${generatedCode}`, JSON.stringify(info));
-      localStorage.setItem('boea_ppv_session_unlocked', JSON.stringify(info));
+    // If Paystack public key is not configured, execute server-side checkout with the Secret Key
+    if (!paystackKey) {
+      const initiated = await initializeServerPaystackPayment({
+        email: buyerEmail.trim(),
+        amount: price,
+        currency,
+        fullName: buyerName.trim(),
+        onError: (errMsg) => {
+          setIsProcessingPay(false);
+          setPayError(errMsg);
+        }
+      });
+      if (!initiated) {
+        setIsProcessingPay(false);
+      }
+      return;
+    }
 
-      setPaidPassCode(generatedCode);
-      setIsProcessingPay(false);
-      setUnlocked(true);
-      setActivePassInfo(info);
-    }, 1500);
+    initializePaystackPayment({
+      key: paystackKey,
+      email: buyerEmail.trim(),
+      amount: price,
+      currency,
+      fullName: buyerName.trim(),
+      onSuccess: async (response) => {
+        try {
+          const { transaction, passCode, info } = await recordPPVPurchase({
+            reference: response.reference,
+            email: buyerEmail,
+            fullName: buyerName,
+            amount: price,
+            currency,
+            gateway: 'paystack'
+          });
+          trackPPVPurchase(transaction);
+          setPaidPassCode(passCode);
+          setUnlocked(true);
+          setActivePassInfo(info);
+        } catch (err) {
+          console.error('Error saving PPV pass:', err);
+        } finally {
+          setIsProcessingPay(false);
+        }
+      },
+      onCancel: () => {
+        setIsProcessingPay(false);
+      },
+      onError: (errMsg) => {
+        setIsProcessingPay(false);
+        setPayError(errMsg);
+      }
+    });
   };
 
   const handleLockSession = () => {
@@ -470,10 +556,14 @@ export default function LiveStream() {
           <div className="ppv-modal-card">
             <button
               type="button"
-              onClick={() => setShowPaymentModal(false)}
-              style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', border: 'none', color: 'var(--on-surface-variant)', cursor: 'pointer' }}
+              className="ppv-modal-close-btn"
+              onClick={() => {
+                setShowPaymentModal(false);
+                setPayError('');
+              }}
+              aria-label="Close modal"
             >
-              <X size={20} />
+              <X size={18} />
             </button>
 
             {paidPassCode ? (
@@ -483,29 +573,35 @@ export default function LiveStream() {
                 <p className="body-sm text-muted" style={{ margin: '0.5rem 0 1.5rem 0' }}>
                   Thank you for supporting the Best of Edo Award. Your PPV Access Passkey is active:
                 </p>
-                <div style={{ background: 'var(--surface-bright)', border: '1px dashed var(--color-gold)', padding: '0.75rem', borderRadius: 'var(--radius-md)', fontSize: '1.2rem', fontWeight: 800, color: 'var(--color-gold)', letterSpacing: '2px', marginBottom: '1.5rem' }}>
+                <div style={{ background: 'rgba(201, 162, 39, 0.1)', border: '1.5px dashed var(--color-gold)', padding: '0.9rem', borderRadius: 'var(--radius-md)', fontSize: '1.25rem', fontWeight: 800, color: 'var(--color-gold)', letterSpacing: '2px', marginBottom: '1.5rem' }}>
                   {paidPassCode}
                 </div>
                 <button
                   type="button"
                   onClick={() => setShowPaymentModal(false)}
                   className="btn btn-gold"
-                  style={{ width: '100%', justifyContent: 'center' }}
+                  style={{ width: '100%', justifyContent: 'center', fontWeight: 800 }}
                 >
                   <Tv size={18} /> Proceed to Live Stream
                 </button>
               </div>
             ) : (
               <div>
-                <span className="label-caps gold-text">Secure Online Checkout</span>
-                <h3 className="headline-sm" style={{ margin: '0.25rem 0 1rem 0' }}>Foreign Viewer PPV Pass</h3>
+                <span className="label-caps gold-text" style={{ display: 'inline-block', marginBottom: '0.25rem' }}>
+                  Secure Online Checkout
+                </span>
+                <h3 className="headline-sm" style={{ margin: '0 0 1.25rem 0', color: '#ffffff' }}>
+                  Foreign Viewer PPV Pass
+                </h3>
 
                 <form onSubmit={handleCompletePayment} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  <div>
-                    <label className="admin-label">Full Name *</label>
+                  <div className="ppv-form-group">
+                    <label className="ppv-form-label">
+                      Full Name *
+                    </label>
                     <input
                       type="text"
-                      className="admin-input"
+                      className="ppv-form-input"
                       placeholder="e.g. Ambassador John Smith"
                       value={buyerName}
                       onChange={(e) => setBuyerName(e.target.value)}
@@ -513,11 +609,13 @@ export default function LiveStream() {
                     />
                   </div>
 
-                  <div>
-                    <label className="admin-label">Email Address (for ticket receipt) *</label>
+                  <div className="ppv-form-group">
+                    <label className="ppv-form-label">
+                      Email Address (for ticket receipt) *
+                    </label>
                     <input
                       type="email"
-                      className="admin-input"
+                      className="ppv-form-input"
                       placeholder="john@example.com"
                       value={buyerEmail}
                       onChange={(e) => setBuyerEmail(e.target.value)}
@@ -525,25 +623,35 @@ export default function LiveStream() {
                     />
                   </div>
 
-                  <div style={{ background: 'var(--surface-bright)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-bronze-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div className="ppv-order-summary">
                     <div>
-                      <div style={{ fontWeight: 700, fontSize: '14px' }}>Gala Night Live Access</div>
-                      <div style={{ fontSize: '12px', color: 'var(--secondary)' }}>YouTube 1080p HD All-Access Pass</div>
+                      <div className="ppv-order-title">
+                        <Sparkles size={15} color="var(--color-gold)" /> Gala Night Live Access
+                      </div>
+                      <div className="ppv-order-subtitle">
+                        YouTube 1080p HD All-Access Pass • Instant Unlock
+                      </div>
                     </div>
-                    <div style={{ fontSize: '1.2rem', fontWeight: 900, color: 'var(--color-gold)' }}>
+                    <div className="ppv-order-price">
                       ${config.foreignPriceUSD} USD
                     </div>
                   </div>
+
+                  {payError && (
+                    <div style={{ background: 'rgba(239, 68, 68, 0.15)', border: '1px solid rgba(239, 68, 68, 0.4)', borderRadius: '8px', padding: '0.65rem 0.85rem', color: '#fca5a5', fontSize: '13px', textAlign: 'left' }}>
+                      {payError}
+                    </div>
+                  )}
 
                   <button
                     type="submit"
                     className="btn btn-gold"
                     disabled={isProcessingPay}
-                    style={{ width: '100%', justifyContent: 'center', gap: '0.5rem', padding: '0.85rem', marginTop: '0.5rem' }}
+                    style={{ width: '100%', justifyContent: 'center', gap: '0.5rem', padding: '0.9rem', marginTop: '0.25rem', fontSize: '14.5px', fontWeight: 800 }}
                   >
                     {isProcessingPay ? (
                       <>
-                        <RefreshCw size={18} className="spin-icon" /> Processing Payment...
+                        <RefreshCw size={18} className="spin-icon" /> Connecting Secure Checkout...
                       </>
                     ) : (
                       <>
@@ -551,6 +659,11 @@ export default function LiveStream() {
                       </>
                     )}
                   </button>
+
+                  <div className="ppv-trust-badge">
+                    <ShieldCheck size={14} color="#10b981" />
+                    <span>Secured by Paystack • 256-bit Bank Grade Encryption</span>
+                  </div>
                 </form>
               </div>
             )}

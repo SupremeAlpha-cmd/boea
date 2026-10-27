@@ -29,6 +29,8 @@ const DEFAULT_STREAM_CONFIG = {
   youtubeUrl: 'https://youtu.be/lHaKtEVysk8?si=UuJtm_lDqVXXt_qy', // Current featured video
   foreignPriceUSD: 5,
   nigeriaFreeAccess: true,
+  paystackPublicKey: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || '',
+  paystackCurrency: 'USD',
   announcement: '🔴 Black Carpet Coverage starts at 5:00 PM WAT. Main Gala Award Ceremony commences at 6:30 PM WAT live on YouTube.',
   bannerImage: '/assets/boea_gala_night_hall.jpeg'
 };
@@ -195,4 +197,94 @@ export async function verifyPasskey(inputCode) {
   }
 
   return { valid: false, message: 'Invalid or expired Access Passkey. Please check and try again.' };
+}
+
+// ---------------------------------------------------------------------------
+// PPV Transactions — Recorded on successful Paystack payment
+// ---------------------------------------------------------------------------
+
+export function getStoredTransactions() {
+  if (typeof window === 'undefined') return [];
+  const saved = localStorage.getItem('boea_ppv_transactions');
+  if (saved) {
+    try {
+      return JSON.parse(saved);
+    } catch (e) {
+      console.error('Error parsing boea_ppv_transactions', e);
+    }
+  }
+  return [];
+}
+
+export function saveTransactions(transactions) {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem('boea_ppv_transactions', JSON.stringify(transactions));
+}
+
+export async function recordPPVPurchase({
+  reference,
+  email,
+  fullName,
+  amount,
+  currency = 'USD',
+  gateway = 'paystack'
+}) {
+  const randomNum = Math.floor(10000 + Math.random() * 90000);
+  const passCode = `BOEA-PPV-${randomNum}`;
+  const now = new Date();
+
+  const transaction = {
+    id: `tx-${Date.now()}-${randomNum}`,
+    reference: reference || `REF-${Date.now()}`,
+    email: (email || '').trim(),
+    fullName: (fullName || '').trim() || 'BOEA Gala Patron',
+    amount: Number(amount) || 5,
+    currency: currency.toUpperCase(),
+    gateway,
+    passCode,
+    status: 'success',
+    createdAt: now.toISOString(),
+    formattedDate: now.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  };
+
+  // 1. Add to local transactions ledger
+  const currentTxs = getStoredTransactions();
+  const updatedTxs = [transaction, ...currentTxs];
+  saveTransactions(updatedTxs);
+
+  // 2. Hash and store passkey so it verifies securely across sessions
+  try {
+    const codeHash = await hashPasskey(passCode);
+    const passRecord = {
+      codeHash,
+      label: `PPV Ticket (${currency.toUpperCase()} ${amount}) — ${email.trim()}`,
+      createdAt: now.toISOString().split('T')[0],
+      active: true
+    };
+    const currentPasskeys = await fetchPasskeys();
+    await savePasskeys([passRecord, ...currentPasskeys]);
+  } catch (err) {
+    console.error('Error saving passkey hash for PPV ticket:', err);
+  }
+
+  // 3. Save as purchased pass for quick local retrieval
+  const info = {
+    type: 'paid_ppv',
+    label: `Foreign PPV Ticket (${currency.toUpperCase()} ${amount})`,
+    code: passCode,
+    buyer: fullName.trim() || 'BOEA Gala Patron',
+    reference: transaction.reference,
+    amount: transaction.amount,
+    currency: transaction.currency
+  };
+  localStorage.setItem(`boea_purchased_pass_${passCode}`, JSON.stringify(info));
+  localStorage.setItem('boea_ppv_session_unlocked', JSON.stringify(info));
+
+  return { transaction, passCode, info };
 }

@@ -1,22 +1,17 @@
 {
   "rules": {
     "pageviews": {
-      // Analytics: anyone may append a pageview (pre-existing behaviour),
-      // only a signed-in admin may read them back for the dashboard.
       ".read": "auth != null",
       ".write": true
     },
+    "ppv_purchases": {
+      ".write": true
+    },
     "cms": {
-      // Admin-published content: public read (visitors must see it),
-      // admin-only write. This is what makes admin edits reach everyone.
-      // NOTE: cms/stream/passkeys holds SHA-256 hashes, never codes — but
-      // hashes are public-read by necessity (visitors verify against them),
-      // so use long generated codes; see FIREBASE_SETUP.md.
       ".read": true,
       ".write": "auth != null"
     },
     "admin": {
-      // Audit trail: admin eyes only.
       ".read": "auth != null",
       ".write": "auth != null"
     }
