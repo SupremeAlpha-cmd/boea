@@ -11,7 +11,7 @@ import {
   ArrowUpRight
 } from 'lucide-react';
 import NominateCta from '../components/NominateCta';
-import { getStoredBlogPosts } from '../data/blogData';
+import { getStoredBlogPosts, fetchBlogPosts } from '../data/blogData';
 import '../styles/pages.css';
 import './BlogPost.css';
 import InPageAdvert from '../components/InPageAdvert';
@@ -32,7 +32,16 @@ export default function BlogPost() {
     } else {
       setPost(null);
     }
+    // Refresh from the CMS in case the post was published after first paint.
+    let cancelled = false;
+    fetchBlogPosts().then((list) => {
+      if (cancelled) return;
+      setAllPosts(list);
+      const live = list.find((p) => p.id === id || p.slug === id);
+      if (live) setPost(live);
+    });
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    return () => { cancelled = true; };
   }, [id]);
 
   useEffect(() => {

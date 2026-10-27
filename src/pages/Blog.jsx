@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Search, Calendar, Clock, User, ArrowUpRight, BookOpen, RefreshCw } from 'lucide-react';
 import PageHero from '../components/PageHero';
 import NominateCta from '../components/NominateCta';
-import { getStoredBlogPosts } from '../data/blogData';
+import { getStoredBlogPosts, fetchBlogPosts } from '../data/blogData';
 import '../styles/pages.css';
 import './Blog.css';
 
@@ -13,6 +13,9 @@ export default function Blog() {
 
   useEffect(() => {
     setPosts(getStoredBlogPosts());
+    let cancelled = false;
+    fetchBlogPosts().then((list) => { if (!cancelled) setPosts(list); });
+    return () => { cancelled = true; };
   }, []);
 
   // Filter posts by search query

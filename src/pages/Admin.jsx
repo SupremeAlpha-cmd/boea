@@ -31,8 +31,9 @@ import {
   BarChart3
 } from 'lucide-react';
 import { INITIAL_PHOTOS, INITIAL_VIDEOS } from './Gallery';
-import { getStoredBlogPosts, saveBlogPosts } from '../data/blogData';
+import { getStoredBlogPosts, fetchBlogPosts, saveBlogPosts } from '../data/blogData';
 import { useAdminAuth } from '../hooks/useAdminAuth';
+import { cmsFetch, cmsSave, CMS_PATHS } from '../lib/cms';
 import PastRecipientsManager from '../components/PastRecipientsManager';
 import AdminAnalytics from '../components/AdminAnalytics';
 import LiveStreamManager from '../components/LiveStreamManager';
@@ -59,14 +60,18 @@ const DEFAULT_SPONSORS = [
   { id: 'def-3', name: 'Benin Cultural Heritage Federation', category: 'Strategic Partner', logo: '/logo.png' },
 ];
 
-function LoginGate({ onLogin, error }) {
+function LoginGate({ onLogin, error, isConfigured, authLoading }) {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onLogin(password, rememberMe);
+    setSubmitting(true);
+    await onLogin(email, password, rememberMe);
+    setSubmitting(false);
   };
 
   return (
@@ -78,18 +83,36 @@ function LoginGate({ onLogin, error }) {
         <span className="label-caps gold-text">Best of Edo Award Portal</span>
         <h1 className="headline-lg" style={{ margin: '0.25rem 0 0.5rem 0' }}>Admin Authentication</h1>
         <p className="body-sm text-muted" style={{ marginBottom: '1.5rem' }}>
-          Enter administrative master passkey to access portal controls.
+          Sign in with the admin email and password created in Firebase Authentication.
         </p>
 
+        {!isConfigured && (
+          <div style={{ background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.4)', color: '#d97706', padding: '0.6rem 0.8rem', borderRadius: '8px', fontSize: '13px', textAlign: 'left', marginBottom: '1rem', fontWeight: 600 }}>
+            Firebase is not connected yet — sign-in is disabled until the env vars in FIREBASE_SETUP.md are set and the site is redeployed.
+          </div>
+        )}
+
         <form className="admin-login-form" onSubmit={handleSubmit}>
+          <div className="admin-pass-input-wrap" style={{ marginBottom: '0.75rem' }}>
+            <input
+              type="email"
+              className="admin-pass-input"
+              placeholder="Admin email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="username"
+            />
+          </div>
           <div className="admin-pass-input-wrap">
             <input
               type={showPassword ? 'text' : 'password'}
               className="admin-pass-input"
-              placeholder="Admin Master Passkey"
+              placeholder="Admin password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              autoComplete="current-password"
             />
             <button
               type="button"
@@ -119,8 +142,8 @@ function LoginGate({ onLogin, error }) {
             </div>
           )}
 
-          <button type="submit" className="btn btn-gold admin-login-btn" style={{ width: '100%', gap: '0.5rem', justifyContent: 'center' }}>
-            <UserCheck size={18} /> Sign In to Portal
+          <button type="submit" className="btn btn-gold admin-login-btn" style={{ width: '100%', gap: '0.5rem', justifyContent: 'center' }} disabled={!isConfigured || submitting || authLoading}>
+            <UserCheck size={18} /> {submitting ? 'Signing in…' : 'Sign In to Portal'}
           </button>
         </form>
 
@@ -138,14 +161,14 @@ function SettingsSecurityManager({ onChangePassword, auditLogs }) {
   const [confirmPass, setConfirmPass] = useState('');
   const [passMsg, setPassMsg] = useState({ text: '', type: '' });
 
-  const handlePassChange = (e) => {
+  const handlePassChange = async (e) => {
     e.preventDefault();
     if (newPass !== confirmPass) {
       setPassMsg({ text: 'New passwords do not match.', type: 'error' });
       return;
     }
 
-    const res = onChangePassword(currentPass, newPass);
+    const res = await onChangePassword(currentPass, newPass);
     if (res.success) {
       setPassMsg({ text: 'Master password updated successfully!', type: 'success' });
       setCurrentPass('');
@@ -254,19 +277,14 @@ function SponsorsManager({ logAuditAction }) {
   const [successMsg, setSuccessMsg] = useState('');
 
   useEffect(() => {
-    const saved = localStorage.getItem('boea-sponsors');
-    if (saved) {
-      try {
-        setSponsors(JSON.parse(saved));
-      } catch (e) {
-        setSponsors(DEFAULT_SPONSORS);
-      }
-    } else {
-      setSponsors(DEFAULT_SPONSORS);
-    }
+    let cancelled = false;
+    cmsFetch(CMS_PATHS.sponsors, DEFAULT_SPONSORS).then((list) => {
+      if (!cancelled) setSponsors(Array.isArray(list) ? list : DEFAULT_SPONSORS);
+    });
+    return () => { cancelled = true; };
   }, []);
 
-  const handleAddSponsor = (e) => {
+  const handleAddSponsor = async (e) => {
     e.preventDefault();
     if (!sponsorName.trim() || !logoBase64) return;
 
@@ -279,21 +297,25 @@ function SponsorsManager({ logAuditAction }) {
 
     const updated = [newSponsor, ...sponsors];
     setSponsors(updated);
-    localStorage.setItem('boea-sponsors', JSON.stringify(updated));
+    const result = await cmsSave(CMS_PATHS.sponsors, updated);
 
     if (logAuditAction) logAuditAction('Added Sponsor Logo', `Sponsor: ${sponsorName} (${category})`);
 
     setSponsorName('');
     setLogoBase64('');
-    setSuccessMsg('Sponsor logo uploaded successfully!');
+    setSuccessMsg(
+      result.cloud
+        ? 'Sponsor logo uploaded successfully!'
+        : 'Saved on this browser only — connect Firebase to publish it to all visitors.',
+    );
     setTimeout(() => setSuccessMsg(''), 3000);
   };
 
-  const handleDeleteSponsor = (id) => {
+  const handleDeleteSponsor = async (id) => {
     const spToDelete = sponsors.find(s => s.id === id);
     const updated = sponsors.filter(sp => sp.id !== id);
     setSponsors(updated);
-    localStorage.setItem('boea-sponsors', JSON.stringify(updated));
+    await cmsSave(CMS_PATHS.sponsors, updated);
     if (logAuditAction && spToDelete) logAuditAction('Deleted Sponsor', `Removed: ${spToDelete.name}`);
   };
 
@@ -400,19 +422,14 @@ function GalleryManager({ logAuditAction }) {
   const [videoThumb, setVideoThumb] = useState('/assets/boea_photo_wall.jpeg');
 
   useEffect(() => {
-    const savedPhotos = localStorage.getItem('boea-gallery-photos');
-    if (savedPhotos) {
-      try { setPhotos(JSON.parse(savedPhotos)); } catch (e) { setPhotos(INITIAL_PHOTOS); }
-    } else {
-      setPhotos(INITIAL_PHOTOS);
-    }
-
-    const savedVideos = localStorage.getItem('boea-gallery-videos');
-    if (savedVideos) {
-      try { setVideos(JSON.parse(savedVideos)); } catch (e) { setVideos(INITIAL_VIDEOS); }
-    } else {
-      setVideos(INITIAL_VIDEOS);
-    }
+    let cancelled = false;
+    cmsFetch(CMS_PATHS.galleryPhotos, INITIAL_PHOTOS).then((list) => {
+      if (!cancelled) setPhotos(Array.isArray(list) ? list : INITIAL_PHOTOS);
+    });
+    cmsFetch(CMS_PATHS.galleryVideos, INITIAL_VIDEOS).then((list) => {
+      if (!cancelled) setVideos(Array.isArray(list) ? list : INITIAL_VIDEOS);
+    });
+    return () => { cancelled = true; };
   }, []);
 
   const handlePhotoFileUpload = (e) => {
@@ -424,7 +441,7 @@ function GalleryManager({ logAuditAction }) {
     }
   };
 
-  const handleAddPhoto = (e) => {
+  const handleAddPhoto = async (e) => {
     e.preventDefault();
     if (!photoTitle.trim() || !photoImgBase64) return;
 
@@ -439,25 +456,29 @@ function GalleryManager({ logAuditAction }) {
 
     const updated = [newPhoto, ...photos];
     setPhotos(updated);
-    localStorage.setItem('boea-gallery-photos', JSON.stringify(updated));
+    const result = await cmsSave(CMS_PATHS.galleryPhotos, updated);
     if (logAuditAction) logAuditAction('Uploaded Gallery Photo', `Title: ${photoTitle}`);
 
     setPhotoTitle('');
     setPhotoMeta('');
     setPhotoImgBase64('');
-    setSuccessMsg('Photo uploaded and published to Gallery!');
+    setSuccessMsg(
+      result.cloud
+        ? 'Photo uploaded and published to Gallery!'
+        : 'Saved on this browser only — connect Firebase to publish it to all visitors.',
+    );
     setTimeout(() => setSuccessMsg(''), 3000);
   };
 
-  const handleDeletePhoto = (id) => {
+  const handleDeletePhoto = async (id) => {
     const itemToDelete = photos.find(p => p.id === id);
     const updated = photos.filter((p) => p.id !== id);
     setPhotos(updated);
-    localStorage.setItem('boea-gallery-photos', JSON.stringify(updated));
+    await cmsSave(CMS_PATHS.galleryPhotos, updated);
     if (logAuditAction && itemToDelete) logAuditAction('Deleted Gallery Photo', `Title: ${itemToDelete.title}`);
   };
 
-  const handleAddVideo = (e) => {
+  const handleAddVideo = async (e) => {
     e.preventDefault();
     if (!videoTitle.trim()) return;
 
@@ -473,20 +494,24 @@ function GalleryManager({ logAuditAction }) {
 
     const updated = [newVideo, ...videos];
     setVideos(updated);
-    localStorage.setItem('boea-gallery-videos', JSON.stringify(updated));
+    const result = await cmsSave(CMS_PATHS.galleryVideos, updated);
     if (logAuditAction) logAuditAction('Published Video Entry', `Title: ${videoTitle}`);
 
     setVideoTitle('');
     setVideoMeta('');
-    setSuccessMsg('Video added and published to Video Gallery!');
+    setSuccessMsg(
+      result.cloud
+        ? 'Video added and published to Video Gallery!'
+        : 'Saved on this browser only — connect Firebase to publish it to all visitors.',
+    );
     setTimeout(() => setSuccessMsg(''), 3000);
   };
 
-  const handleDeleteVideo = (id) => {
+  const handleDeleteVideo = async (id) => {
     const vidToDelete = videos.find(v => v.id === id);
     const updated = videos.filter((v) => v.id !== id);
     setVideos(updated);
-    localStorage.setItem('boea-gallery-videos', JSON.stringify(updated));
+    await cmsSave(CMS_PATHS.galleryVideos, updated);
     if (logAuditAction && vidToDelete) logAuditAction('Deleted Video Entry', `Title: ${vidToDelete.title}`);
   };
 
@@ -707,6 +732,13 @@ function BlogManager({ logAuditAction }) {
   const [posts, setPosts] = useState(() => getStoredBlogPosts());
   const [editingId, setEditingId] = useState(null);
 
+  // Refresh from the CMS (falls back to the cached list).
+  useEffect(() => {
+    let cancelled = false;
+    fetchBlogPosts().then((list) => { if (!cancelled) setPosts(list); });
+    return () => { cancelled = true; };
+  }, []);
+
   // Form states
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('BOEA Editorial Board');
@@ -746,7 +778,7 @@ function BlogManager({ logAuditAction }) {
     setContent('');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title.trim() || !content.trim()) return;
 
@@ -782,7 +814,7 @@ function BlogManager({ logAuditAction }) {
           : p
       );
       if (logAuditAction) logAuditAction(`Updated Blog Post: "${title.trim()}"`);
-      setSuccessMsg('Article updated successfully! Changes are live on the website.');
+      setSuccessMsg('Article updated successfully!');
     } else {
       const newPost = {
         id: `post-${Date.now()}`,
@@ -797,21 +829,24 @@ function BlogManager({ logAuditAction }) {
       };
       updatedPosts = [newPost, ...posts];
       if (logAuditAction) logAuditAction(`Published New Blog Post: "${title.trim()}"`);
-      setSuccessMsg('New article published successfully! It is now live on the website.');
+      setSuccessMsg('New article published successfully!');
     }
 
     setPosts(updatedPosts);
-    saveBlogPosts(updatedPosts);
+    const result = await saveBlogPosts(updatedPosts);
+    if (!result.cloud) {
+      setSuccessMsg('Saved on this browser only — connect Firebase to publish it to all visitors.');
+    }
     resetForm();
 
     setTimeout(() => setSuccessMsg(''), 6000);
   };
 
-  const handleDelete = (id, postTitle) => {
+  const handleDelete = async (id, postTitle) => {
     if (window.confirm(`Are you sure you want to delete "${postTitle}"?`)) {
       const filtered = posts.filter((p) => p.id !== id);
       setPosts(filtered);
-      saveBlogPosts(filtered);
+      await saveBlogPosts(filtered);
       if (logAuditAction) logAuditAction(`Deleted Blog Post: "${postTitle}"`);
     }
   };
@@ -1005,7 +1040,7 @@ function BlogManager({ logAuditAction }) {
   );
 }
 
-function ManagerShell({ onLogout, onChangePassword, auditLogs, logAuditAction }) {
+function ManagerShell({ onLogout, onChangePassword, auditLogs, logAuditAction, userEmail }) {
   const [active, setActive] = useState('Past Recipients');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -1079,7 +1114,7 @@ function ManagerShell({ onLogout, onChangePassword, auditLogs, logAuditAction })
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
             <span className="label-caps" style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', padding: '0.3rem 0.75rem', borderRadius: 'var(--radius-full)', fontWeight: 600, fontSize: '11px', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
-              <UserCheck size={14} /> Authenticated Admin Session
+              <UserCheck size={14} /> {userEmail || 'Authenticated Admin Session'}
             </span>
             <button
               type="button"
@@ -1125,7 +1160,17 @@ function ManagerShell({ onLogout, onChangePassword, auditLogs, logAuditAction })
 }
 
 export default function Admin() {
-  const { isAuthenticated, authError, login, logout, changePassword, auditLogs, logAuditAction } = useAdminAuth();
+  const { isAuthenticated, userEmail, isConfigured, authLoading, authError, login, logout, changePassword, auditLogs, logAuditAction } = useAdminAuth();
+
+  if (authLoading) {
+    return (
+      <div className="admin-login">
+        <div className="admin-login-card">
+          <p className="body-sm text-muted">Checking admin session…</p>
+        </div>
+      </div>
+    );
+  }
 
   return isAuthenticated ? (
     <ManagerShell
@@ -1133,8 +1178,9 @@ export default function Admin() {
       onChangePassword={changePassword}
       auditLogs={auditLogs}
       logAuditAction={logAuditAction}
+      userEmail={userEmail}
     />
   ) : (
-    <LoginGate onLogin={login} error={authError} />
+    <LoginGate onLogin={login} error={authError} isConfigured={isConfigured} authLoading={authLoading} />
   );
 }

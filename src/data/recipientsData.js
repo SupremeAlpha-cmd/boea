@@ -1,67 +1,67 @@
 import { PAST_RECIPIENTS_DATA } from './past_recipients_generated.js';
+import { cmsFetch, cmsSave, cmsSubscribe, readCache, CMS_PATHS } from '../lib/cms';
 
-const STORAGE_KEY = 'boea_past_recipients';
 const EVENT_KEY = 'boea-recipients-updated';
 
+// Recipients are CMS-backed (see `src/lib/cms.js`): the admin publishes once
+// and every visitor reads the same list. The local cache below is only the
+// fallback for first paint / unconfigured Firebase.
+
 /**
- * Retrieves past recipients from localStorage with fallback to default data.
+ * Synchronous cache read with fallback to the bundled dataset.
  */
 export function getStoredRecipients() {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
-      }
-    }
-  } catch (e) {
-    console.error('Error reading recipients from localStorage:', e);
+  const cached = readCache(CMS_PATHS.recipients, null);
+  if (Array.isArray(cached) && cached.length > 0) {
+    return cached;
   }
   return PAST_RECIPIENTS_DATA;
 }
 
-/**
- * Saves updated recipients to localStorage and notifies active listeners.
- */
-export function saveStoredRecipients(recipients) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(recipients));
-    window.dispatchEvent(new CustomEvent(EVENT_KEY, { detail: recipients }));
-  } catch (e) {
-    console.error('Error saving recipients to localStorage:', e);
+/** Live read from the database (falls back to cache / bundled data). */
+export async function fetchRecipients() {
+  const fetched = await cmsFetch(CMS_PATHS.recipients, null);
+  if (Array.isArray(fetched) && fetched.length > 0) {
+    return fetched;
   }
+  return getStoredRecipients();
 }
 
 /**
- * Resets recipients in localStorage back to default bundled dataset.
+ * Saves updated recipients to the CMS and notifies active listeners.
+ * Returns the CMS save result `{ ok, cloud }`.
  */
-export function resetStoredRecipients() {
-  try {
-    localStorage.removeItem(STORAGE_KEY);
-    window.dispatchEvent(new CustomEvent(EVENT_KEY, { detail: PAST_RECIPIENTS_DATA }));
-  } catch (e) {
-    console.error('Error resetting recipients:', e);
-  }
+export async function saveStoredRecipients(recipients) {
+  const result = await cmsSave(CMS_PATHS.recipients, recipients);
+  window.dispatchEvent(new CustomEvent(EVENT_KEY, { detail: recipients }));
+  return result;
+}
+
+/**
+ * Resets recipients back to the default bundled dataset (publishes it).
+ */
+export async function resetStoredRecipients() {
+  await cmsSave(CMS_PATHS.recipients, PAST_RECIPIENTS_DATA);
+  window.dispatchEvent(new CustomEvent(EVENT_KEY, { detail: PAST_RECIPIENTS_DATA }));
   return PAST_RECIPIENTS_DATA;
 }
 
 /**
- * Subscribes to changes made by the admin panel.
+ * Subscribes to changes made by the admin panel (live database updates
+ * plus same-tab admin events).
  */
 export function subscribeToRecipients(callback) {
   const handler = (e) => {
     callback(e.detail || getStoredRecipients());
   };
   window.addEventListener(EVENT_KEY, handler);
-  window.addEventListener('storage', (e) => {
-    if (e.key === STORAGE_KEY) {
-      callback(getStoredRecipients());
-    }
-  });
+  const unsubscribeCms = cmsSubscribe(CMS_PATHS.recipients, (value) => {
+    if (Array.isArray(value) && value.length > 0) callback(value);
+  }, null);
 
   return () => {
     window.removeEventListener(EVENT_KEY, handler);
+    unsubscribeCms();
   };
 }
 

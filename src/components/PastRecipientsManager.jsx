@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import {
   Trophy,
   Search,
@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import {
   getStoredRecipients,
+  fetchRecipients,
   saveStoredRecipients,
   resetStoredRecipients,
   compressImageFile
@@ -24,6 +25,14 @@ import {
 
 export default function PastRecipientsManager({ logAuditAction }) {
   const [recipients, setRecipients] = useState(() => getStoredRecipients());
+  const [cloudNote, setCloudNote] = useState('');
+
+  // Refresh from the CMS (falls back to the cached list).
+  useEffect(() => {
+    let cancelled = false;
+    fetchRecipients().then((list) => { if (!cancelled) setRecipients(list); });
+    return () => { cancelled = true; };
+  }, []);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'needs-photo' | 'has-photo'
   const [categoryFilter, setCategoryFilter] = useState('all');
@@ -92,6 +101,16 @@ export default function PastRecipientsManager({ logAuditAction }) {
     });
   }, [recipients, searchQuery, statusFilter, categoryFilter]);
 
+  // Persist to the CMS; warn when the save only reached this browser.
+  const persist = async (updated) => {
+    const result = await saveStoredRecipients(updated);
+    setCloudNote(
+      result.cloud
+        ? ''
+        : 'Saved on this browser only — connect Firebase to publish it to all visitors.',
+    );
+  };
+
   const showNotification = (msg, isError = false) => {
     if (isError) {
       setErrorMsg(msg);
@@ -115,7 +134,7 @@ export default function PastRecipientsManager({ logAuditAction }) {
       );
 
       setRecipients(updated);
-      saveStoredRecipients(updated);
+      persist(updated);
       setCompressingId(null);
 
       if (logAuditAction) {
@@ -141,7 +160,7 @@ export default function PastRecipientsManager({ logAuditAction }) {
     );
 
     setRecipients(updated);
-    saveStoredRecipients(updated);
+    persist(updated);
 
     if (logAuditAction) {
       logAuditAction('Linked Laureate Photo URL', `${urlModalItem.name}: ${path}`);
@@ -161,7 +180,7 @@ export default function PastRecipientsManager({ logAuditAction }) {
     );
 
     setRecipients(updated);
-    saveStoredRecipients(updated);
+    persist(updated);
 
     if (logAuditAction) {
       logAuditAction('Removed Laureate Photo', recipient.name);
@@ -170,13 +189,13 @@ export default function PastRecipientsManager({ logAuditAction }) {
   };
 
   // Reset to default bundled data
-  const handleResetDefaults = () => {
+  const handleResetDefaults = async () => {
     if (
       window.confirm(
         'Reset all past recipients back to the default bundled catalog? Any custom uploaded photos will be reset to defaults.'
       )
     ) {
-      const reset = resetStoredRecipients();
+      const reset = await resetStoredRecipients();
       setRecipients(reset);
       if (logAuditAction) logAuditAction('Reset Recipients Database', 'Reverted to defaults');
       showNotification('Recipients restored to default catalog!');
@@ -194,7 +213,7 @@ export default function PastRecipientsManager({ logAuditAction }) {
         r.id === editingItem.id ? { ...r, ...formData } : r
       );
       setRecipients(updated);
-      saveStoredRecipients(updated);
+      persist(updated);
       if (logAuditAction) {
         logAuditAction('Edited Laureate Details', formData.name);
       }
@@ -216,7 +235,7 @@ export default function PastRecipientsManager({ logAuditAction }) {
 
       const updated = [newLaureate, ...recipients];
       setRecipients(updated);
-      saveStoredRecipients(updated);
+      persist(updated);
       if (logAuditAction) {
         logAuditAction('Added New Laureate', newLaureate.name);
       }
@@ -299,6 +318,11 @@ export default function PastRecipientsManager({ logAuditAction }) {
       {successMsg && (
         <div className="admin-alert admin-alert-success">
           <CheckCircle2 size={18} /> {successMsg}
+        </div>
+      )}
+      {cloudNote && (
+        <div className="admin-alert" style={{ background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.4)', color: '#d97706' }}>
+          <AlertCircle size={18} /> {cloudNote}
         </div>
       )}
       {errorMsg && (

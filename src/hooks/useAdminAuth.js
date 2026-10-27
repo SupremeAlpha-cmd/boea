@@ -1,137 +1,196 @@
+/**
+ * BOEA Admin Auth — Firebase Authentication (email + password).
+ *
+ * This replaces the old client-side password check, which shipped a default
+ * password inside the JS bundle and stored any replacement in the admin's own
+ * browser localStorage. Nothing credential-like lives in this file or in the
+ * bundle anymore: sign-in is verified by Firebase, and the session is a real
+ * Firebase Auth session (persisted per the "remember me" choice).
+ *
+ * The admin account itself is created in the Firebase console (see
+ * `FIREBASE_SETUP.md`) — never in code, never in the repo.
+ *
+ * Audit trail: written to `admin/auditLogs` in the database when connected
+ * (admin-only per `database.rules.json`), otherwise kept in localStorage.
+ */
+
 import { useState, useEffect, useCallback } from 'react';
+import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+  updatePassword,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
+  setPersistence,
+  browserLocalPersistence,
+  browserSessionPersistence,
+} from 'firebase/auth';
+import { getAuthClient, isFirebaseConfigured } from '../lib/firebase';
+import { cmsFetch, cmsSave, CMS_PATHS } from '../lib/cms';
 
-const DEFAULT_PASSWORD_HASH = 'BOEA-ADMIN-KEY'; // Configurable master password
-const SESSION_KEY = 'boea_admin_auth_session';
-const PASS_KEY = 'boea_admin_pass_key';
-const AUDIT_LOGS_KEY = 'boea_admin_audit_logs';
+const AUDIT_LOCAL_KEY = 'boea_admin_audit_logs';
 
-const IDLE_TIMEOUT_MS = 30 * 60 * 1000; // 30 Minutes
+function readLocalAudit() {
+  try {
+    const logs = JSON.parse(localStorage.getItem(AUDIT_LOCAL_KEY) || '[]');
+    return Array.isArray(logs) ? logs : [];
+  } catch {
+    return [];
+  }
+}
 
-function getStoredPassword() {
-  return localStorage.getItem(PASS_KEY) || DEFAULT_PASSWORD_HASH;
+function writeLocalAudit(logs) {
+  try {
+    localStorage.setItem(AUDIT_LOCAL_KEY, JSON.stringify(logs));
+  } catch (e) {
+    console.error('Failed to persist audit logs locally:', e);
+  }
+}
+
+/** Human-readable messages for Firebase Auth errors (no raw codes to users). */
+function friendlyAuthError(e) {
+  const code = e?.code || '';
+  if (code === 'auth/invalid-credential' || code === 'auth/user-not-found' || code === 'auth/wrong-password') {
+    return 'Invalid email or password.';
+  }
+  if (code === 'auth/too-many-requests') {
+    return 'Too many failed attempts. Please wait a few minutes and try again.';
+  }
+  if (code === 'auth/requires-recent-login') {
+    return 'Please sign in again, then retry changing your password.';
+  }
+  if (code === 'auth/network-request-failed') {
+    return 'Network error. Check your connection and try again.';
+  }
+  if (code === 'auth/invalid-email') {
+    return 'That email address does not look right.';
+  }
+  return 'Sign-in failed. Please try again.';
 }
 
 export function useAdminAuth() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [auditLogs, setAuditLogs] = useState([]);
+  const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [authError, setAuthError] = useState('');
+  const [auditLogs, setAuditLogs] = useState([]);
 
-  // Log an administrative activity
+  const isAuthenticated = !!user;
+  const isConfigured = isFirebaseConfigured;
+
+  useEffect(() => {
+    const auth = getAuthClient();
+    if (!auth) {
+      setAuthLoading(false);
+      setAuditLogs(readLocalAudit());
+      return undefined;
+    }
+    const unsubscribe = onAuthStateChanged(auth, async (u) => {
+      setUser(u);
+      setAuthLoading(false);
+      if (u) {
+        const logs = await cmsFetch(CMS_PATHS.auditLogs, readLocalAudit());
+        setAuditLogs(Array.isArray(logs) ? logs : []);
+      } else {
+        setAuditLogs(readLocalAudit());
+      }
+    });
+    return unsubscribe;
+  }, []);
+
+  // Log an administrative activity (database when connected, local otherwise)
   const logAuditAction = useCallback((action, details = '') => {
     const newEntry = {
       id: 'log-' + Date.now(),
       action,
       details,
-      timestamp: new Date().toLocaleString()
+      timestamp: new Date().toLocaleString(),
     };
-    try {
-      const existing = JSON.parse(localStorage.getItem(AUDIT_LOGS_KEY) || '[]');
-      const updated = [newEntry, ...existing].slice(0, 100); // Keep last 100 logs
-      localStorage.setItem(AUDIT_LOGS_KEY, JSON.stringify(updated));
-      setAuditLogs(updated);
-    } catch (e) {
-      console.error('Failed to update audit logs:', e);
-    }
-  }, []);
-
-  // Validate active session token
-  const checkSession = useCallback(() => {
-    const sessionDataStr = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
-    if (!sessionDataStr) {
-      setIsAuthenticated(false);
-      return false;
-    }
-
-    try {
-      const session = JSON.parse(sessionDataStr);
-      const now = Date.now();
-      const maxAge = session.rememberMe ? 7 * 24 * 60 * 60 * 1000 : IDLE_TIMEOUT_MS;
-
-      if (now - session.timestamp > maxAge) {
-        // Session expired
-        logout();
-        setAuthError('Session expired due to inactivity. Please sign in again.');
-        return false;
+    setAuditLogs((prev) => {
+      const updated = [newEntry, ...prev].slice(0, 100); // Keep last 100 logs
+      if (isFirebaseConfigured) {
+        cmsSave(CMS_PATHS.auditLogs, updated);
+      } else {
+        writeLocalAudit(updated);
       }
-
-      // Refresh session timestamp on active use
-      session.timestamp = now;
-      const storage = session.rememberMe ? localStorage : sessionStorage;
-      storage.setItem(SESSION_KEY, JSON.stringify(session));
-
-      setIsAuthenticated(true);
-      return true;
-    } catch (e) {
-      logout();
-      return false;
-    }
+      return updated;
+    });
   }, []);
 
-  useEffect(() => {
-    checkSession();
+  const login = useCallback(
+    async (email, password, rememberMe = true) => {
+      const auth = getAuthClient();
+      if (!auth) {
+        const msg = 'Firebase is not connected yet. Follow FIREBASE_SETUP.md, then sign in.';
+        setAuthError(msg);
+        return { success: false, error: msg };
+      }
+      try {
+        await setPersistence(
+          auth,
+          rememberMe ? browserLocalPersistence : browserSessionPersistence,
+        );
+        await signInWithEmailAndPassword(auth, email.trim(), password);
+        setAuthError('');
+        logAuditAction('Admin Login', 'Successful administrative authentication session initiated.');
+        return { success: true };
+      } catch (e) {
+        const msg = friendlyAuthError(e);
+        setAuthError(msg);
+        logAuditAction('Failed Login Attempt', 'Unauthorized login attempt detected.');
+        return { success: false, error: msg };
+      }
+    },
+    [logAuditAction],
+  );
 
-    // Fetch initial audit logs
-    try {
-      const logs = JSON.parse(localStorage.getItem(AUDIT_LOGS_KEY) || '[]');
-      setAuditLogs(logs);
-    } catch (e) {
-      setAuditLogs([]);
+  const logout = useCallback(async () => {
+    const auth = getAuthClient();
+    if (auth) {
+      try {
+        await signOut(auth);
+      } catch (e) {
+        console.error('Sign-out failed:', e);
+      }
     }
-  }, [checkSession]);
-
-  const login = (password, rememberMe = false) => {
-    const currentPass = getStoredPassword();
-
-    if (password === currentPass) {
-      const session = {
-        token: 'token-' + Date.now() + '-' + Math.random().toString(36).substring(2),
-        timestamp: Date.now(),
-        rememberMe
-      };
-
-      const storage = rememberMe ? localStorage : sessionStorage;
-      storage.setItem(SESSION_KEY, JSON.stringify(session));
-
-      setIsAuthenticated(true);
-      setAuthError('');
-
-      logAuditAction('Admin Login', 'Successful administrative authentication session initiated.');
-      return { success: true };
-    } else {
-      setAuthError('Invalid administrator credentials. Please check your password.');
-      logAuditAction('Failed Login Attempt', 'Unauthorized login attempt detected.');
-      return { success: false, error: 'Invalid administrator credentials.' };
-    }
-  };
-
-  const logout = () => {
-    sessionStorage.removeItem(SESSION_KEY);
-    localStorage.removeItem(SESSION_KEY);
-    setIsAuthenticated(false);
+    setUser(null);
     logAuditAction('Admin Logout', 'Administrative session terminated.');
-  };
+  }, [logAuditAction]);
 
-  const changePassword = (currentPass, newPass) => {
-    const masterPass = getStoredPassword();
-    if (currentPass !== masterPass) {
-      return { success: false, error: 'Current password does not match.' };
-    }
-    if (!newPass || newPass.length < 6) {
-      return { success: false, error: 'New password must be at least 6 characters long.' };
-    }
-
-    localStorage.setItem(PASS_KEY, newPass);
-    logAuditAction('Password Changed', 'Administrative security credentials updated.');
-    return { success: true };
-  };
+  const changePassword = useCallback(
+    async (currentPassword, newPassword) => {
+      const auth = getAuthClient();
+      const currentUser = auth?.currentUser;
+      if (!auth || !currentUser) {
+        return { success: false, error: 'You are not signed in.' };
+      }
+      if (!newPassword || newPassword.length < 6) {
+        return { success: false, error: 'New password must be at least 6 characters long.' };
+      }
+      try {
+        const credential = EmailAuthProvider.credential(currentUser.email, currentPassword);
+        await reauthenticateWithCredential(currentUser, credential);
+        await updatePassword(currentUser, newPassword);
+        logAuditAction('Password Changed', 'Administrative security credentials updated.');
+        return { success: true };
+      } catch (e) {
+        return { success: false, error: friendlyAuthError(e) };
+      }
+    },
+    [logAuditAction],
+  );
 
   return {
     isAuthenticated,
+    user,
+    userEmail: user?.email || '',
+    isConfigured,
+    authLoading,
     authError,
     login,
     logout,
     changePassword,
     auditLogs,
-    logAuditAction
+    logAuditAction,
   };
 }

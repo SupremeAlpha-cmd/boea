@@ -11,34 +11,15 @@
  * The site works fine without it.
  */
 
-import { initializeApp, getApps } from 'firebase/app';
-import { getDatabase, ref, push, get, query, orderByChild, limitToLast } from 'firebase/database';
+import { ref, push, get, query, orderByChild, limitToLast } from 'firebase/database';
+import { getDb, isDatabaseConfigured } from './firebase';
 
 // ---------------------------------------------------------------------------
-// Config — from Vite env vars. Empty until Firebase is wired up.
+// Config — from Vite env vars via the shared Firebase init (`./firebase.js`).
+// Empty until Firebase is wired up.
 // ---------------------------------------------------------------------------
 
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || '',
-  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL || '',
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || '',
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || '',
-};
-
-export const isAnalyticsEnabled =
-  Boolean(firebaseConfig.apiKey) && Boolean(firebaseConfig.databaseURL);
-
-let db = null;
-
-function getDb() {
-  if (!isAnalyticsEnabled) return null;
-  if (!db) {
-    const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-    db = getDatabase(app);
-  }
-  return db;
-}
+export const isAnalyticsEnabled = isDatabaseConfigured;
 
 // ---------------------------------------------------------------------------
 // Tracking — call once per pageview (route change)

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import PageHero from '../components/PageHero';
 import NominateCta from '../components/NominateCta';
+import { cmsFetch, CMS_PATHS } from '../lib/cms';
 import '../styles/pages.css';
 import './SponsorsLogos.css';
 
@@ -15,20 +16,15 @@ const DEFAULT_SPONSORS = [
 ];
 
 export default function SponsorsLogos() {
-  const [sponsors, setSponsors] = useState([]);
+  const [sponsors, setSponsors] = useState(DEFAULT_SPONSORS);
 
+  // Admin-published list from the CMS; bundled defaults until then.
   useEffect(() => {
-    const saved = localStorage.getItem('boea-sponsors');
-    if (saved) {
-      try {
-        setSponsors(JSON.parse(saved));
-      } catch (e) {
-        setSponsors(DEFAULT_SPONSORS);
-      }
-    } else {
-      setSponsors(DEFAULT_SPONSORS);
-      localStorage.setItem('boea-sponsors', JSON.stringify(DEFAULT_SPONSORS));
-    }
+    let cancelled = false;
+    cmsFetch(CMS_PATHS.sponsors, DEFAULT_SPONSORS).then((list) => {
+      if (!cancelled) setSponsors(Array.isArray(list) ? list : DEFAULT_SPONSORS);
+    });
+    return () => { cancelled = true; };
   }, []);
 
   return (

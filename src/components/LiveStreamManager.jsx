@@ -16,8 +16,10 @@ import {
 } from 'lucide-react';
 import {
   getStoredStreamConfig,
+  fetchStreamConfig,
   saveStreamConfig,
   getStoredPasskeys,
+  fetchPasskeys,
   savePasskeys,
   generatePasskey,
   extractYouTubeId,
@@ -29,49 +31,61 @@ export default function LiveStreamManager({ logAuditAction }) {
   const [passkeys, setPasskeys] = useState(getStoredPasskeys());
   const [successMsg, setSuccessMsg] = useState('');
   const [copiedCode, setCopiedCode] = useState('');
+  // Freshly generated code — shown ONCE, right after creation. Only the
+  // hash is stored, so this cannot be recovered afterwards.
+  const [freshCode, setFreshCode] = useState(null);
 
   // Passkey generator field
   const [passkeyLabel, setPasskeyLabel] = useState('');
 
   useEffect(() => {
-    setConfig(getStoredStreamConfig());
-    setPasskeys(getStoredPasskeys());
+    let cancelled = false;
+    fetchStreamConfig().then((c) => { if (!cancelled) setConfig(c); });
+    fetchPasskeys().then((p) => { if (!cancelled) setPasskeys(p); });
+    return () => { cancelled = true; };
   }, []);
 
-  const handleSaveConfig = (e) => {
+  const handleSaveConfig = async (e) => {
     e.preventDefault();
-    saveStreamConfig(config);
+    const result = await saveStreamConfig(config);
     if (logAuditAction) {
       logAuditAction('Updated Live Stream Config', `Status: ${config.status}, YouTube: ${config.youtubeUrl}`);
     }
-    setSuccessMsg('Live stream configuration updated successfully! Changes are live on the website.');
+    setSuccessMsg(
+      result.cloud
+        ? 'Live stream configuration updated successfully! Changes are live on the website.'
+        : 'Saved on this browser only — connect Firebase to publish it to all visitors.',
+    );
     setTimeout(() => setSuccessMsg(''), 4000);
   };
 
-  const handleGeneratePasskey = (e) => {
+  const handleGeneratePasskey = async (e) => {
     e.preventDefault();
     const label = passkeyLabel.trim() || 'VIP Foreign Pass';
-    const newPass = generatePasskey(label);
-    const updated = getStoredPasskeys();
+    const { code, passkeys: updated } = await generatePasskey(label);
     setPasskeys(updated);
+    setFreshCode({ code, label });
     setPasskeyLabel('');
     if (logAuditAction) {
-      logAuditAction('Generated Stream Passkey', `Code: ${newPass.code} (${label})`);
+      // Audit trail records the label only — never the code itself.
+      logAuditAction('Generated Stream Passkey', `Label: ${label}`);
     }
   };
 
-  const handleDeletePasskey = (code) => {
-    const updated = passkeys.filter((p) => p.code !== code);
+  const handleDeletePasskey = async (codeHash) => {
+    const removed = passkeys.find((p) => p.codeHash === codeHash);
+    const updated = passkeys.filter((p) => p.codeHash !== codeHash);
     setPasskeys(updated);
-    savePasskeys(updated);
+    await savePasskeys(updated);
     if (logAuditAction) {
-      logAuditAction('Revoked Stream Passkey', `Code: ${code}`);
+      logAuditAction('Revoked Stream Passkey', `Label: ${removed?.label || 'unknown'}`);
     }
   };
 
-  const handleCopyPasskey = (code) => {
-    navigator.clipboard.writeText(code);
-    setCopiedCode(code);
+  const handleCopyFreshCode = () => {
+    if (!freshCode) return;
+    navigator.clipboard.writeText(freshCode.code);
+    setCopiedCode(freshCode.code);
     setTimeout(() => setCopiedCode(''), 2500);
   };
 
@@ -240,11 +254,44 @@ export default function LiveStreamManager({ logAuditAction }) {
           </button>
         </form>
 
+        {freshCode && (
+          <div style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.4)', borderRadius: '8px', padding: '1rem', marginBottom: '1.5rem' }}>
+            <div style={{ fontSize: '13px', fontWeight: 700, color: '#10b981', marginBottom: '0.25rem' }}>
+              New passkey for “{freshCode.label}” — copy it now, it cannot be shown again:
+            </div>
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+              <code style={{ fontSize: '15px', fontWeight: 800, letterSpacing: '1px', color: 'var(--color-gold)' }}>{freshCode.code}</code>
+              <button
+                type="button"
+                className="btn btn-outline"
+                onClick={handleCopyFreshCode}
+                style={{ padding: '0.35rem 0.65rem', fontSize: '12px', gap: '0.3rem' }}
+              >
+                {copiedCode === freshCode.code ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
+                {copiedCode === freshCode.code ? 'Copied' : 'Copy'}
+              </button>
+              <button
+                type="button"
+                className="btn btn-outline"
+                onClick={() => setFreshCode(null)}
+                style={{ padding: '0.35rem 0.65rem', fontSize: '12px' }}
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        )}
+
         <h4 className="headline-xs" style={{ marginBottom: '0.75rem' }}>Active Passkeys ({passkeys.length})</h4>
         <div style={{ display: 'grid', gap: '0.75rem' }}>
+          {passkeys.length === 0 && (
+            <p style={{ fontSize: '13px', color: 'var(--on-surface-variant)' }}>
+              No passkeys yet. Generate one above — old built-in codes were removed with the Firebase migration and will not work.
+            </p>
+          )}
           {passkeys.map((p) => (
             <div
-              key={p.code}
+              key={p.codeHash}
               style={{
                 background: 'var(--surface-bright)',
                 border: '1px solid var(--border-bronze-subtle)',
@@ -259,10 +306,10 @@ export default function LiveStreamManager({ logAuditAction }) {
             >
               <div>
                 <div style={{ fontSize: '15px', fontWeight: 800, color: 'var(--color-gold)', letterSpacing: '1px' }}>
-                  {p.code}
+                  {p.label}
                 </div>
                 <div style={{ fontSize: '12px', color: 'var(--on-surface-variant)' }}>
-                  {p.label} &middot; Generated: {p.createdAt}
+                  Code stored as a hash (not shown) &middot; Generated: {p.createdAt} &middot; {p.active ? 'Active' : 'Inactive'}
                 </div>
               </div>
 
@@ -270,16 +317,7 @@ export default function LiveStreamManager({ logAuditAction }) {
                 <button
                   type="button"
                   className="btn btn-outline"
-                  onClick={() => handleCopyPasskey(p.code)}
-                  style={{ padding: '0.35rem 0.65rem', fontSize: '12px', gap: '0.3rem' }}
-                >
-                  {copiedCode === p.code ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
-                  {copiedCode === p.code ? 'Copied' : 'Copy'}
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-outline"
-                  onClick={() => handleDeletePasskey(p.code)}
+                  onClick={() => handleDeletePasskey(p.codeHash)}
                   style={{ padding: '0.35rem 0.65rem', fontSize: '12px', color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.4)' }}
                   title="Revoke Passkey"
                 >

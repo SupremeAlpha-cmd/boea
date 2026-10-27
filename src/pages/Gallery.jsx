@@ -4,6 +4,7 @@ import PageHero from '../components/PageHero';
 import NominateCta from '../components/NominateCta';
 import RichLinkPreview from '../components/RichLinkPreview';
 import { FEATURED_PRESS_LINKS } from '../data/content';
+import { cmsFetch, CMS_PATHS } from '../lib/cms';
 import '../styles/pages.css';
 import './Gallery.css';
 
@@ -739,29 +740,20 @@ export default function Gallery() {
   const [activePhoto, setActivePhoto] = useState(null);
 
   useEffect(() => {
-    const savedPhotos = localStorage.getItem('boea-gallery-photos');
-    if (savedPhotos) {
-      try { setPhotos(JSON.parse(savedPhotos)); } catch (e) { setPhotos(INITIAL_PHOTOS); }
-    } else {
-      setPhotos(INITIAL_PHOTOS);
-    }
-
-    const savedVideos = localStorage.getItem('boea-gallery-videos');
-    if (savedVideos) {
-      try {
-        const parsed = JSON.parse(savedVideos);
-        const sanitized = parsed.map((v) =>
-          v.thumb === '/assets/boea_photo_wall.jpeg'
-            ? { ...v, thumb: '/assets/boea_brand_award_image.jpeg' }
-            : v
-        );
-        setVideos(sanitized);
-      } catch (e) {
-        setVideos(INITIAL_VIDEOS);
-      }
-    } else {
-      setVideos(INITIAL_VIDEOS);
-    }
+    let cancelled = false;
+    const sanitizeVideos = (list) =>
+      list.map((v) =>
+        v.thumb === '/assets/boea_photo_wall.jpeg'
+          ? { ...v, thumb: '/assets/boea_brand_award_image.jpeg' }
+          : v
+      );
+    cmsFetch(CMS_PATHS.galleryPhotos, INITIAL_PHOTOS).then((list) => {
+      if (!cancelled) setPhotos(Array.isArray(list) ? list : INITIAL_PHOTOS);
+    });
+    cmsFetch(CMS_PATHS.galleryVideos, INITIAL_VIDEOS).then((list) => {
+      if (!cancelled) setVideos(Array.isArray(list) ? sanitizeVideos(list) : INITIAL_VIDEOS);
+    });
+    return () => { cancelled = true; };
   }, []);
 
   return (

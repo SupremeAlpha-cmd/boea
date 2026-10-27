@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import {
   getStoredStreamConfig,
+  fetchStreamConfig,
   formatYouTubeEmbedUrl,
   verifyPasskey,
   extractYouTubeId
@@ -109,7 +110,10 @@ export default function LiveStream() {
     };
 
     checkAccess();
-    setConfig(getStoredStreamConfig());
+    // Refresh stream config from the CMS (falls back to cached defaults).
+    let cancelled = false;
+    fetchStreamConfig().then((c) => { if (!cancelled) setConfig(c); });
+    return () => { cancelled = true; };
   }, []);
 
   // Countdown timer effect
@@ -135,16 +139,18 @@ export default function LiveStream() {
     return () => clearInterval(interval);
   }, [config.eventDate]);
 
-  // Handle Passkey Verification
-  const handleVerifyPasskey = (e) => {
+  // Handle Passkey Verification (hash comparison — see streamData.js)
+  const handleVerifyPasskey = async (e) => {
     e.preventDefault();
     setPasskeyError('');
-    const res = verifyPasskey(passkeyInput);
+    const res = await verifyPasskey(passkeyInput);
     if (res.valid) {
       const info = {
         type: 'passkey',
         label: res.passkey.label || 'VIP Pass Verified',
-        code: res.passkey.code
+        // The code the visitor just typed (never a stored code — there is
+        // none; passkeys are stored as hashes only).
+        code: passkeyInput.trim().toUpperCase(),
       };
       setUnlocked(true);
       setActivePassInfo(info);
@@ -437,7 +443,7 @@ export default function LiveStream() {
                   <input
                     type="text"
                     className="admin-input"
-                    placeholder="SECRET-KEY"
+                    placeholder="Enter your access passkey"
                     value={passkeyInput}
                     onChange={(e) => setPasskeyInput(e.target.value)}
                     required

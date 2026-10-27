@@ -1,3 +1,25 @@
+/**
+ * BOEA Live Stream data — config + passkeys, now backed by the CMS
+ * (`src/lib/cms.js`) instead of browser localStorage alone.
+ *
+ * Security changes (see FIREBASE_SETUP.md):
+ * - There are NO built-in passkeys anymore. The old hardcoded codes and the
+ *   master override that accepted them are deleted. The admin creates fresh
+ *   passkeys in the portal after Firebase is connected.
+ * - Passkeys are stored as SHA-256 hashes only — never the codes themselves.
+ *   A generated code is shown to the admin exactly once, at creation time.
+ * - Verification hashes the visitor's input and compares hashes, so the code
+ *   itself never travels to or from the database.
+ *
+ * Honest limit: hashes live under a public-read CMS path (visitors must be
+ * able to verify), so a short code could be brute-forced offline. That is
+ * why generated codes are now long random strings, not 4-digit suffixes.
+ * Truly secret verification would need a server check (Cloud Function) —
+ * listed as a follow-up in FIREBASE_SETUP.md, not pretended here.
+ */
+
+import { cmsFetch, cmsSave, readCache, CMS_PATHS } from '../lib/cms';
+
 // Default Live Stream Configuration for Best of Edo Award (BOEA)
 const DEFAULT_STREAM_CONFIG = {
   title: '9th Edition Best of Edo Award Gala Night 2026 — Official Live Stream',
@@ -10,13 +32,6 @@ const DEFAULT_STREAM_CONFIG = {
   announcement: '🔴 Black Carpet Coverage starts at 5:00 PM WAT. Main Gala Award Ceremony commences at 6:30 PM WAT live on YouTube.',
   bannerImage: '/assets/boea_gala_night_hall.jpeg'
 };
-
-const INITIAL_PASSKEYS = [
-  { code: 'SECRET-KEY', label: 'VIP Pass — Royal Guest', createdAt: '2026-09-01', active: true },
-  { code: 'BOEA-VIP-2026', label: 'VIP Pass — Gala Delegate', createdAt: '2026-09-01', active: true },
-  { code: 'BOEA-GALA-8849', label: 'International Press Pass', createdAt: '2026-09-05', active: true },
-  { code: 'BOEA-FOREIGN-7712', label: 'Diaspora Heritage Pass', createdAt: '2026-09-10', active: true }
-];
 
 export function extractYouTubeId(urlOrId) {
   if (!urlOrId) return '';
@@ -45,89 +60,139 @@ export function formatYouTubeEmbedUrl(urlOrId) {
   return 'https://www.youtube-nocookie.com/embed/lHaKtEVysk8?autoplay=1&modestbranding=1&rel=0';
 }
 
+// ---------------------------------------------------------------------------
+// Stream config — CMS-backed, bundled defaults as fallback
+// ---------------------------------------------------------------------------
+
+/** Synchronous read (local cache merged over defaults) for first paint. */
 export function getStoredStreamConfig() {
-  if (typeof window === 'undefined') return DEFAULT_STREAM_CONFIG;
-  const saved = localStorage.getItem('boea_stream_config');
-  if (saved) {
-    try {
-      const parsed = JSON.parse(saved);
-      // Clean up legacy test data or upgrade default channel link to the specific featured video
-      if (
-        parsed.youtubeUrl &&
-        (parsed.youtubeUrl.includes('dQw4w9WgXcQ') ||
-          parsed.youtubeUrl.includes('@BestofEdoAwards') ||
-          parsed.youtubeUrl.includes('gnFr2I8xIhA'))
-      ) {
-        parsed.youtubeUrl = DEFAULT_STREAM_CONFIG.youtubeUrl;
-        localStorage.setItem('boea_stream_config', JSON.stringify({ ...DEFAULT_STREAM_CONFIG, ...parsed }));
-      }
-      return { ...DEFAULT_STREAM_CONFIG, ...parsed };
-    } catch (e) {
-      console.error('Error parsing boea_stream_config', e);
+  const cached = readCache(CMS_PATHS.streamConfig, null);
+  if (cached) {
+    const parsed = { ...DEFAULT_STREAM_CONFIG, ...cached };
+    // Clean up legacy test data / old channel links
+    if (
+      parsed.youtubeUrl &&
+      (parsed.youtubeUrl.includes('dQw4w9WgXcQ') ||
+        parsed.youtubeUrl.includes('@BestofEdoAwards') ||
+        parsed.youtubeUrl.includes('gnFr2I8xIhA'))
+    ) {
+      parsed.youtubeUrl = DEFAULT_STREAM_CONFIG.youtubeUrl;
     }
+    return parsed;
   }
   return DEFAULT_STREAM_CONFIG;
 }
 
-export function saveStreamConfig(config) {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem('boea_stream_config', JSON.stringify(config));
-}
-
-export function getStoredPasskeys() {
-  if (typeof window === 'undefined') return INITIAL_PASSKEYS;
-  const saved = localStorage.getItem('boea_stream_passkeys');
-  if (saved) {
-    try {
-      return JSON.parse(saved);
-    } catch (e) {
-      console.error('Error parsing boea_stream_passkeys', e);
-    }
+/** Live read from the database (falls back to the cached/default config). */
+export async function fetchStreamConfig() {
+  const fetched = await cmsFetch(CMS_PATHS.streamConfig, null);
+  if (!fetched) return getStoredStreamConfig();
+  const parsed = { ...DEFAULT_STREAM_CONFIG, ...fetched };
+  if (
+    parsed.youtubeUrl &&
+    (parsed.youtubeUrl.includes('dQw4w9WgXcQ') ||
+      parsed.youtubeUrl.includes('@BestofEdoAwards') ||
+      parsed.youtubeUrl.includes('gnFr2I8xIhA'))
+  ) {
+    parsed.youtubeUrl = DEFAULT_STREAM_CONFIG.youtubeUrl;
   }
-  return INITIAL_PASSKEYS;
+  return parsed;
 }
 
-export function savePasskeys(passkeys) {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem('boea_stream_passkeys', JSON.stringify(passkeys));
+export async function saveStreamConfig(config) {
+  return cmsSave(CMS_PATHS.streamConfig, config);
 }
 
-export function verifyPasskey(inputCode) {
+// ---------------------------------------------------------------------------
+// Passkeys — SHA-256 hashes only, no codes stored anywhere
+// ---------------------------------------------------------------------------
+
+/** SHA-256 hex of the normalised code. Fails closed without secure context. */
+export async function hashPasskey(code) {
+  const data = new TextEncoder().encode(code.trim().toUpperCase());
+  const digest = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+/** Synchronous read of cached passkey records (hashes, labels, flags). */
+export function getStoredPasskeys() {
+  const cached = readCache(CMS_PATHS.passkeys, null);
+  return Array.isArray(cached) ? cached : [];
+}
+
+/** Live read of passkey records from the database. */
+export async function fetchPasskeys() {
+  const fetched = await cmsFetch(CMS_PATHS.passkeys, null);
+  return Array.isArray(fetched) ? fetched : getStoredPasskeys();
+}
+
+export async function savePasskeys(passkeys) {
+  return cmsSave(CMS_PATHS.passkeys, passkeys);
+}
+
+function randomGroup(length) {
+  const alphabet = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; // no lookalikes
+  const bytes = new Uint8Array(length);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, (b) => alphabet[b % alphabet.length]).join('');
+}
+
+/**
+ * Generate a passkey. Returns `{ code, record, passkeys }` — `code` is the
+ * plaintext shown to the admin ONCE; only the hash is stored. Callers must
+ * display `code` immediately, because it cannot be recovered afterwards.
+ */
+export async function generatePasskey(label = 'Foreign Visitor Pass') {
+  const code = `BOEA-${randomGroup(4)}-${randomGroup(4)}-${randomGroup(4)}`;
+  const codeHash = await hashPasskey(code);
+  const record = {
+    codeHash,
+    label,
+    createdAt: new Date().toISOString().split('T')[0],
+    active: true,
+  };
+  const current = await fetchPasskeys();
+  const updated = [record, ...current];
+  await savePasskeys(updated);
+  return { code, record, passkeys: updated };
+}
+
+/**
+ * Verify a visitor-supplied code by hash comparison against stored records,
+ * then against locally kept purchase receipts (from the PPV checkout).
+ * Returns `{ valid, passkey: { label } }` or `{ valid: false, message }`.
+ * Never returns a stored code — there is none to return.
+ */
+export async function verifyPasskey(inputCode) {
   if (!inputCode) return { valid: false, message: 'Passkey cannot be empty' };
   const cleanCode = inputCode.trim().toUpperCase();
-  
-  // Master override code
-  if (cleanCode === 'BOEA-ADMIN-KEY' || cleanCode === 'BOEA-VIP-2026' || cleanCode === 'SECRET-KEY') {
-    return { valid: true, passkey: { code: cleanCode, label: 'Master VIP Pass' } };
+
+  let hash = null;
+  try {
+    hash = await hashPasskey(cleanCode);
+  } catch (e) {
+    console.error('Passkey hashing unavailable:', e);
+    return { valid: false, message: 'Passkey verification is unavailable in this browser.' };
   }
 
-  const passkeys = getStoredPasskeys();
-  const match = passkeys.find(p => p.code.toUpperCase() === cleanCode && p.active);
+  const passkeys = await fetchPasskeys();
+  const match = passkeys.find((p) => p.codeHash === hash && p.active);
   if (match) {
-    return { valid: true, passkey: match };
+    return { valid: true, passkey: { label: match.label } };
   }
 
-  // Check if it's a paid pass stored locally
+  // Check if it's a paid pass stored locally (PPV checkout receipt)
   const purchased = localStorage.getItem(`boea_purchased_pass_${cleanCode}`);
   if (purchased) {
-    return { valid: true, passkey: JSON.parse(purchased) };
+    try {
+      const info = JSON.parse(purchased);
+      return { valid: true, passkey: { label: info.label || 'Paid PPV Ticket' } };
+    } catch (e) {
+      console.error('Error parsing purchased pass:', e);
+    }
   }
 
   return { valid: false, message: 'Invalid or expired Access Passkey. Please check and try again.' };
-}
-
-export function generatePasskey(label = 'Foreign Visitor Pass') {
-  const randomNum = Math.floor(1000 + Math.random() * 9000);
-  const code = `BOEA-PASS-${randomNum}`;
-  const newPass = {
-    code,
-    label,
-    createdAt: new Date().toISOString().split('T')[0],
-    active: true
-  };
-
-  const current = getStoredPasskeys();
-  const updated = [newPass, ...current];
-  savePasskeys(updated);
-  return newPass;
 }
