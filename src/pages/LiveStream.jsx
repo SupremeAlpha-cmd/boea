@@ -127,7 +127,8 @@ export default function LiveStream() {
               fullName: pending.fullName || 'BOEA Gala Patron',
               amount: verified.amount || pending.amount || 5,
               currency: verified.currency || pending.currency || 'USD',
-              gateway: 'paystack_server'
+              gateway: 'paystack_server',
+              serverPassCode: verified.passCode
             });
 
             trackPPVPurchase(transaction);
@@ -258,20 +259,30 @@ export default function LiveStream() {
       fullName: buyerName.trim(),
       onSuccess: async (response) => {
         try {
+          // Security: Verify transaction with the server before unlocking
+          const verified = await verifyServerPaystackPayment(response.reference);
+          if (!verified || !verified.success) {
+            setPayError(verified?.error || 'Payment verification failed on the server.');
+            return;
+          }
+
           const { transaction, passCode, info } = await recordPPVPurchase({
-            reference: response.reference,
-            email: buyerEmail,
+            reference: verified.reference || response.reference,
+            email: verified.email || buyerEmail,
             fullName: buyerName,
-            amount: price,
-            currency,
-            gateway: 'paystack'
+            amount: verified.amount || price,
+            currency: verified.currency || currency,
+            gateway: 'paystack',
+            serverPassCode: verified.passCode
           });
+
           trackPPVPurchase(transaction);
           setPaidPassCode(passCode);
           setUnlocked(true);
           setActivePassInfo(info);
         } catch (err) {
-          console.error('Error saving PPV pass:', err);
+          console.error('Error verifying PPV pass:', err);
+          setPayError('Unable to complete pass verification. Please try again or contact support.');
         } finally {
           setIsProcessingPay(false);
         }
@@ -629,12 +640,11 @@ export default function LiveStream() {
                         <Sparkles size={15} color="var(--color-gold)" /> Gala Night Live Access
                       </div>
                       <div className="ppv-order-subtitle">
-                        YouTube 1080p HD All-Access Pass • Global Cards Accepted
+                        YouTube 1080p HD All-Access Pass • Instant Unlock
                       </div>
                     </div>
-                    <div style={{ textAlign: 'right' }}>
-                      <div className="ppv-order-price">${config.foreignPriceUSD} USD</div>
-                      <div style={{ fontSize: '11.5px', color: 'var(--color-gold, #c9a227)', fontWeight: 600 }}>~₦7,500 NGN</div>
+                    <div className="ppv-order-price">
+                      ${config.foreignPriceUSD} USD
                     </div>
                   </div>
 
@@ -656,7 +666,7 @@ export default function LiveStream() {
                       </>
                     ) : (
                       <>
-                        <CreditCard size={18} /> Pay ${config.foreignPriceUSD} USD (~₦7,500) & Watch Live
+                        <CreditCard size={18} /> Pay ${config.foreignPriceUSD} USD & Watch Live
                       </>
                     )}
                   </button>

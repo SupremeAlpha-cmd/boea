@@ -1,3 +1,21 @@
+async function getLiveUsdToNgnRate() {
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 2000);
+    const res = await fetch('https://open.er-api.com/v6/latest/USD', {
+      signal: controller.signal
+    });
+    clearTimeout(timer);
+    if (res.ok) {
+      const data = await res.json();
+      if (data?.rates?.NGN && data.rates.NGN > 500) {
+        return Math.round(data.rates.NGN);
+      }
+    }
+  } catch {}
+  return 1550; // Resilient default rate
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -12,7 +30,7 @@ export default async function handler(req, res) {
         // ignore
       }
     }
-    const { email, fullName, amount = 5, currency = 'USD' } = body || {};
+    const { email, fullName, item = 'ppv_pass', amount, currency = 'USD', phone = '', organisation = '' } = body || {};
 
     if (!email || !email.includes('@')) {
       return res.status(400).json({ error: 'A valid email address is required.' });
@@ -30,17 +48,40 @@ export default async function handler(req, res) {
     const host = req.headers['x-forwarded-host'] || req.headers.host || 'bestofedoaward.com';
     const origin = `${protocol}://${host}`;
 
-    let targetCurrency = (currency || 'USD').toUpperCase();
-    let subunitAmount = Math.round(Number(amount) * 100);
-    const ref = `BOEA-PPV-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const isSponsorship = item === 'sponsorship';
+    const ref = `BOEA-${isSponsorship ? 'SPONSOR' : 'PPV'}-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    let targetCurrency = 'USD';
+    let subunitAmount = 500; // $5 USD fixed for PPV
+    let itemDescription = 'BOEA 2026 Gala Night Live Stream Pass';
+    let callbackUrl = `${origin}/live?verify_ref=${ref}`;
+
+    if (isSponsorship) {
+      targetCurrency = 'NGN';
+      const cleanAmount = Math.max(1000, Number(amount) || 50000);
+      subunitAmount = Math.round(cleanAmount * 100);
+      itemDescription = `BOEA 2026 Sponsorship / Donation (${organisation ? organisation + ' - ' : ''}${fullName || 'Supporter'})`;
+      callbackUrl = `${origin}/partners?status=confirmed&ref=${ref}`;
+    } else {
+      // Security: PPV Pass price is strictly controlled by the server.
+      // Client cannot request a $0.01 or discounted pass.
+      targetCurrency = (currency || 'USD').toUpperCase();
+      subunitAmount = 500; // 500 cents = $5.00 USD
+    }
 
     const createPayload = (cur, subAmount) => ({
       email: email.trim(),
       amount: subAmount,
       currency: cur,
       reference: ref,
-      callback_url: `${origin}/live?verify_ref=${ref}`,
+      callback_url: callbackUrl,
       metadata: {
+        item_type: isSponsorship ? 'sponsorship' : 'ppv_pass',
+        expected_usd_cents: isSponsorship ? 0 : 500,
+        expected_min_ngn_kobo: isSponsorship ? subunitAmount : 750000, // ₦7,500 floor
+        customer_name: (fullName || 'BOEA Gala Guest').trim(),
+        phone: phone ? phone.trim() : undefined,
+        organisation: organisation ? organisation.trim() : undefined,
         custom_fields: [
           {
             display_name: 'Customer Name',
@@ -50,7 +91,7 @@ export default async function handler(req, res) {
           {
             display_name: 'Item Purchased',
             variable_name: 'item_purchased',
-            value: 'BOEA 2026 Gala Night Live Stream Pass'
+            value: itemDescription
           }
         ]
       }
@@ -67,12 +108,13 @@ export default async function handler(req, res) {
 
     let data = await paystackRes.json();
 
-    // If the merchant account does not support USD settlement, fall back to NGN (~$5 = ₦7,500)
-    // All international cards (Visa, Mastercard, Amex) can pay NGN seamlessly worldwide
+    // If the merchant account rejects USD with a currency unsupported error,
+    // automatically fall back to the live NGN equivalent (minimum ₦7,500 floor).
     if (!paystackRes.ok || !data.status) {
       if (data.message && data.message.toLowerCase().includes('currency')) {
         targetCurrency = 'NGN';
-        const ngnTotal = Number(amount) <= 50 ? Number(amount) * 1500 : Number(amount);
+        const liveRate = await getLiveUsdToNgnRate();
+        const ngnTotal = Math.max(7500, Math.round(5 * liveRate));
         const ngnSubunit = Math.round(ngnTotal * 100);
 
         paystackRes = await fetch('https://api.paystack.co/transaction/initialize', {

@@ -1,12 +1,14 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
+import initializeHandler from './api/paystack/initialize.js';
+import verifyHandler from './api/paystack/verify.js';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  const secretKey =
-    env.PAYSTACK_SECRET_KEY ||
-    env.PAYSTACK_TEST_SECRET_KEY ||
-    '';
+  // Populate process.env for the server handlers in local dev
+  process.env.PAYSTACK_SECRET_KEY = env.PAYSTACK_SECRET_KEY || process.env.PAYSTACK_SECRET_KEY || '';
+  process.env.PAYSTACK_TEST_SECRET_KEY = env.PAYSTACK_TEST_SECRET_KEY || process.env.PAYSTACK_TEST_SECRET_KEY || '';
+  process.env.FIREBASE_DATABASE_URL = env.VITE_FIREBASE_DATABASE_URL || process.env.FIREBASE_DATABASE_URL || '';
 
   return {
     plugins: [
@@ -17,130 +19,41 @@ export default defineConfig(({ mode }) => {
           server.middlewares.use(async (req, res, next) => {
             const url = new URL(req.url, `http://${req.headers.host || 'localhost:3000'}`);
 
-            if (url.pathname === '/api/paystack/initialize' && req.method === 'POST') {
-              let body = '';
-              req.on('data', (chunk) => {
-                body += chunk;
-              });
-              req.on('end', async () => {
+            if (url.pathname === '/api/paystack/initialize' || url.pathname === '/api/paystack/verify') {
+              // Polyfill query and helper response methods for Vite connect middleware
+              req.query = Object.fromEntries(url.searchParams);
+              if (!res.status) {
+                res.status = function (code) {
+                  this.statusCode = code;
+                  return this;
+                };
+              }
+              if (!res.json) {
+                res.json = function (payload) {
+                  this.setHeader('Content-Type', 'application/json');
+                  this.end(JSON.stringify(payload));
+                  return this;
+                };
+              }
+
+              if (req.method === 'POST' && !req.body) {
+                let rawBody = '';
+                for await (const chunk of req) {
+                  rawBody += chunk;
+                }
                 try {
-                  const parsed = JSON.parse(body || '{}');
-                  const { email, fullName, amount = 5, currency = 'USD' } = parsed;
-                  let targetCurrency = (currency || 'USD').toUpperCase();
-                  let subunitAmount = Math.round(Number(amount) * 100);
-                  const ref = `BOEA-PPV-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
-
-                  const protocol = req.headers['x-forwarded-proto'] || 'http';
-                  const host = req.headers.host || 'localhost:3000';
-                  const origin = `${protocol}://${host}`;
-
-                  const makePayload = (cur, subAmount) => ({
-                    email: (email || '').trim(),
-                    amount: subAmount,
-                    currency: cur,
-                    reference: ref,
-                    callback_url: `${origin}/live?verify_ref=${ref}`,
-                    metadata: {
-                      custom_fields: [
-                        {
-                          display_name: 'Customer Name',
-                          variable_name: 'customer_name',
-                          value: (fullName || 'BOEA Gala Guest').trim()
-                        },
-                        {
-                          display_name: 'Item Purchased',
-                          variable_name: 'item_purchased',
-                          value: 'BOEA 2026 Gala Night Live Stream Pass'
-                        }
-                      ]
-                    }
-                  });
-
-                  let pRes = await fetch('https://api.paystack.co/transaction/initialize', {
-                    method: 'POST',
-                    headers: {
-                      Authorization: `Bearer ${secretKey.trim()}`,
-                      'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(makePayload(targetCurrency, subunitAmount))
-                  });
-
-                  let data = await pRes.json();
-
-                  if (!pRes.ok || !data.status) {
-                    if (data.message && data.message.toLowerCase().includes('currency')) {
-                      targetCurrency = 'NGN';
-                      const ngnTotal = Number(amount) <= 50 ? Number(amount) * 1500 : Number(amount);
-                      const ngnSubunit = Math.round(ngnTotal * 100);
-                      pRes = await fetch('https://api.paystack.co/transaction/initialize', {
-                        method: 'POST',
-                        headers: {
-                          Authorization: `Bearer ${secretKey.trim()}`,
-                          'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(makePayload(targetCurrency, ngnSubunit))
-                      });
-                      data = await pRes.json();
-                    }
-                  }
-                  res.setHeader('Content-Type', 'application/json');
-                  res.statusCode = pRes.status;
-                  res.end(
-                    JSON.stringify(
-                      data.status
-                        ? {
-                            authorization_url: data.data.authorization_url,
-                            access_code: data.data.access_code,
-                            reference: ref
-                          }
-                        : { error: data.message || 'Initialization failed' }
-                    )
-                  );
-                } catch (err) {
-                  res.statusCode = 500;
-                  res.end(JSON.stringify({ error: err.message }));
+                  req.body = JSON.parse(rawBody);
+                } catch {
+                  req.body = rawBody;
                 }
-              });
-              return;
-            }
+              }
 
-            if (url.pathname === '/api/paystack/verify' && req.method === 'GET') {
-              const reference = url.searchParams.get('reference') || url.searchParams.get('verify_ref');
-              if (!reference) {
-                res.statusCode = 400;
-                res.end(JSON.stringify({ error: 'Missing reference' }));
-                return;
+              if (url.pathname === '/api/paystack/initialize') {
+                return initializeHandler(req, res);
               }
-              try {
-                const pRes = await fetch(`https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`, {
-                  headers: {
-                    Authorization: `Bearer ${secretKey.trim()}`,
-                    'Content-Type': 'application/json'
-                  }
-                });
-                const data = await pRes.json();
-                res.setHeader('Content-Type', 'application/json');
-                res.statusCode = pRes.status;
-                if (data.status && data.data.status === 'success') {
-                  res.end(
-                    JSON.stringify({
-                      success: true,
-                      reference: data.data.reference,
-                      amount: data.data.amount / 100,
-                      currency: data.data.currency,
-                      email: data.data.customer?.email,
-                      paidAt: data.data.paid_at,
-                      status: 'success'
-                    })
-                  );
-                } else {
-                  res.end(JSON.stringify({ error: data.message || 'Verification failed' }));
-                }
-              } catch (err) {
-                res.statusCode = 500;
-                res.end(JSON.stringify({ error: err.message }));
+              if (url.pathname === '/api/paystack/verify') {
+                return verifyHandler(req, res);
               }
-              return;
             }
 
             next();

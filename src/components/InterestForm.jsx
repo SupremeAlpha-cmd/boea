@@ -1,7 +1,6 @@
-import { useState } from 'react';
-import { CheckCircle2, CreditCard, Lock, Banknote } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { CheckCircle2, CreditCard, Lock, Banknote, Loader2, AlertCircle } from 'lucide-react';
 import CustomSelect from './CustomSelect';
-import PaystackModal from './PaystackModal';
 import './InterestForm.css';
 
 const PRESET_AMOUNTS = [
@@ -14,7 +13,9 @@ const PRESET_AMOUNTS = [
 
 export default function InterestForm({ title, subtitle, options = [], submitLabel = 'Proceed to Paystack Payment' }) {
   const [submitted, setSubmitted] = useState(false);
-  const [showPaystack, setShowPaystack] = useState(false);
+  const [confirmedRef, setConfirmedRef] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState('');
   const [isCustomAmount, setIsCustomAmount] = useState(false);
   const [formData, setFormData] = useState({
     interestType: options?.[0] || 'Individual donation',
@@ -26,18 +27,74 @@ export default function InterestForm({ title, subtitle, options = [], submitLabe
     message: ''
   });
 
+  // Check for return from real Paystack checkout redirect
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get('status');
+    const ref = params.get('ref') || params.get('reference');
+    if (status === 'confirmed' && ref) {
+      setSubmitted(true);
+      setConfirmedRef(ref);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+
   const handleAmountSelect = (val) => {
     if (val === 'custom') {
       setIsCustomAmount(true);
     } else {
       setIsCustomAmount(false);
-      setFormData(prev => ({ ...prev, amount: val }));
+      setFormData((prev) => ({ ...prev, amount: val }));
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setShowPaystack(true);
+    setError('');
+
+    if (!formData.fullName.trim() || !formData.email.trim()) {
+      setError('Please provide your full name and a valid email address.');
+      return;
+    }
+
+    const payAmount = Number(formData.amount);
+    if (!payAmount || payAmount < 1000) {
+      setError('Minimum contribution amount is ₦1,000 NGN.');
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      const res = await fetch('/api/paystack/initialize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: formData.email.trim(),
+          fullName: formData.fullName.trim(),
+          amount: payAmount,
+          currency: 'NGN',
+          item: 'sponsorship',
+          phone: formData.phone.trim(),
+          organisation: formData.organisation.trim()
+        })
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.authorization_url) {
+        // Redirect to real Paystack secure checkout
+        window.location.href = data.authorization_url;
+      } else {
+        setError(data.error || 'Payment initialization failed. Please try again.');
+        setIsProcessing(false);
+      }
+    } catch (err) {
+      console.error('Paystack initialization error:', err);
+      setError('Network connection error. Please check your connection and try again.');
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -47,12 +104,20 @@ export default function InterestForm({ title, subtitle, options = [], submitLabe
           <CheckCircle2 size={40} className="interest-success-icon" />
           <h3 className="headline-md interest-success-title">Thank You for Your Support!</h3>
           <p className="body-md interest-success-text">
-            Your details have been submitted and payment confirmation received. Our team will contact you via email ({formData.email}) shortly.
+            Your pledge and payment confirmation have been successfully received. Our team will contact you shortly.
           </p>
+          {confirmedRef && (
+            <div style={{ marginTop: '0.75rem', fontSize: '0.85rem', color: 'var(--color-gold)', fontFamily: 'monospace' }}>
+              Reference: {confirmedRef}
+            </div>
+          )}
           <button
             type="button"
             className="btn btn-outline margin-top-md"
-            onClick={() => { setSubmitted(false); setShowPaystack(false); }}
+            onClick={() => {
+              setSubmitted(false);
+              setConfirmedRef('');
+            }}
           >
             Submit Another Request
           </button>
@@ -61,6 +126,26 @@ export default function InterestForm({ title, subtitle, options = [], submitLabe
         <form className="interest-form" onSubmit={handleSubmit}>
           {title && <h3 className="headline-md interest-form-title">{title}</h3>}
           {subtitle && <p className="body-md text-muted interest-form-subtitle">{subtitle}</p>}
+
+          {error && (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.75rem',
+                borderRadius: '8px',
+                background: 'rgba(239, 68, 68, 0.1)',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                color: '#ef4444',
+                fontSize: '0.9rem',
+                marginBottom: '1rem'
+              }}
+            >
+              <AlertCircle size={16} />
+              <span>{error}</span>
+            </div>
+          )}
 
           {options.length > 0 && (
             <div className="interest-field">
@@ -75,7 +160,7 @@ export default function InterestForm({ title, subtitle, options = [], submitLabe
 
           <div className="interest-row">
             <label className="interest-field">
-              <span className="label-caps interest-label">Full Name</span>
+              <span className="label-caps interest-label">Full Name *</span>
               <input
                 type="text"
                 className="interest-input"
@@ -86,7 +171,7 @@ export default function InterestForm({ title, subtitle, options = [], submitLabe
               />
             </label>
             <label className="interest-field">
-              <span className="label-caps interest-label">Email Address</span>
+              <span className="label-caps interest-label">Email Address *</span>
               <input
                 type="email"
                 className="interest-input"
@@ -178,27 +263,49 @@ export default function InterestForm({ title, subtitle, options = [], submitLabe
             />
           </label>
 
-          <button type="submit" className="btn btn-gold interest-submit" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', width: '100%' }}>
-            <CreditCard size={18} />
-            {submitLabel} — ₦{Number(formData.amount).toLocaleString('en-NG')}
+          <button
+            type="submit"
+            disabled={isProcessing}
+            className="btn btn-gold interest-submit"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.5rem',
+              width: '100%',
+              opacity: isProcessing ? 0.7 : 1,
+              cursor: isProcessing ? 'not-allowed' : 'pointer'
+            }}
+          >
+            {isProcessing ? (
+              <>
+                <Loader2 size={18} className="spin-animation" />
+                Connecting to Paystack Secure Checkout...
+              </>
+            ) : (
+              <>
+                <CreditCard size={18} />
+                {submitLabel} — ₦{Number(formData.amount).toLocaleString('en-NG')}
+              </>
+            )}
           </button>
 
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem', fontSize: '11px', color: 'var(--on-surface-variant)', marginTop: '0.75rem' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.35rem',
+              fontSize: '11px',
+              color: 'var(--on-surface-variant)',
+              marginTop: '0.75rem'
+            }}
+          >
             <Lock size={12} className="gold-text" />
-            <span>Encrypted payment checkout powered by Paystack</span>
+            <span>Encrypted checkout powered by Paystack</span>
           </div>
         </form>
       )}
-
-      {/* Paystack Modal Launcher */}
-      <PaystackModal
-        isOpen={showPaystack}
-        formData={formData}
-        onClose={() => {
-          setShowPaystack(false);
-          setSubmitted(true);
-        }}
-      />
     </>
   );
 }

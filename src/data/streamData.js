@@ -19,6 +19,8 @@
  */
 
 import { cmsFetch, cmsSave, readCache, CMS_PATHS } from '../lib/cms';
+import { ref, get, set } from 'firebase/database';
+import { getDb } from '../lib/firebase';
 
 // Default Live Stream Configuration for Best of Edo Award (BOEA)
 const DEFAULT_STREAM_CONFIG = {
@@ -171,29 +173,72 @@ export async function verifyPasskey(inputCode) {
   if (!inputCode) return { valid: false, message: 'Passkey cannot be empty' };
   const cleanCode = inputCode.trim().toUpperCase();
 
-  let hash = null;
-  try {
-    hash = await hashPasskey(cleanCode);
-  } catch (e) {
-    console.error('Passkey hashing unavailable:', e);
-    return { valid: false, message: 'Passkey verification is unavailable in this browser.' };
-  }
-
-  const passkeys = await fetchPasskeys();
-  const match = passkeys.find((p) => p.codeHash === hash && p.active);
-  if (match) {
-    return { valid: true, passkey: { label: match.label } };
-  }
-
-  // Check if it's a paid pass stored locally (PPV checkout receipt)
+  // 1. Check local cache (fastest on current device)
   const purchased = localStorage.getItem(`boea_purchased_pass_${cleanCode}`);
   if (purchased) {
     try {
       const info = JSON.parse(purchased);
-      return { valid: true, passkey: { label: info.label || 'Paid PPV Ticket' } };
+      return { valid: true, passkey: { label: info.label || 'Paid PPV Pass' } };
     } catch (e) {
-      console.error('Error parsing purchased pass:', e);
+      // ignore
     }
+  }
+
+  // 2. Check VIP passkey hashes from CMS (admin generated passkeys)
+  try {
+    const hash = await hashPasskey(cleanCode);
+    const passkeys = await fetchPasskeys();
+    const match = passkeys.find((p) => p.codeHash === hash && p.active);
+    if (match) {
+      return { valid: true, passkey: { label: match.label } };
+    }
+  } catch (e) {
+    console.error('Passkey hash check error:', e);
+  }
+
+  // 3. Check Realtime Database ppv_passes collection (cross-device support)
+  try {
+    const db = getDb();
+    if (db) {
+      const snap = await get(ref(db, `ppv_passes/${cleanCode}`));
+      if (snap.exists()) {
+        const val = snap.val();
+        if (val && val.active) {
+          const passInfo = {
+            type: 'paid_ppv',
+            label: `Paid PPV Pass (${val.currency || 'USD'} ${val.amount || 5})`,
+            code: cleanCode,
+            reference: val.reference
+          };
+          localStorage.setItem(`boea_purchased_pass_${cleanCode}`, JSON.stringify(passInfo));
+          return { valid: true, passkey: { label: passInfo.label } };
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Realtime database ppv_passes check:', err.message);
+  }
+
+  // 4. Server-side verification fallback (via Paystack verify or passcode query)
+  try {
+    const res = await fetch(
+      `/api/paystack/verify?passcode=${encodeURIComponent(cleanCode)}&reference=${encodeURIComponent(cleanCode)}`
+    );
+    if (res.ok) {
+      const serverData = await res.json();
+      if (serverData && serverData.valid) {
+        const passInfo = {
+          type: 'paid_ppv',
+          label: serverData.label || 'Verified PPV Ticket',
+          code: cleanCode,
+          reference: serverData.reference
+        };
+        localStorage.setItem(`boea_purchased_pass_${cleanCode}`, JSON.stringify(passInfo));
+        return { valid: true, passkey: { label: passInfo.label } };
+      }
+    }
+  } catch (err) {
+    // offline or server unreachable
   }
 
   return { valid: false, message: 'Invalid or expired Access Passkey. Please check and try again.' };
@@ -227,10 +272,11 @@ export async function recordPPVPurchase({
   fullName,
   amount,
   currency = 'USD',
-  gateway = 'paystack'
+  gateway = 'paystack',
+  serverPassCode
 }) {
   const randomNum = Math.floor(10000 + Math.random() * 90000);
-  const passCode = `BOEA-PPV-${randomNum}`;
+  const passCode = serverPassCode || `BOEA-PPV-${randomNum}`;
   const now = new Date();
 
   const transaction = {
@@ -258,19 +304,24 @@ export async function recordPPVPurchase({
   const updatedTxs = [transaction, ...currentTxs];
   saveTransactions(updatedTxs);
 
-  // 2. Hash and store passkey so it verifies securely across sessions
+  // 2. Save to ppv_passes in Firebase Realtime Database for universal cross-device access
   try {
-    const codeHash = await hashPasskey(passCode);
-    const passRecord = {
-      codeHash,
-      label: `PPV Ticket (${currency.toUpperCase()} ${amount}) — ${email.trim()}`,
-      createdAt: now.toISOString().split('T')[0],
-      active: true
-    };
-    const currentPasskeys = await fetchPasskeys();
-    await savePasskeys([passRecord, ...currentPasskeys]);
+    const db = getDb();
+    if (db) {
+      const passRecord = {
+        passCode,
+        reference: transaction.reference,
+        email: (email || '').trim(),
+        fullName: (fullName || '').trim() || 'BOEA Gala Patron',
+        amount: transaction.amount,
+        currency: transaction.currency,
+        active: true,
+        createdAt: now.toISOString()
+      };
+      await set(ref(db, `ppv_passes/${passCode}`), passRecord);
+    }
   } catch (err) {
-    console.error('Error saving passkey hash for PPV ticket:', err);
+    console.error('Error saving pass to ppv_passes:', err);
   }
 
   // 3. Save as purchased pass for quick local retrieval
@@ -278,7 +329,7 @@ export async function recordPPVPurchase({
     type: 'paid_ppv',
     label: `Foreign PPV Ticket (${currency.toUpperCase()} ${amount})`,
     code: passCode,
-    buyer: fullName.trim() || 'BOEA Gala Patron',
+    buyer: (fullName || 'BOEA Gala Patron').trim(),
     reference: transaction.reference,
     amount: transaction.amount,
     currency: transaction.currency

@@ -5,6 +5,11 @@
       ".write": true
     },
     "ppv_purchases": {
+      ".read": "auth != null",
+      ".write": true
+    },
+    "ppv_passes": {
+      ".read": true,
       ".write": true
     },
     "cms": {
