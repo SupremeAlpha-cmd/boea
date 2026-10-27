@@ -76,8 +76,8 @@ export default async function handler(req, res) {
   const reference = query.reference || query.verify_ref || body.reference;
   const passcode = query.passcode || body.passcode;
 
-  // Case A: Querying validation for a Passcode across devices
-  if (!reference && passcode) {
+  // Case A: Querying validation for a Passcode across devices (checked first)
+  if (passcode) {
     const cleanPass = passcode.trim().toUpperCase();
 
     // 1. Cryptographic HMAC verification: instant and zero database dependency

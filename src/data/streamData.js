@@ -197,7 +197,7 @@ export async function verifyPasskey(inputCode) {
   // 3. Secure server-side verification (verifies HMAC, Paystack, and authenticated Firebase)
   try {
     const res = await fetch(
-      `/api/paystack/verify?passcode=${encodeURIComponent(cleanCode)}&reference=${encodeURIComponent(cleanCode)}`
+      `/api/paystack/verify?passcode=${encodeURIComponent(cleanCode)}`
     );
     if (res.ok) {
       const serverData = await res.json();
