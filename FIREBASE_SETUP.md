@@ -28,10 +28,14 @@ VITE_FIREBASE_AUTH_DOMAIN=
 VITE_FIREBASE_DATABASE_URL=
 VITE_FIREBASE_PROJECT_ID=
 VITE_FIREBASE_APP_ID=
+
+# Server-only Firebase secret for authenticated REST access to ppv_purchases & ppv_passes
+# Get from: Project Settings -> Service accounts -> Database secrets -> Show / Copy
+FIREBASE_DATABASE_SECRET=
 ```
 
-On Vercel: Project → Settings → Environment Variables → add the same five,
-then redeploy. The admin login stays disabled until a deployed build has them.
+On Vercel: Project → Settings → Environment Variables → add the above variables (including `FIREBASE_DATABASE_SECRET` and `PAYSTACK_SECRET_KEY`),
+then redeploy. The admin login and server-verified pass writes stay disabled until a deployed build has them.
 
 ## 3. Publish the database rules
 
@@ -48,6 +52,7 @@ What the rules mean:
   sponsors, gallery, blog, recipients, stream config, passkey hashes.
 - `admin/*` — admin-only read/write (audit trail).
 - `pageviews` — anyone may append (analytics tracking), admin-only read.
+- `ppv_purchases` & `ppv_passes` — **admin & server-only** (`auth != null`). Completely closed to public read/write to prevent $0 fake pass creation and email/passcode harvesting. The server writes via authenticated REST with `FIREBASE_DATABASE_SECRET`.
 
 ## 4. First sign-in + fresh passkeys
 

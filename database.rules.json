@@ -6,11 +6,11 @@
     },
     "ppv_purchases": {
       ".read": "auth != null",
-      ".write": true
+      ".write": "auth != null"
     },
     "ppv_passes": {
-      ".read": true,
-      ".write": true
+      ".read": "auth != null",
+      ".write": "auth != null"
     },
     "cms": {
       ".read": true,

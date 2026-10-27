@@ -19,8 +19,6 @@
  */
 
 import { cmsFetch, cmsSave, readCache, CMS_PATHS } from '../lib/cms';
-import { ref, get, set } from 'firebase/database';
-import { getDb } from '../lib/firebase';
 
 // Default Live Stream Configuration for Best of Edo Award (BOEA)
 const DEFAULT_STREAM_CONFIG = {
@@ -196,30 +194,7 @@ export async function verifyPasskey(inputCode) {
     console.error('Passkey hash check error:', e);
   }
 
-  // 3. Check Realtime Database ppv_passes collection (cross-device support)
-  try {
-    const db = getDb();
-    if (db) {
-      const snap = await get(ref(db, `ppv_passes/${cleanCode}`));
-      if (snap.exists()) {
-        const val = snap.val();
-        if (val && val.active) {
-          const passInfo = {
-            type: 'paid_ppv',
-            label: `Paid PPV Pass (${val.currency || 'USD'} ${val.amount || 5})`,
-            code: cleanCode,
-            reference: val.reference
-          };
-          localStorage.setItem(`boea_purchased_pass_${cleanCode}`, JSON.stringify(passInfo));
-          return { valid: true, passkey: { label: passInfo.label } };
-        }
-      }
-    }
-  } catch (err) {
-    console.warn('Realtime database ppv_passes check:', err.message);
-  }
-
-  // 4. Server-side verification fallback (via Paystack verify or passcode query)
+  // 3. Secure server-side verification (verifies HMAC, Paystack, and authenticated Firebase)
   try {
     const res = await fetch(
       `/api/paystack/verify?passcode=${encodeURIComponent(cleanCode)}&reference=${encodeURIComponent(cleanCode)}`
@@ -304,27 +279,7 @@ export async function recordPPVPurchase({
   const updatedTxs = [transaction, ...currentTxs];
   saveTransactions(updatedTxs);
 
-  // 2. Save to ppv_passes in Firebase Realtime Database for universal cross-device access
-  try {
-    const db = getDb();
-    if (db) {
-      const passRecord = {
-        passCode,
-        reference: transaction.reference,
-        email: (email || '').trim(),
-        fullName: (fullName || '').trim() || 'BOEA Gala Patron',
-        amount: transaction.amount,
-        currency: transaction.currency,
-        active: true,
-        createdAt: now.toISOString()
-      };
-      await set(ref(db, `ppv_passes/${passCode}`), passRecord);
-    }
-  } catch (err) {
-    console.error('Error saving pass to ppv_passes:', err);
-  }
-
-  // 3. Save as purchased pass for quick local retrieval
+  // 2. Save as purchased pass for quick local retrieval
   const info = {
     type: 'paid_ppv',
     label: `Foreign PPV Ticket (${currency.toUpperCase()} ${amount})`,

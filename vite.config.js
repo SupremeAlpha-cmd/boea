@@ -9,6 +9,7 @@ export default defineConfig(({ mode }) => {
   process.env.PAYSTACK_SECRET_KEY = env.PAYSTACK_SECRET_KEY || process.env.PAYSTACK_SECRET_KEY || '';
   process.env.PAYSTACK_TEST_SECRET_KEY = env.PAYSTACK_TEST_SECRET_KEY || process.env.PAYSTACK_TEST_SECRET_KEY || '';
   process.env.FIREBASE_DATABASE_URL = env.VITE_FIREBASE_DATABASE_URL || process.env.FIREBASE_DATABASE_URL || '';
+  process.env.FIREBASE_DATABASE_SECRET = env.FIREBASE_DATABASE_SECRET || process.env.FIREBASE_DATABASE_SECRET || '';
 
   return {
     plugins: [
