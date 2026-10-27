@@ -629,11 +629,12 @@ export default function LiveStream() {
                         <Sparkles size={15} color="var(--color-gold)" /> Gala Night Live Access
                       </div>
                       <div className="ppv-order-subtitle">
-                        YouTube 1080p HD All-Access Pass • Instant Unlock
+                        YouTube 1080p HD All-Access Pass • Global Cards Accepted
                       </div>
                     </div>
-                    <div className="ppv-order-price">
-                      ${config.foreignPriceUSD} USD
+                    <div style={{ textAlign: 'right' }}>
+                      <div className="ppv-order-price">${config.foreignPriceUSD} USD</div>
+                      <div style={{ fontSize: '11.5px', color: 'var(--color-gold, #c9a227)', fontWeight: 600 }}>~₦7,500 NGN</div>
                     </div>
                   </div>
 
@@ -651,11 +652,11 @@ export default function LiveStream() {
                   >
                     {isProcessingPay ? (
                       <>
-                        <RefreshCw size={18} className="spin-icon" /> Connecting Secure Checkout...
+                        <RefreshCw size={18} className="spin-icon" /> Connecting Paystack Checkout...
                       </>
                     ) : (
                       <>
-                        <CreditCard size={18} /> Pay ${config.foreignPriceUSD} USD & Watch Live
+                        <CreditCard size={18} /> Pay ${config.foreignPriceUSD} USD (~₦7,500) & Watch Live
                       </>
                     )}
                   </button>

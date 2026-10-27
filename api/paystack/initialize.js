@@ -30,39 +30,62 @@ export default async function handler(req, res) {
     const host = req.headers['x-forwarded-host'] || req.headers.host || 'bestofedoaward.com';
     const origin = `${protocol}://${host}`;
 
-    const subunitAmount = Math.round(Number(amount) * 100);
+    let targetCurrency = (currency || 'USD').toUpperCase();
+    let subunitAmount = Math.round(Number(amount) * 100);
     const ref = `BOEA-PPV-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
 
-    const paystackRes = await fetch('https://api.paystack.co/transaction/initialize', {
+    const createPayload = (cur, subAmount) => ({
+      email: email.trim(),
+      amount: subAmount,
+      currency: cur,
+      reference: ref,
+      callback_url: `${origin}/live?verify_ref=${ref}`,
+      metadata: {
+        custom_fields: [
+          {
+            display_name: 'Customer Name',
+            variable_name: 'customer_name',
+            value: (fullName || 'BOEA Gala Guest').trim()
+          },
+          {
+            display_name: 'Item Purchased',
+            variable_name: 'item_purchased',
+            value: 'BOEA 2026 Gala Night Live Stream Pass'
+          }
+        ]
+      }
+    });
+
+    let paystackRes = await fetch('https://api.paystack.co/transaction/initialize', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${secretKey.trim()}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        email: email.trim(),
-        amount: subunitAmount,
-        currency: currency.toUpperCase(),
-        reference: ref,
-        callback_url: `${origin}/live?verify_ref=${ref}`,
-        metadata: {
-          custom_fields: [
-            {
-              display_name: 'Customer Name',
-              variable_name: 'customer_name',
-              value: (fullName || 'BOEA Gala Guest').trim()
-            },
-            {
-              display_name: 'Item Purchased',
-              variable_name: 'item_purchased',
-              value: 'BOEA 2026 Gala Night Live Stream Pass'
-            }
-          ]
-        }
-      })
+      body: JSON.stringify(createPayload(targetCurrency, subunitAmount))
     });
 
-    const data = await paystackRes.json();
+    let data = await paystackRes.json();
+
+    // If the merchant account does not support USD settlement, fall back to NGN (~$5 = ₦7,500)
+    // All international cards (Visa, Mastercard, Amex) can pay NGN seamlessly worldwide
+    if (!paystackRes.ok || !data.status) {
+      if (data.message && data.message.toLowerCase().includes('currency')) {
+        targetCurrency = 'NGN';
+        const ngnTotal = Number(amount) <= 50 ? Number(amount) * 1500 : Number(amount);
+        const ngnSubunit = Math.round(ngnTotal * 100);
+
+        paystackRes = await fetch('https://api.paystack.co/transaction/initialize', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${secretKey.trim()}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(createPayload(targetCurrency, ngnSubunit))
+        });
+        data = await paystackRes.json();
+      }
+    }
 
     if (!paystackRes.ok || !data.status) {
       console.error('Paystack initialization error:', data);

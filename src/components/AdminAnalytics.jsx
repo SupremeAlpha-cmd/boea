@@ -74,14 +74,14 @@ export default function AdminAnalytics() {
           <Eye size={18} />
           <div>
             <p className="analytics-kpi-value">{stats.totalViews.toLocaleString()}</p>
-            <p className="analytics-kpi-label">Page Views</p>
+            <p className="analytics-kpi-label">Page Views ({stats.todayViews || 0} today)</p>
           </div>
         </div>
         <div className="analytics-kpi">
           <Users size={18} />
           <div>
             <p className="analytics-kpi-value">{stats.uniqueVisitors.toLocaleString()}</p>
-            <p className="analytics-kpi-label">Unique Visitors</p>
+            <p className="analytics-kpi-label">Unique Visitors ({stats.todayVisitors || 0} today)</p>
           </div>
         </div>
         <div className="analytics-kpi">
@@ -114,6 +114,62 @@ export default function AdminAnalytics() {
                   style={{ height: `${Math.max(4, (d.views / maxDaily) * 100)}%` }}
                 />
                 <span className="analytics-bar-label">{d.date.slice(5)}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Geographic Audience Breakdown */}
+      <div className="analytics-card">
+        <h4><Globe size={16} /> Audience Geographic Breakdown</h4>
+
+        {/* Domestic vs Diaspora Split Banner */}
+        <div className="analytics-geo-summary">
+          <div className="analytics-geo-pill">
+            <span className="analytics-geo-pill-label">🇳🇬 Nigeria (Domestic Audience)</span>
+            <span className="analytics-geo-pill-val">
+              {stats.geographic?.nigeriaPercent || 0}%
+              <span style={{ fontSize: '0.8rem', fontWeight: 500, color: 'var(--on-surface-variant)', marginLeft: '0.5rem' }}>
+                ({(stats.geographic?.nigeriaVisitors || 0).toLocaleString()} visitors)
+              </span>
+            </span>
+          </div>
+
+          <div className="analytics-geo-pill">
+            <span className="analytics-geo-pill-label">🌍 International / Diaspora Audience</span>
+            <span className="analytics-geo-pill-val">
+              {stats.geographic?.diasporaPercent || 0}%
+              <span style={{ fontSize: '0.8rem', fontWeight: 500, color: 'var(--on-surface-variant)', marginLeft: '0.5rem' }}>
+                ({(stats.geographic?.diasporaVisitors || 0).toLocaleString()} visitors)
+              </span>
+            </span>
+          </div>
+        </div>
+
+        {/* Countries Ranking */}
+        {!stats.geographic?.countries?.length ? (
+          <p className="analytics-empty">No country data recorded yet. Visitor locations will display here as people visit.</p>
+        ) : (
+          <div className="analytics-country-list">
+            {stats.geographic.topCountries.map((c) => (
+              <div key={c.code} className="analytics-country-item">
+                <div className="analytics-country-header">
+                  <div className="analytics-country-name">
+                    <span style={{ fontSize: '1.2rem' }}>{c.flag}</span>
+                    <span>{c.name}</span>
+                  </div>
+                  <div className="analytics-country-stats">
+                    <strong>{c.visitors.toLocaleString()} {c.visitors === 1 ? 'visitor' : 'visitors'}</strong>
+                    <span>({c.percentage}%)</span>
+                  </div>
+                </div>
+                <div className="analytics-country-bar-bg">
+                  <div
+                    className="analytics-country-bar-fill"
+                    style={{ width: `${Math.max(4, c.percentage)}%` }}
+                  />
+                </div>
               </div>
             ))}
           </div>

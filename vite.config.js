@@ -26,43 +26,63 @@ export default defineConfig(({ mode }) => {
                 try {
                   const parsed = JSON.parse(body || '{}');
                   const { email, fullName, amount = 5, currency = 'USD' } = parsed;
-                  const subunitAmount = Math.round(Number(amount) * 100);
+                  let targetCurrency = (currency || 'USD').toUpperCase();
+                  let subunitAmount = Math.round(Number(amount) * 100);
                   const ref = `BOEA-PPV-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
 
                   const protocol = req.headers['x-forwarded-proto'] || 'http';
                   const host = req.headers.host || 'localhost:3000';
                   const origin = `${protocol}://${host}`;
 
-                  const pRes = await fetch('https://api.paystack.co/transaction/initialize', {
+                  const makePayload = (cur, subAmount) => ({
+                    email: (email || '').trim(),
+                    amount: subAmount,
+                    currency: cur,
+                    reference: ref,
+                    callback_url: `${origin}/live?verify_ref=${ref}`,
+                    metadata: {
+                      custom_fields: [
+                        {
+                          display_name: 'Customer Name',
+                          variable_name: 'customer_name',
+                          value: (fullName || 'BOEA Gala Guest').trim()
+                        },
+                        {
+                          display_name: 'Item Purchased',
+                          variable_name: 'item_purchased',
+                          value: 'BOEA 2026 Gala Night Live Stream Pass'
+                        }
+                      ]
+                    }
+                  });
+
+                  let pRes = await fetch('https://api.paystack.co/transaction/initialize', {
                     method: 'POST',
                     headers: {
                       Authorization: `Bearer ${secretKey.trim()}`,
                       'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                      email: (email || '').trim(),
-                      amount: subunitAmount,
-                      currency: currency.toUpperCase(),
-                      reference: ref,
-                      callback_url: `${origin}/live?verify_ref=${ref}`,
-                      metadata: {
-                        custom_fields: [
-                          {
-                            display_name: 'Customer Name',
-                            variable_name: 'customer_name',
-                            value: (fullName || 'BOEA Gala Guest').trim()
-                          },
-                          {
-                            display_name: 'Item Purchased',
-                            variable_name: 'item_purchased',
-                            value: 'BOEA 2026 Gala Night Live Stream Pass'
-                          }
-                        ]
-                      }
-                    })
+                    body: JSON.stringify(makePayload(targetCurrency, subunitAmount))
                   });
 
-                  const data = await pRes.json();
+                  let data = await pRes.json();
+
+                  if (!pRes.ok || !data.status) {
+                    if (data.message && data.message.toLowerCase().includes('currency')) {
+                      targetCurrency = 'NGN';
+                      const ngnTotal = Number(amount) <= 50 ? Number(amount) * 1500 : Number(amount);
+                      const ngnSubunit = Math.round(ngnTotal * 100);
+                      pRes = await fetch('https://api.paystack.co/transaction/initialize', {
+                        method: 'POST',
+                        headers: {
+                          Authorization: `Bearer ${secretKey.trim()}`,
+                          'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(makePayload(targetCurrency, ngnSubunit))
+                      });
+                      data = await pRes.json();
+                    }
+                  }
                   res.setHeader('Content-Type', 'application/json');
                   res.statusCode = pRes.status;
                   res.end(
