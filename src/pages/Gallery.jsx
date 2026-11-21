@@ -2886,6 +2886,69 @@ export const INITIAL_PHOTOS = [...NINTH_EDITION_PHOTOS, ...PREVIOUS_EDITION_PHOT
 
 export const INITIAL_VIDEOS = [
   {
+    "id": "vid-9th-1",
+    "title": "BOEA 9th Edition — Cultural Dance",
+    "meta": "Best of Edo Award — 9th Edition · 15 November 2026",
+    "duration": "0:20",
+    "tag": "Cultural Dance",
+    "thumb": "/assets/boea_9th_video_1_thumb.jpg",
+    "src": "/assets/boea_9th_video_1.mp4"
+  },
+  {
+    "id": "vid-9th-2",
+    "title": "BOEA 9th Edition — Dance Troupe on Stage",
+    "meta": "Best of Edo Award — 9th Edition · 15 November 2026",
+    "duration": "0:11",
+    "tag": "Cultural Dance",
+    "thumb": "/assets/boea_9th_video_2_thumb.jpg",
+    "src": "/assets/boea_9th_video_2.mp4"
+  },
+  {
+    "id": "vid-9th-3",
+    "title": "BOEA 9th Edition — Stage Speech (ITA Benin Broadcast)",
+    "meta": "Best of Edo Award — 9th Edition · 15 November 2026",
+    "duration": "3:23",
+    "tag": "Ceremony",
+    "thumb": "/assets/boea_9th_video_3_thumb.jpg",
+    "src": "/assets/boea_9th_video_3.mp4"
+  },
+  {
+    "id": "vid-9th-4",
+    "title": "BOEA 9th Edition — Stage Panel",
+    "meta": "Best of Edo Award — 9th Edition · 15 November 2026",
+    "duration": "0:54",
+    "tag": "Panel",
+    "thumb": "/assets/boea_9th_video_4_thumb.jpg",
+    "src": "/assets/boea_9th_video_4.mp4"
+  },
+  {
+    "id": "vid-9th-5",
+    "title": "BOEA 9th Edition — Award Presentation",
+    "meta": "Best of Edo Award — 9th Edition · 15 November 2026",
+    "duration": "0:39",
+    "tag": "Award Presentation",
+    "thumb": "/assets/boea_9th_video_5_thumb.jpg",
+    "src": "/assets/boea_9th_video_5.mp4"
+  },
+  {
+    "id": "vid-9th-6",
+    "title": "BOEA 9th Edition — Winners on Stage",
+    "meta": "Best of Edo Award — 9th Edition · 15 November 2026",
+    "duration": "0:25",
+    "tag": "Winners",
+    "thumb": "/assets/boea_9th_video_6_thumb.jpg",
+    "src": "/assets/boea_9th_video_6.mp4"
+  },
+  {
+    "id": "vid-9th-7",
+    "title": "BOEA 9th Edition — Cultural Dance Finale",
+    "meta": "Best of Edo Award — 9th Edition · 15 November 2026",
+    "duration": "0:34",
+    "tag": "Cultural Dance",
+    "thumb": "/assets/boea_9th_video_7_thumb.jpg",
+    "src": "/assets/boea_9th_video_7.mp4"
+  },
+  {
     "id": "vid-1",
     "title": "BOEA Gala Night \u2014 Official Highlights",
     "meta": "Best of Edo Award \u2014 Event Coverage",
