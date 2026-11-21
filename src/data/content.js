@@ -18,7 +18,10 @@ export const HERO_SLIDES = [
     eyebrow: 'WELCOME TO THE',
     title: ' BEST OF EDO AWARD',
     subtitle: 'Celebrating Excellence',
-    image: '/assets/boea_red_carpet_backdrop.jpeg',
+    image: '/assets/boea-9th-black-carpet-interview.jpg',
+    // Near-square frame: anchor to the bottom so the photographer's
+    // watermark along the bottom edge stays visible in the wide hero crop.
+    bgPosition: 'center bottom',
     accent: '#C9A227'
   },
   {
