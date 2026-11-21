@@ -160,10 +160,48 @@
 /* Edition groups: 9th edition (latest) first, previous edition after. */
 .gallery-group {
   margin-bottom: 3rem;
+  scroll-margin-top: 6rem;
 }
 
 .gallery-group:last-child {
   margin-bottom: 0;
+}
+
+/* Hard visual break between the two editions — the 9th edition run is
+   279 photos long, so the second section needs a rule and breathing
+   room of its own or the gallery reads as one endless grid. */
+.gallery-group + .gallery-group {
+  margin-top: 4rem;
+  padding-top: 3rem;
+  border-top: 1px solid rgba(174, 138, 46, 0.35);
+}
+
+/* Jump links shown on opening so both sections are one click away. */
+.gallery-section-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.gallery-section-nav a {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(174, 138, 46, 0.35);
+  border-radius: var(--radius-full);
+  background: var(--surface-bright);
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.gallery-section-nav a:hover,
+.gallery-section-nav a:focus-visible {
+  border-color: var(--secondary);
+  color: var(--secondary);
 }
 
 .gallery-group-head {

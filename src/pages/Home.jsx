@@ -67,6 +67,9 @@ function HeroSlider() {
             style={{
               backgroundImage: `url("${slide.image}")`,
               backgroundPosition: slide.bgPosition || 'center',
+              // Near-square slides (e.g. the black-carpet interview) opt
+              // into `contain` via slide.bgSize so nothing is cropped.
+              backgroundSize: slide.bgSize || 'cover',
             }}
           />
           <div className="hero-slide-overlay" />
@@ -153,11 +156,14 @@ function IntroSection() {
   );
 }
 
-// 9th-edition photos shot portrait: in a landscape frame `object-fit: cover`
-// crops top and bottom, so anchor these to the bottom edge — the FAITHFYN
-// watermark runs along the bottom and must stay visible, never cropped off.
-const PORTRAIT_IMAGES = new Set([
+// 9th-edition photos shot portrait / near-square: in a 4 / 3 frame
+// `object-fit: cover` crops the subjects' heads (the trophy handover
+// lost both men's heads entirely), and no crop window can hold both the
+// heads at the top and the FAITHFYN watermark along the bottom edge.
+// Show these whole with `contain` on a dark bed instead.
+const CONTAIN_IMAGES = new Set([
   '/assets/boea-9th-trophy-handover.jpg',
+  '/assets/boea-9th-black-carpet-interview.jpg',
 ]);
 
 function SplitSection({ reverse, eyebrow, title, paragraphs, image, images, alt, cta, ctaTo }) {
@@ -184,8 +190,8 @@ function SplitSection({ reverse, eyebrow, title, paragraphs, image, images, alt,
                   alt={`${alt} slide ${index + 1}`}
                   className={index === currentIdx ? 'active' : ''}
                   style={
-                    PORTRAIT_IMAGES.has(imgSrc)
-                      ? { objectPosition: 'center bottom' }
+                    CONTAIN_IMAGES.has(imgSrc)
+                      ? { objectFit: 'contain', backgroundColor: '#12090b' }
                       : undefined
                   }
                 />
