@@ -19,9 +19,11 @@ export const HERO_SLIDES = [
     title: ' BEST OF EDO AWARD',
     subtitle: 'Celebrating Excellence',
     image: '/assets/boea-9th-black-carpet-interview.jpg',
-    // Near-square frame: anchor to the bottom so the photographer's
-    // watermark along the bottom edge stays visible in the wide hero crop.
-    bgPosition: 'center bottom',
+    // Near-square frame (1.08): shown whole with `contain` so the red
+    // cap, both faces and the FAITHFYN watermark along the bottom edge
+    // stay visible. `cover` in the 100vh hero cut the subjects' heads.
+    bgSize: 'contain',
+    bgPosition: 'center',
     accent: '#C9A227'
   },
   {

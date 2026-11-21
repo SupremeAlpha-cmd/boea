@@ -26,6 +26,10 @@
   inset: 0;
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
+  /* Dark bed so a `contain` slide letterboxes against the hero's dark
+     overlay instead of a light surface. */
+  background-color: #12090b;
 }
 
 .hero-slide-overlay {
@@ -323,6 +327,8 @@
   border-radius: var(--radius-xl);
   overflow: hidden;
   aspect-ratio: 4 / 3;
+  /* Dark bed so `contain` slides letterbox cleanly inside the frame. */
+  background-color: #12090b;
 }
 
 .split-slideshow img {
