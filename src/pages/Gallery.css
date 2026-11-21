@@ -150,11 +150,19 @@
   transform: scale(1.05);
 }
 
-/* Portrait 9th-edition frames: `background-size: cover` crops top and bottom,
-   so anchor to the bottom edge — the FAITHFYN watermark runs along the
-   bottom and must stay visible, never cropped off. */
+/* Portrait 9th-edition frames: `background-size: cover` crops the top and
+   bottom of a tall photo in a wide card, so heads were cut off and only
+   lower bodies showed (Excerpts 276/277). Contain the whole photo instead —
+   the dark card behind it reads as a frame, and heads and the FAITHFYN
+   watermark both stay visible. */
+.gallery-card-portrait {
+  background: #0a0508;
+}
+
 .gallery-card-portrait .gallery-card-bg {
-  background-position: center bottom;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 /* Edition groups: 9th edition (latest) first, previous edition after. */
