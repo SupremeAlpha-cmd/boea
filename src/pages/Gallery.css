@@ -150,6 +150,30 @@
   transform: scale(1.05);
 }
 
+/* Portrait 9th-edition frames: `background-size: cover` crops top and bottom,
+   so anchor to the bottom edge — the FAITHFYN watermark runs along the
+   bottom and must stay visible, never cropped off. */
+.gallery-card-portrait .gallery-card-bg {
+  background-position: center bottom;
+}
+
+/* Edition groups: 9th edition (latest) first, previous edition after. */
+.gallery-group {
+  margin-bottom: 3rem;
+}
+
+.gallery-group:last-child {
+  margin-bottom: 0;
+}
+
+.gallery-group-head {
+  margin-bottom: 1.5rem;
+}
+
+.gallery-group-title {
+  margin: 0.25rem 0 0.5rem;
+}
+
 .gallery-card-shade,
 .gallery-video-overlay {
   position: absolute;

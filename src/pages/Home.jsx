@@ -64,7 +64,10 @@ function HeroSlider() {
         >
           <div
             className="hero-slide-bg"
-            style={{ backgroundImage: `url("${slide.image}")` }}
+            style={{
+              backgroundImage: `url("${slide.image}")`,
+              backgroundPosition: slide.bgPosition || 'center',
+            }}
           />
           <div className="hero-slide-overlay" />
           <div className="hero-slide-content container">
@@ -150,6 +153,13 @@ function IntroSection() {
   );
 }
 
+// 9th-edition photos shot portrait: in a landscape frame `object-fit: cover`
+// crops top and bottom, so anchor these to the bottom edge — the FAITHFYN
+// watermark runs along the bottom and must stay visible, never cropped off.
+const PORTRAIT_IMAGES = new Set([
+  '/assets/boea-9th-trophy-handover.jpg',
+]);
+
 function SplitSection({ reverse, eyebrow, title, paragraphs, image, images, alt, cta, ctaTo }) {
   const [currentIdx, setCurrentIdx] = useState(0);
 
@@ -173,6 +183,11 @@ function SplitSection({ reverse, eyebrow, title, paragraphs, image, images, alt,
                   src={imgSrc}
                   alt={`${alt} slide ${index + 1}`}
                   className={index === currentIdx ? 'active' : ''}
+                  style={
+                    PORTRAIT_IMAGES.has(imgSrc)
+                      ? { objectPosition: 'center bottom' }
+                      : undefined
+                  }
                 />
               ))}
               <div className="split-slideshow-indicators">
@@ -269,11 +284,13 @@ export default function Home() {
         title={HOME.moreThanAnAward.title}
         paragraphs={HOME.moreThanAnAward.paragraphs}
         images={[
-          '/assets/boea_photo_wall.jpeg',
-          '/assets/boea_red_carpet_backdrop.jpeg',
-          '/assets/boea_5th_edition_backdrop.jpeg',
-          '/assets/boea_6th_edition_poster.jpeg',
-          '/assets/coral_beads.jpeg'
+          '/assets/boea-9th-photo-wall-ushers.jpg',
+          '/assets/boea-9th-black-carpet-interview.jpg',
+          '/assets/boea-9th-dance-troupe.jpg',
+          '/assets/boea-9th-trophy-handover.jpg',
+          '/assets/boea-9th-dignitaries.jpg',
+          '/assets/boea-9th-packed-hall.jpg',
+          '/assets/boea-9th-stage-screen.jpg'
         ]}
         alt="Best of Edo Award gala black carpet"
         cta="See Past Recipients"
@@ -286,7 +303,7 @@ export default function Home() {
         images={[
           '/assets/ososo_hills.png',
           '/assets/coral_beads.jpeg',
-          '/assets/boea_6th_edition_poster.jpeg'
+          '/assets/boea-9th-stage-screen.jpg'
         ]}
         alt="Edo State landscape and heritage"
         cta="Discover Our Heritage"
