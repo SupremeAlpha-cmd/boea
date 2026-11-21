@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Play, Camera, Film, X, ZoomIn } from 'lucide-react';
+import { Play, Camera, Film, X, ZoomIn, ChevronLeft, ChevronRight } from 'lucide-react';
 import PageHero from '../components/PageHero';
 import NominateCta from '../components/NominateCta';
 import RichLinkPreview from '../components/RichLinkPreview';
@@ -3101,6 +3101,32 @@ export default function Gallery() {
   const ninthPhotos = photos.filter(isNinthEdition);
   const previousPhotos = photos.filter((p) => !isNinthEdition(p));
 
+  // Lightbox navigation follows the page order: 9th edition first, then
+  // Previous edition, wrapping at both ends.
+  const orderedPhotos = [...ninthPhotos, ...previousPhotos];
+  const activePhotoIndex = activePhoto
+    ? orderedPhotos.findIndex((p) => p.image === activePhoto.image)
+    : -1;
+  const touchStartX = useRef(null);
+  const goToPhoto = (dir) => {
+    if (activePhotoIndex < 0 || orderedPhotos.length === 0) return;
+    const next = (activePhotoIndex + dir + orderedPhotos.length) % orderedPhotos.length;
+    setActivePhoto(orderedPhotos[next]);
+  };
+
+  // Arrow keys step through photos, Escape closes — only while open.
+  // No dep array on purpose: the listener always sees the latest index.
+  useEffect(() => {
+    if (!activePhoto) return undefined;
+    const onKey = (e) => {
+      if (e.key === 'ArrowRight') goToPhoto(1);
+      else if (e.key === 'ArrowLeft') goToPhoto(-1);
+      else if (e.key === 'Escape') setActivePhoto(null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  });
+
   return (
     <main>
       <PageHero
@@ -3215,10 +3241,24 @@ export default function Gallery() {
         </div>
       </section>
 
-      {/* Photo Lightbox */}
+      {/* Photo Lightbox — full image, never cropped: the img uses the
+          contain-fit classes below, so portrait frames fit inside the
+          modal and the FAITHFYN watermark stays visible. Prev/next
+          buttons, arrow keys and swipe all step through the photos in
+          page order (9th edition first, then Previous edition). */}
       {activePhoto && (
         <div className="video-modal-backdrop" onClick={() => setActivePhoto(null)}>
-          <div className="photo-modal-content" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="photo-modal-content"
+            onClick={(e) => e.stopPropagation()}
+            onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+            onTouchEnd={(e) => {
+              if (touchStartX.current == null) return;
+              const dx = e.changedTouches[0].clientX - touchStartX.current;
+              if (Math.abs(dx) > 50) goToPhoto(dx < 0 ? 1 : -1);
+              touchStartX.current = null;
+            }}
+          >
             <div className="video-modal-header">
               <div style={{ textAlign: 'left' }}>
                 <span className="label-caps gold-text">{activePhoto.tag}</span>
@@ -3233,8 +3273,29 @@ export default function Gallery() {
                 <X size={24} />
               </button>
             </div>
-            <div className="photo-modal-img-wrap">
-              <img src={activePhoto.image} alt={activePhoto.title} className="photo-modal-img" />
+            <div className="photo-lightbox-img-wrapper">
+              <img src={activePhoto.image} alt={activePhoto.title} className="photo-lightbox-img" />
+              <button
+                type="button"
+                className="photo-modal-nav photo-modal-nav-prev"
+                onClick={() => goToPhoto(-1)}
+                aria-label="Previous photo"
+              >
+                <ChevronLeft size={24} />
+              </button>
+              <button
+                type="button"
+                className="photo-modal-nav photo-modal-nav-next"
+                onClick={() => goToPhoto(1)}
+                aria-label="Next photo"
+              >
+                <ChevronRight size={24} />
+              </button>
+              {activePhotoIndex >= 0 && (
+                <span className="photo-modal-counter">
+                  {activePhotoIndex + 1} / {orderedPhotos.length}
+                </span>
+              )}
             </div>
             {activePhoto.meta && (
               <p className="body-sm text-muted" style={{ marginTop: '0.75rem', textAlign: 'center' }}>
